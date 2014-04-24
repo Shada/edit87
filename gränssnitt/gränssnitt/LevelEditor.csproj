@@ -100,6 +100,12 @@
   <ItemGroup>
     <None Include="save.png" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\wrapper\CliWrapper\CliWrapper.vcxproj">
+      <Project>{db367f4e-08ed-4458-91f6-685f05fdbe15}</Project>
+      <Name>CliWrapper</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

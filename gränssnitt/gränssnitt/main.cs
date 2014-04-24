@@ -8,13 +8,17 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
+using wrapperns;
+
 namespace LevelEditor
 {
 	public partial class MapEditor : Form
 	{		
+        public wrapperns.Temp tempClass123;
 		public MapEditor()
 		{
 			InitializeComponent();
+            //tempClass123.updateScene();
 		}
 
 		private void button1_Click(object sender, EventArgs e)
