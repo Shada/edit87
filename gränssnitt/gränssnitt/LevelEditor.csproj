@@ -13,7 +13,7 @@
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
+    <PlatformTarget>x86</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -101,10 +101,11 @@
     <None Include="save.png" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\wrapper\CliWrapper\CliWrapper.vcxproj">
-      <Project>{db367f4e-08ed-4458-91f6-685f05fdbe15}</Project>
     <None Include="map_placeholder.png" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\wrapper\CliWrapper\CliWrapper.vcxproj">
+      <Project>{db367f4e-08ed-4458-91f6-685f05fdbe15}</Project>
       <Name>CliWrapper</Name>
     </ProjectReference>
   </ItemGroup>

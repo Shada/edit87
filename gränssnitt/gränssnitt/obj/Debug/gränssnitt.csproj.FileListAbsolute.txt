@@ -1,9 +1,0 @@
-c:\users\ossian'\documents\visual studio 2013\Projects\gränssnitt\gränssnitt\bin\Debug\gränssnitt.exe.config
-c:\users\ossian'\documents\visual studio 2013\Projects\gränssnitt\gränssnitt\bin\Debug\gränssnitt.exe
-c:\users\ossian'\documents\visual studio 2013\Projects\gränssnitt\gränssnitt\bin\Debug\gränssnitt.pdb
-c:\users\ossian'\documents\visual studio 2013\Projects\gränssnitt\gränssnitt\obj\Debug\gränssnitt.Main.resources
-c:\users\ossian'\documents\visual studio 2013\Projects\gränssnitt\gränssnitt\obj\Debug\gränssnitt.Properties.Resources.resources
-c:\users\ossian'\documents\visual studio 2013\Projects\gränssnitt\gränssnitt\obj\Debug\gränssnitt.csproj.GenerateResource.Cache
-c:\users\ossian'\documents\visual studio 2013\Projects\gränssnitt\gränssnitt\obj\Debug\gränssnitt.exe
-c:\users\ossian'\documents\visual studio 2013\Projects\gränssnitt\gränssnitt\obj\Debug\gränssnitt.pdb
-c:\users\ossian'\documents\visual studio 2013\Projects\gränssnitt\gränssnitt\obj\Debug\gränssnitt.properties_test.resources
