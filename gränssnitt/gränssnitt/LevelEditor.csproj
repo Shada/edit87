@@ -104,7 +104,7 @@
     <None Include="map_placeholder.png" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\wrapper\CliWrapper\CliWrapper.vcxproj">
+    <ProjectReference Include="..\..\wrapper\CliWrapper.vcxproj">
       <Project>{db367f4e-08ed-4458-91f6-685f05fdbe15}</Project>
       <Name>CliWrapper</Name>
     </ProjectReference>

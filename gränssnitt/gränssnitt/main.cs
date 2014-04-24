@@ -14,13 +14,13 @@ namespace LevelEditor
 {
 	public partial class MapEditor : Form
 	{
-        public wrapperns.Temp tempClass123;
+        // Umm... cant use this yet for some reason
+        public wrapperns.GraphicsCommunicator graphics;
         int windowWidth, windowHeight;
 
 		public MapEditor()
 		{
 			InitializeComponent();
-            //tempClass123.updateScene();
             windowWidth = Size.Width;
             windowHeight = Size.Height;
 		}
