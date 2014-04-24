@@ -13,12 +13,16 @@ using wrapperns;
 namespace LevelEditor
 {
 	public partial class MapEditor : Form
-	{		
+	{
         public wrapperns.Temp tempClass123;
+        int windowWidth, windowHeight;
+
 		public MapEditor()
 		{
 			InitializeComponent();
             //tempClass123.updateScene();
+            windowWidth = Size.Width;
+            windowHeight = Size.Height;
 		}
 
 		private void button1_Click(object sender, EventArgs e)
@@ -57,25 +61,21 @@ namespace LevelEditor
                 btn_redo.Visible = false;
                 cb_history.Visible = false;
 
-                tw_objects.Location = new Point(tw_objects.Location.X, tw_objects.Location.Y - 34);
-                pictureBox1.Location = new Point(pictureBox1.Location.X, pictureBox1.Location.Y - 34);
-                tc_Tools.Location = new Point(tc_Tools.Location.X, tc_Tools.Location.Y - 34);
+                panel_Left.Location = new Point(panel_Left.Location.X, panel_Left.Location.Y - 34);
+                pb_scene.Location = new Point(pb_scene.Location.X, pb_scene.Location.Y - 34);
 
-                tw_objects.Size = new Size(tw_objects.Size.Width, tw_objects.Size.Height + 34);
-                pictureBox1.Size = new Size(pictureBox1.Size.Width, pictureBox1.Size.Height + 34);
-                tc_Tools.Size = new Size(tc_Tools.Size.Width, tc_Tools.Size.Height + 34);
+                panel_Left.Size = new Size(panel_Left.Size.Width, panel_Left.Size.Height + 34);
+                pb_scene.Size = new Size(pb_scene.Size.Width, pb_scene.Size.Height + 34);
             }
             else
             {
                 item.CheckState = CheckState.Checked;
 
-                tw_objects.Size = new Size(tw_objects.Size.Width, tw_objects.Size.Height - 34);
-                pictureBox1.Size = new Size(pictureBox1.Size.Width, pictureBox1.Size.Height - 34);
-                tc_Tools.Size = new Size(tc_Tools.Size.Width, tc_Tools.Size.Height - 34);
+                panel_Left.Size = new Size(panel_Left.Size.Width, panel_Left.Size.Height - 34);
+                pb_scene.Size = new Size(pb_scene.Size.Width, pb_scene.Size.Height - 34);
 
-                tw_objects.Location = new Point(tw_objects.Location.X, tw_objects.Location.Y + 34);
-                pictureBox1.Location = new Point(pictureBox1.Location.X, pictureBox1.Location.Y + 34);
-                tc_Tools.Location = new Point(tc_Tools.Location.X, tc_Tools.Location.Y + 34);                
+                panel_Left.Location = new Point(panel_Left.Location.X, panel_Left.Location.Y + 34);
+                pb_scene.Location = new Point(pb_scene.Location.X, pb_scene.Location.Y + 34);                
 
                 btn_save.Visible = true;
                 btn_load.Visible = true;
@@ -84,6 +84,19 @@ namespace LevelEditor
                 btn_redo.Visible = true;
                 cb_history.Visible = true;
             }
+        }
+
+        private void MapEditor_Resize(object sender, EventArgs e)
+        {
+            int sizeDifWidth = Size.Width - windowWidth;
+			int sizeDifHeight = Size.Height - windowHeight;
+
+            pb_scene.Size = new Size(pb_scene.Size.Width + sizeDifWidth, pb_scene.Size.Height + sizeDifHeight);
+            windowWidth = Size.Width;
+			windowHeight = Size.Height;
+            panel_Right.Location = new Point(panel_Right.Location.X + sizeDifWidth, panel_Right.Location.Y);
+			panel_Right.Size = new Size(panel_Right.Size.Width, panel_Right.Size.Height + sizeDifHeight);
+			panel_Left.Size = new Size(panel_Left.Size.Width, panel_Left.Size.Height + sizeDifHeight);
         }
 	}
 }

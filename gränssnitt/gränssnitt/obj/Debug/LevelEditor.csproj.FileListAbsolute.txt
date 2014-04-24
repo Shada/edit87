@@ -38,5 +38,15 @@ C:\Temp\gränssnitt\gränssnitt\obj\Debug\LevelEditor.csproj.GenerateResource.Ca
 \\storage10.student.bth.se\students\20102\toab10\edit87\gränssnitt\gränssnitt\bin\Debug\gränssnitt.exe
 \\storage10.student.bth.se\students\20102\toab10\edit87\gränssnitt\gränssnitt\bin\Debug\gränssnitt.pdb
 \\storage10.student.bth.se\students\20102\toab10\edit87\gränssnitt\gränssnitt\bin\Debug\CliWrapper.exe
+D:\Gränssnitt\gränssnitt\gränssnitt\bin\Debug\gränssnitt.exe.config
+D:\Gränssnitt\gränssnitt\gränssnitt\obj\Debug\gränssnitt.exe
+D:\Gränssnitt\gränssnitt\gränssnitt\obj\Debug\gränssnitt.pdb
+D:\Gränssnitt\gränssnitt\gränssnitt\bin\Debug\gränssnitt.exe
+D:\Gränssnitt\gränssnitt\gränssnitt\bin\Debug\gränssnitt.pdb
+D:\Gränssnitt\gränssnitt\gränssnitt\obj\Debug\LevelEditor.csprojResolveAssemblyReference.cache
+D:\Gränssnitt\gränssnitt\gränssnitt\obj\Debug\LevelEditor.MapEditor.resources
+D:\Gränssnitt\gränssnitt\gränssnitt\obj\Debug\gränssnitt.Properties.Resources.resources
+D:\Gränssnitt\gränssnitt\gränssnitt\obj\Debug\LevelEditor.properties_test.resources
+D:\Gränssnitt\gränssnitt\gränssnitt\obj\Debug\LevelEditor.csproj.GenerateResource.Cache
 \\storage10.student.bth.se\students\20102\toab10\edit87\gränssnitt\gränssnitt\bin\Debug\CliWrapper.pdb
 \\storage10.student.bth.se\students\20102\toab10\edit87\gränssnitt\gränssnitt\obj\Debug\gränssnitt.exe
