@@ -23,5 +23,11 @@
 *.pdb
 *.FileListAbsolute.txt
 *.Cashe
+*.cashe
 *.suo
 TemporaryGeneratedFile*
+*.tlog
+*.log
+*sdf
+*.lastbuildstate
+*htm
