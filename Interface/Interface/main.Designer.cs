@@ -43,7 +43,7 @@
 			this.btn_importTexture = new System.Windows.Forms.Button();
 			this.btn_importBrush = new System.Windows.Forms.Button();
 			this.label5 = new System.Windows.Forms.Label();
-			this.numericUpDown1 = new System.Windows.Forms.NumericUpDown();
+			this.nud_brushIntensity = new System.Windows.Forms.NumericUpDown();
 			this.label4 = new System.Windows.Forms.Label();
 			this.label2 = new System.Windows.Forms.Label();
 			this.label8 = new System.Windows.Forms.Label();
@@ -56,6 +56,7 @@
 			this.il_terrainBrushes = new System.Windows.Forms.ImageList(this.components);
 			this.menuStrip = new System.Windows.Forms.MenuStrip();
 			this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.newProjectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.saveAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.loadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -70,12 +71,11 @@
 			this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.haalpPleaseToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.label3 = new System.Windows.Forms.Label();
-			this.panel_Left = new System.Windows.Forms.TreeView();
+			this.tw_objects = new System.Windows.Forms.TreeView();
 			this.il_icons = new System.Windows.Forms.ImageList(this.components);
 			this.cb_history = new System.Windows.Forms.ComboBox();
 			this.btn_importResource = new System.Windows.Forms.Button();
-			this.treeView1 = new System.Windows.Forms.TreeView();
+			this.tw_resources = new System.Windows.Forms.TreeView();
 			this.label9 = new System.Windows.Forms.Label();
 			this.panel_Right = new System.Windows.Forms.Panel();
 			this.btn_TextureBrush = new System.Windows.Forms.Button();
@@ -87,12 +87,14 @@
 			this.btn_undo = new System.Windows.Forms.Button();
 			this.pb_scene = new System.Windows.Forms.PictureBox();
 			this.bindingSource1 = new System.Windows.Forms.BindingSource(this.components);
-			((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
+			this.panel_Left = new System.Windows.Forms.Panel();
+			((System.ComponentModel.ISupportInitialize)(this.nud_brushIntensity)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.nud_BrushSize)).BeginInit();
 			this.menuStrip.SuspendLayout();
 			this.panel_Right.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.pb_scene)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).BeginInit();
+			this.panel_Left.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// btn_importTexture
@@ -103,6 +105,7 @@
 			this.btn_importTexture.TabIndex = 30;
 			this.btn_importTexture.Text = "Import texture";
 			this.btn_importTexture.UseVisualStyleBackColor = true;
+			this.btn_importTexture.Click += new System.EventHandler(this.btn_importTexture_Click);
 			// 
 			// btn_importBrush
 			// 
@@ -112,6 +115,7 @@
 			this.btn_importBrush.TabIndex = 29;
 			this.btn_importBrush.Text = "Import brush";
 			this.btn_importBrush.UseVisualStyleBackColor = true;
+			this.btn_importBrush.Click += new System.EventHandler(this.btn_importBrush_Click);
 			// 
 			// label5
 			// 
@@ -122,12 +126,13 @@
 			this.label5.TabIndex = 28;
 			this.label5.Text = "Size:";
 			// 
-			// numericUpDown1
+			// nud_brushIntensity
 			// 
-			this.numericUpDown1.Location = new System.Drawing.Point(64, 77);
-			this.numericUpDown1.Name = "numericUpDown1";
-			this.numericUpDown1.Size = new System.Drawing.Size(50, 20);
-			this.numericUpDown1.TabIndex = 27;
+			this.nud_brushIntensity.Location = new System.Drawing.Point(64, 103);
+			this.nud_brushIntensity.Name = "nud_brushIntensity";
+			this.nud_brushIntensity.Size = new System.Drawing.Size(50, 20);
+			this.nud_brushIntensity.TabIndex = 27;
+			this.nud_brushIntensity.ValueChanged += new System.EventHandler(this.nud_brushIntensity_ValueChanged);
 			// 
 			// label4
 			// 
@@ -199,10 +204,11 @@
 			// 
 			// nud_BrushSize
 			// 
-			this.nud_BrushSize.Location = new System.Drawing.Point(64, 103);
+			this.nud_BrushSize.Location = new System.Drawing.Point(64, 77);
 			this.nud_BrushSize.Name = "nud_BrushSize";
 			this.nud_BrushSize.Size = new System.Drawing.Size(50, 20);
 			this.nud_BrushSize.TabIndex = 20;
+			this.nud_BrushSize.ValueChanged += new System.EventHandler(this.nud_BrushSize_ValueChanged);
 			// 
 			// lw_Brush
 			// 
@@ -217,6 +223,7 @@
 			this.lw_Brush.SmallImageList = this.il_terrainBrushes;
 			this.lw_Brush.TabIndex = 15;
 			this.lw_Brush.UseCompatibleStateImageBehavior = false;
+			this.lw_Brush.SelectedIndexChanged += new System.EventHandler(this.lw_Brush_SelectedIndexChanged);
 			// 
 			// il_terrainBrushes
 			// 
@@ -242,6 +249,7 @@
 			// fileToolStripMenuItem
 			// 
 			this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.newProjectToolStripMenuItem,
             this.saveToolStripMenuItem,
             this.saveAsToolStripMenuItem,
             this.loadToolStripMenuItem,
@@ -250,29 +258,40 @@
 			this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
 			this.fileToolStripMenuItem.Text = "File";
 			// 
+			// newProjectToolStripMenuItem
+			// 
+			this.newProjectToolStripMenuItem.Name = "newProjectToolStripMenuItem";
+			this.newProjectToolStripMenuItem.Size = new System.Drawing.Size(138, 22);
+			this.newProjectToolStripMenuItem.Text = "New Project";
+			this.newProjectToolStripMenuItem.Click += new System.EventHandler(this.newProjectToolStripMenuItem_Click);
+			// 
 			// saveToolStripMenuItem
 			// 
 			this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-			this.saveToolStripMenuItem.Size = new System.Drawing.Size(112, 22);
+			this.saveToolStripMenuItem.Size = new System.Drawing.Size(138, 22);
 			this.saveToolStripMenuItem.Text = "Save";
+			this.saveToolStripMenuItem.Click += new System.EventHandler(this.saveToolStripMenuItem_Click);
 			// 
 			// saveAsToolStripMenuItem
 			// 
 			this.saveAsToolStripMenuItem.Name = "saveAsToolStripMenuItem";
-			this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(112, 22);
+			this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(138, 22);
 			this.saveAsToolStripMenuItem.Text = "Save as";
+			this.saveAsToolStripMenuItem.Click += new System.EventHandler(this.saveAsToolStripMenuItem_Click);
 			// 
 			// loadToolStripMenuItem
 			// 
 			this.loadToolStripMenuItem.Name = "loadToolStripMenuItem";
-			this.loadToolStripMenuItem.Size = new System.Drawing.Size(112, 22);
+			this.loadToolStripMenuItem.Size = new System.Drawing.Size(138, 22);
 			this.loadToolStripMenuItem.Text = "Load";
+			this.loadToolStripMenuItem.Click += new System.EventHandler(this.loadToolStripMenuItem_Click);
 			// 
 			// exportToolStripMenuItem
 			// 
 			this.exportToolStripMenuItem.Name = "exportToolStripMenuItem";
-			this.exportToolStripMenuItem.Size = new System.Drawing.Size(112, 22);
+			this.exportToolStripMenuItem.Size = new System.Drawing.Size(138, 22);
 			this.exportToolStripMenuItem.Text = "Export";
+			this.exportToolStripMenuItem.Click += new System.EventHandler(this.exportToolStripMenuItem_Click);
 			// 
 			// editToolStripMenuItem
 			// 
@@ -290,24 +309,28 @@
 			this.importBrushesToolStripMenuItem.Name = "importBrushesToolStripMenuItem";
 			this.importBrushesToolStripMenuItem.Size = new System.Drawing.Size(134, 22);
 			this.importBrushesToolStripMenuItem.Text = "Import tool";
+			this.importBrushesToolStripMenuItem.Click += new System.EventHandler(this.importBrushesToolStripMenuItem_Click);
 			// 
 			// undoToolStripMenuItem
 			// 
 			this.undoToolStripMenuItem.Name = "undoToolStripMenuItem";
 			this.undoToolStripMenuItem.Size = new System.Drawing.Size(134, 22);
 			this.undoToolStripMenuItem.Text = "Undo";
+			this.undoToolStripMenuItem.Click += new System.EventHandler(this.undoToolStripMenuItem_Click);
 			// 
 			// redoToolStripMenuItem
 			// 
 			this.redoToolStripMenuItem.Name = "redoToolStripMenuItem";
 			this.redoToolStripMenuItem.Size = new System.Drawing.Size(134, 22);
 			this.redoToolStripMenuItem.Text = "Redo";
+			this.redoToolStripMenuItem.Click += new System.EventHandler(this.redoToolStripMenuItem_Click);
 			// 
 			// prefrencesToolStripMenuItem
 			// 
 			this.prefrencesToolStripMenuItem.Name = "prefrencesToolStripMenuItem";
 			this.prefrencesToolStripMenuItem.Size = new System.Drawing.Size(134, 22);
 			this.prefrencesToolStripMenuItem.Text = "Prefrences";
+			this.prefrencesToolStripMenuItem.Click += new System.EventHandler(this.prefrencesToolStripMenuItem_Click);
 			// 
 			// viewToolStripMenuItem
 			// 
@@ -340,29 +363,22 @@
 			this.haalpPleaseToolStripMenuItem.Name = "haalpPleaseToolStripMenuItem";
 			this.haalpPleaseToolStripMenuItem.Size = new System.Drawing.Size(144, 22);
 			this.haalpPleaseToolStripMenuItem.Text = "Haalp please!";
+			this.haalpPleaseToolStripMenuItem.Click += new System.EventHandler(this.haalpPleaseToolStripMenuItem_Click);
 			// 
 			// aboutToolStripMenuItem
 			// 
 			this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
 			this.aboutToolStripMenuItem.Size = new System.Drawing.Size(144, 22);
 			this.aboutToolStripMenuItem.Text = "About";
+			this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
 			// 
-			// label3
+			// tw_objects
 			// 
-			this.label3.AutoSize = true;
-			this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.label3.Location = new System.Drawing.Point(552, 359);
-			this.label3.Name = "label3";
-			this.label3.Size = new System.Drawing.Size(159, 25);
-			this.label3.TabIndex = 5;
-			this.label3.Text = "3D view of map";
-			// 
-			// panel_Left
-			// 
-			this.panel_Left.Location = new System.Drawing.Point(4, 58);
-			this.panel_Left.Name = "panel_Left";
-			this.panel_Left.Size = new System.Drawing.Size(210, 612);
-			this.panel_Left.TabIndex = 6;
+			this.tw_objects.Location = new System.Drawing.Point(4, 5);
+			this.tw_objects.Name = "tw_objects";
+			this.tw_objects.Size = new System.Drawing.Size(200, 612);
+			this.tw_objects.TabIndex = 6;
+			this.tw_objects.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.tw_objects_AfterSelect);
 			// 
 			// il_icons
 			// 
@@ -388,6 +404,7 @@
 			this.cb_history.Name = "cb_history";
 			this.cb_history.Size = new System.Drawing.Size(121, 21);
 			this.cb_history.TabIndex = 11;
+			this.cb_history.SelectedIndexChanged += new System.EventHandler(this.cb_history_SelectedIndexChanged);
 			// 
 			// btn_importResource
 			// 
@@ -397,13 +414,15 @@
 			this.btn_importResource.TabIndex = 0;
 			this.btn_importResource.Text = "Import resource";
 			this.btn_importResource.UseVisualStyleBackColor = true;
+			this.btn_importResource.Click += new System.EventHandler(this.btn_importResource_Click);
 			// 
-			// treeView1
+			// tw_resources
 			// 
-			this.treeView1.Location = new System.Drawing.Point(8, 523);
-			this.treeView1.Name = "treeView1";
-			this.treeView1.Size = new System.Drawing.Size(180, 200);
-			this.treeView1.TabIndex = 1;
+			this.tw_resources.Location = new System.Drawing.Point(8, 523);
+			this.tw_resources.Name = "tw_resources";
+			this.tw_resources.Size = new System.Drawing.Size(180, 200);
+			this.tw_resources.TabIndex = 1;
+			this.tw_resources.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.tw_resources_AfterSelect);
 			// 
 			// label9
 			// 
@@ -421,7 +440,7 @@
 			this.panel_Right.Controls.Add(this.btn_TextureBrush);
 			this.panel_Right.Controls.Add(this.btn_importTexture);
 			this.panel_Right.Controls.Add(this.btn_TerrainBrush);
-			this.panel_Right.Controls.Add(this.treeView1);
+			this.panel_Right.Controls.Add(this.tw_resources);
 			this.panel_Right.Controls.Add(this.lw_Brush);
 			this.panel_Right.Controls.Add(this.nud_BrushSize);
 			this.panel_Right.Controls.Add(this.btn_importResource);
@@ -432,7 +451,7 @@
 			this.panel_Right.Controls.Add(this.label5);
 			this.panel_Right.Controls.Add(this.label8);
 			this.panel_Right.Controls.Add(this.label2);
-			this.panel_Right.Controls.Add(this.numericUpDown1);
+			this.panel_Right.Controls.Add(this.nud_brushIntensity);
 			this.panel_Right.Controls.Add(this.label4);
 			this.panel_Right.Location = new System.Drawing.Point(1053, 58);
 			this.panel_Right.Name = "panel_Right";
@@ -471,6 +490,7 @@
 			this.btn_export.TabIndex = 12;
 			this.btn_export.Text = "E";
 			this.btn_export.UseVisualStyleBackColor = true;
+			this.btn_export.Click += new System.EventHandler(this.btn_export_Click);
 			// 
 			// btn_load
 			// 
@@ -481,6 +501,7 @@
 			this.btn_load.Size = new System.Drawing.Size(25, 25);
 			this.btn_load.TabIndex = 10;
 			this.btn_load.UseVisualStyleBackColor = true;
+			this.btn_load.Click += new System.EventHandler(this.btn_load_Click);
 			// 
 			// btn_save
 			// 
@@ -491,6 +512,7 @@
 			this.btn_save.Size = new System.Drawing.Size(25, 25);
 			this.btn_save.TabIndex = 9;
 			this.btn_save.UseVisualStyleBackColor = true;
+			this.btn_save.Click += new System.EventHandler(this.btn_save_Click);
 			// 
 			// btn_redo
 			// 
@@ -502,6 +524,7 @@
 			this.btn_redo.TabIndex = 8;
 			this.btn_redo.Text = "R";
 			this.btn_redo.UseVisualStyleBackColor = true;
+			this.btn_redo.Click += new System.EventHandler(this.btn_redo_Click);
 			// 
 			// btn_undo
 			// 
@@ -513,21 +536,32 @@
 			this.btn_undo.TabIndex = 7;
 			this.btn_undo.Text = "U";
 			this.btn_undo.UseVisualStyleBackColor = true;
+			this.btn_undo.Click += new System.EventHandler(this.btn_undo_Click);
 			// 
 			// pb_scene
 			// 
 			this.pb_scene.BackgroundImage = global::Interface.Properties.Resources.map_placeholder;
-			this.pb_scene.Location = new System.Drawing.Point(220, 58);
+			this.pb_scene.Location = new System.Drawing.Point(232, 58);
 			this.pb_scene.Name = "pb_scene";
-			this.pb_scene.Size = new System.Drawing.Size(828, 612);
+			this.pb_scene.Size = new System.Drawing.Size(816, 612);
 			this.pb_scene.TabIndex = 4;
 			this.pb_scene.TabStop = false;
+			// 
+			// panel_Left
+			// 
+			this.panel_Left.AutoScroll = true;
+			this.panel_Left.Controls.Add(this.tw_objects);
+			this.panel_Left.Location = new System.Drawing.Point(12, 58);
+			this.panel_Left.Name = "panel_Left";
+			this.panel_Left.Size = new System.Drawing.Size(221, 612);
+			this.panel_Left.TabIndex = 32;
 			// 
 			// MapEditor
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(1264, 682);
+			this.Controls.Add(this.panel_Left);
 			this.Controls.Add(this.panel_Right);
 			this.Controls.Add(this.btn_export);
 			this.Controls.Add(this.cb_history);
@@ -535,8 +569,6 @@
 			this.Controls.Add(this.btn_save);
 			this.Controls.Add(this.btn_redo);
 			this.Controls.Add(this.btn_undo);
-			this.Controls.Add(this.panel_Left);
-			this.Controls.Add(this.label3);
 			this.Controls.Add(this.pb_scene);
 			this.Controls.Add(this.menuStrip);
 			this.MainMenuStrip = this.menuStrip;
@@ -544,7 +576,7 @@
 			this.Name = "MapEditor";
 			this.Text = "Map Editor";
 			this.Resize += new System.EventHandler(this.MapEditor_Resize);
-			((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).EndInit();
+			((System.ComponentModel.ISupportInitialize)(this.nud_brushIntensity)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.nud_BrushSize)).EndInit();
 			this.menuStrip.ResumeLayout(false);
 			this.menuStrip.PerformLayout();
@@ -552,6 +584,7 @@
 			this.panel_Right.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)(this.pb_scene)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).EndInit();
+			this.panel_Left.ResumeLayout(false);
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -564,8 +597,7 @@
 		private System.Windows.Forms.ToolStripMenuItem editToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem helpToolStripMenuItem;
 		private System.Windows.Forms.PictureBox pb_scene;
-        private System.Windows.Forms.Label label3;
-		private System.Windows.Forms.TreeView panel_Left;
+		private System.Windows.Forms.TreeView tw_objects;
 		private System.Windows.Forms.Button btn_TerrainBrush;
 		private System.Windows.Forms.Button btn_TextureBrush;
 		private System.Windows.Forms.ListView lw_Brush;
@@ -595,17 +627,19 @@
         private System.Windows.Forms.ToolStripMenuItem viewToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem toolsShortcutsToolStripMenuItem;
         private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.NumericUpDown numericUpDown1;
+        private System.Windows.Forms.NumericUpDown nud_brushIntensity;
         private System.Windows.Forms.Button btn_importTexture;
         private System.Windows.Forms.Button btn_importBrush;
         private System.Windows.Forms.ImageList il_textures;
         private System.Windows.Forms.ImageList il_icons;
         private System.Windows.Forms.Button btn_importResource;
-        private System.Windows.Forms.TreeView treeView1;
+        private System.Windows.Forms.TreeView tw_resources;
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.ToolStripMenuItem prefrencesToolStripMenuItem;
         private System.Windows.Forms.Panel panel_Right;
         private System.Windows.Forms.BindingSource bindingSource1;
+		private System.Windows.Forms.ToolStripMenuItem newProjectToolStripMenuItem;
+		private System.Windows.Forms.Panel panel_Left;
 
 	}
 }
