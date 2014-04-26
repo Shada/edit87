@@ -67,15 +67,16 @@
 			this.txb_projectName.Name = "txb_projectName";
 			this.txb_projectName.Size = new System.Drawing.Size(100, 20);
 			this.txb_projectName.TabIndex = 2;
+			this.txb_projectName.Text = "test";
 			// 
 			// mtxb_mapSizeX
 			// 
 			this.mtxb_mapSizeX.Location = new System.Drawing.Point(41, 103);
-			this.mtxb_mapSizeX.Mask = "00000";
+			this.mtxb_mapSizeX.Mask = "000";
 			this.mtxb_mapSizeX.Name = "mtxb_mapSizeX";
 			this.mtxb_mapSizeX.Size = new System.Drawing.Size(40, 20);
 			this.mtxb_mapSizeX.TabIndex = 3;
-			this.mtxb_mapSizeX.ValidatingType = typeof(int);
+			this.mtxb_mapSizeX.Text = "512";
 			// 
 			// label2
 			// 
@@ -92,6 +93,7 @@
 			this.txb_workingDirectory.Name = "txb_workingDirectory";
 			this.txb_workingDirectory.Size = new System.Drawing.Size(176, 20);
 			this.txb_workingDirectory.TabIndex = 5;
+			this.txb_workingDirectory.Text = "C:\\Users\\Ossian\'\\Desktop";
 			// 
 			// label3
 			// 
@@ -123,11 +125,11 @@
 			// mtxb_mapSizeY
 			// 
 			this.mtxb_mapSizeY.Location = new System.Drawing.Point(41, 129);
-			this.mtxb_mapSizeY.Mask = "00000";
+			this.mtxb_mapSizeY.Mask = "000";
 			this.mtxb_mapSizeY.Name = "mtxb_mapSizeY";
 			this.mtxb_mapSizeY.Size = new System.Drawing.Size(40, 20);
 			this.mtxb_mapSizeY.TabIndex = 8;
-			this.mtxb_mapSizeY.ValidatingType = typeof(int);
+			this.mtxb_mapSizeY.Text = "512";
 			// 
 			// btn_createParoject
 			// 

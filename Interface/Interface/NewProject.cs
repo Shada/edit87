@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;
+using System.Xml;
 
 namespace LevelEditor
 {
@@ -16,6 +17,8 @@ namespace LevelEditor
 		public NewProject()
 		{
 			InitializeComponent();
+			mtxb_mapSizeX.ValidatingType = typeof(uint);
+			mtxb_mapSizeY.ValidatingType = typeof(uint);
 		}
 
 		private void btn_browseDirectory_Click(object sender, EventArgs e)
@@ -24,13 +27,14 @@ namespace LevelEditor
 
 			if (res == DialogResult.OK)
 			{
-				txb_workingDirectory.Text = fbd_workingDirectory.SelectedPath;				
+				txb_workingDirectory.Text = fbd_workingDirectory.SelectedPath;
 			}
 		}
 
 		private void btn_createParoject_Click(object sender, EventArgs e)
 		{
 			string folder = txb_workingDirectory.Text + "\\" + txb_projectName.Text;
+			uint X, Y;
 
 			if (Directory.Exists(folder))
 			{
@@ -38,7 +42,51 @@ namespace LevelEditor
 				return;
 			}
 
-			DirectoryInfo di = Directory.CreateDirectory(folder);
+			try
+			{
+				X = (uint)mtxb_mapSizeX.ValidateText();
+			}
+			catch
+			{
+				MessageBox.Show("The X value for map size is invalid", "No can do!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+				return;
+			}
+
+			try
+			{
+				Y = (uint)mtxb_mapSizeY.ValidateText();
+			}
+			catch
+			{
+				MessageBox.Show("The Y value for map size is invalid", "No can do!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+				return;
+			}			
+
+			DirectoryInfo root = Directory.CreateDirectory(folder);
+			DirectoryInfo brushes = Directory.CreateDirectory(folder + "\\brushes");
+			DirectoryInfo resources = Directory.CreateDirectory(folder + "\\resources");
+
+			using (XmlTextWriter writer = new XmlTextWriter(folder + "\\" + txb_projectName.Text + ".xml", Encoding.UTF8))
+			{
+				writer.Formatting = Formatting.Indented;
+				writer.Indentation = 4;
+
+				writer.WriteStartDocument();
+				writer.WriteStartElement("root");
+
+				writer.WriteStartElement("header");
+				writer.WriteElementString("project name", txb_projectName.Text);
+
+				writer.WriteStartElement("size");
+				writer.WriteElementString("X", X.ToString());
+				writer.WriteElementString("Y", Y.ToString());
+				writer.WriteEndElement(); 
+
+				writer.WriteEndElement();
+
+				writer.WriteEndElement();
+				writer.WriteEndDocument();
+			}
 		}
 	}
 }
