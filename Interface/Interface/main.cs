@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using WeifenLuo.WinFormsUI.Docking;
 
 using wrap;
 
@@ -17,12 +18,29 @@ namespace LevelEditor
         private wrap.GraphicsCommunicator graphics;
         int windowWidth, windowHeight;
 
+        DockContent[] panels = new DockContent[10];
+
 		public MapEditor()
 		{
             graphics = new GraphicsCommunicator(this.Handle);
 			InitializeComponent();
             windowWidth = Size.Width;
             windowHeight = Size.Height;
+
+            panels[0] = new PanBrushes();
+            panels[0].Show(mainDockPanel, DockState.DockRight);
+            panels[1] = new PanTextures();
+            panels[1].Show(mainDockPanel, DockState.Float);
+            panels[1].DockHandler.FloatPane.DockTo(mainDockPanel.DockWindows[DockState.DockRight]);
+            panels[2] = new PanResources();
+            panels[2].Show(mainDockPanel, DockState.Float);
+            panels[2].DockHandler.FloatPane.DockTo(mainDockPanel.DockWindows[DockState.DockRight]);
+            //panels[3] = new PanToolShortcuts();
+            //panels[3].Show(mainDockPanel, DockState.Float);
+            //panels[3].DockHandler.FloatPane.DockTo(mainDockPanel.DockWindows[DockState.DockTop]);
+            panels[4] = new PanLibrary();
+            panels[4].Show(mainDockPanel, DockState.Float);
+            panels[4].DockHandler.FloatPane.DockTo(mainDockPanel.DockWindows[DockState.DockLeft]);
 		}
 
 		private void button1_Click(object sender, EventArgs e)
@@ -184,55 +202,65 @@ namespace LevelEditor
 
 		private void resizeWindow()
 		{
-			int sizeDifWidth = Size.Width - windowWidth;
-			int sizeDifHeight = Size.Height - windowHeight;
+            //int sizeDifWidth = Size.Width - windowWidth;
+            //int sizeDifHeight = Size.Height - windowHeight;
 
-			pb_scene.Size = new Size(pb_scene.Size.Width + sizeDifWidth, pb_scene.Size.Height + sizeDifHeight);
-			windowWidth = Size.Width;
-			windowHeight = Size.Height;
-			panel_Right.Location = new Point(panel_Right.Location.X + sizeDifWidth, panel_Right.Location.Y);
-			panel_Right.Size = new Size(panel_Right.Size.Width, panel_Right.Size.Height + sizeDifHeight);
-			panel_Left.Size = new Size(panel_Left.Size.Width, panel_Left.Size.Height + sizeDifHeight);
+            //pb_scene.Size = new Size(pb_scene.Size.Width + sizeDifWidth, pb_scene.Size.Height + sizeDifHeight);
+            //windowWidth = Size.Width;
+            //windowHeight = Size.Height;
+            //panel_Right.Location = new Point(panel_Right.Location.X + sizeDifWidth, panel_Right.Location.Y);
+            //panel_Right.Size = new Size(panel_Right.Size.Width, panel_Right.Size.Height + sizeDifHeight);
+            //panel_Left.Size = new Size(panel_Left.Size.Width, panel_Left.Size.Height + sizeDifHeight);
 		}
 
 		private void hideToolsMenu(object sender)
 		{
-			ToolStripMenuItem item = (ToolStripMenuItem)sender;
+            //ToolStripMenuItem item = (ToolStripMenuItem)sender;
 
-			if (item.CheckState == CheckState.Checked)
-			{
-				item.CheckState = CheckState.Unchecked;
+            //if (item.CheckState == CheckState.Checked)
+            //{
+            //    item.CheckState = CheckState.Unchecked;
 
-				btn_save.Visible = false;
-				btn_load.Visible = false;
-				btn_export.Visible = false;
-				btn_undo.Visible = false;
-				btn_redo.Visible = false;
-				cb_history.Visible = false;
+            //    btn_save.Visible = false;
+            //    btn_load.Visible = false;
+            //    btn_export.Visible = false;
+            //    btn_undo.Visible = false;
+            //    btn_redo.Visible = false;
+            //    cb_history.Visible = false;
 
-				tw_objects.Location = new Point(tw_objects.Location.X, tw_objects.Location.Y - 34);
-				pb_scene.Location = new Point(pb_scene.Location.X, pb_scene.Location.Y - 34);
+            //    tw_objects.Location = new Point(tw_objects.Location.X, tw_objects.Location.Y - 34);
+            //    pb_scene.Location = new Point(pb_scene.Location.X, pb_scene.Location.Y - 34);
 
-				tw_objects.Size = new Size(tw_objects.Size.Width, tw_objects.Size.Height + 34);
-				pb_scene.Size = new Size(pb_scene.Size.Width, pb_scene.Size.Height + 34);
-			}
-			else
-			{
-				item.CheckState = CheckState.Checked;
+            //    tw_objects.Size = new Size(tw_objects.Size.Width, tw_objects.Size.Height + 34);
+            //    pb_scene.Size = new Size(pb_scene.Size.Width, pb_scene.Size.Height + 34);
+            //}
+            //else
+            //{
+            //    item.CheckState = CheckState.Checked;
 
-				tw_objects.Size = new Size(tw_objects.Size.Width, tw_objects.Size.Height - 34);
-				pb_scene.Size = new Size(pb_scene.Size.Width, pb_scene.Size.Height - 34);
+            //    tw_objects.Size = new Size(tw_objects.Size.Width, tw_objects.Size.Height - 34);
+            //    pb_scene.Size = new Size(pb_scene.Size.Width, pb_scene.Size.Height - 34);
 
-				tw_objects.Location = new Point(tw_objects.Location.X, tw_objects.Location.Y + 34);
-				pb_scene.Location = new Point(pb_scene.Location.X, pb_scene.Location.Y + 34);
+            //    tw_objects.Location = new Point(tw_objects.Location.X, tw_objects.Location.Y + 34);
+            //    pb_scene.Location = new Point(pb_scene.Location.X, pb_scene.Location.Y + 34);
 
-				btn_save.Visible = true;
-				btn_load.Visible = true;
-				btn_export.Visible = true;
-				btn_undo.Visible = true;
-				btn_redo.Visible = true;
-				cb_history.Visible = true;
-			}
+            //    btn_save.Visible = true;
+            //    btn_load.Visible = true;
+            //    btn_export.Visible = true;
+            //    btn_undo.Visible = true;
+            //    btn_redo.Visible = true;
+            //    cb_history.Visible = true;
+            //}
 		}
+
+        private void MapEditor_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        private void menuStrip_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
+        {
+
+        }
 	}
 }

@@ -62,8 +62,41 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
+    <Reference Include="WeifenLuo.WinFormsUI.Docking">
+      <HintPath>..\..\..\..\..\Desktop\edit87-master\Interface\WeifenLuo.WinFormsUI.Docking.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Forms\PanBrushes.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\PanBrushes.Designer.cs">
+      <DependentUpon>PanBrushes.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\PanLibrary.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\PanLibrary.Designer.cs">
+      <DependentUpon>PanLibrary.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\PanResources.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\PanResources.Designer.cs">
+      <DependentUpon>PanResources.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\PanTextures.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\PanTextures.Designer.cs">
+      <DependentUpon>PanTextures.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\PanToolShortcuts.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\PanToolShortcuts.Designer.cs">
+      <DependentUpon>PanToolShortcuts.cs</DependentUpon>
+    </Compile>
     <Compile Include="main.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -90,6 +123,21 @@
     <Compile Include="properties_test.Designer.cs">
       <DependentUpon>properties_test.cs</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="Forms\PanBrushes.resx">
+      <DependentUpon>PanBrushes.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\PanLibrary.resx">
+      <DependentUpon>PanLibrary.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\PanResources.resx">
+      <DependentUpon>PanResources.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\PanTextures.resx">
+      <DependentUpon>PanTextures.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\PanToolShortcuts.resx">
+      <DependentUpon>PanToolShortcuts.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="main.resx">
       <DependentUpon>main.cs</DependentUpon>
     </EmbeddedResource>
@@ -132,6 +180,7 @@
       <Name>Wrapper</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
