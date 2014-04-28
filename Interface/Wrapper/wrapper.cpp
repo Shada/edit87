@@ -1,4 +1,5 @@
 #include "wrapper.h"
+#include "../Engine/EngineFactory.h"
 #include <Windows.h>
 
 namespace wrap
@@ -6,13 +7,7 @@ namespace wrap
 	GraphicsCommunicator::GraphicsCommunicator(System::IntPtr win)
 	{
 		HWND hWnd = (HWND)((void*)win);
-		//gfx = new DX11((void*)win);
-	}
-
-	int GraphicsCommunicator::onButtonClick()
-	{
-		//return gfx->printNumber();
-		return 42;
+		//gfx = EngineFactory::createGraphics(hWnd);
 	}
 
 	void GraphicsCommunicator::setRenderArea(int x, int y, int width, int height)
@@ -22,12 +17,12 @@ namespace wrap
 		r.left = x; 
 		r.bottom = y + height;
 		r.right = x + width;
-		//gfx->setRenderArea(r);
+		gfx->setRect(r);
 	}
 
-	void GraphicsCommunicator::updateScene()
+	void GraphicsCommunicator::renderScene()
 	{
-
+		gfx->renderScene();
 	}
 
 	void GraphicsCommunicator::mouseReleased(MouseKeyType mType)

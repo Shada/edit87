@@ -18,9 +18,18 @@
     <ClInclude Include="RenderDX11.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="EngineInterface.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineFactory.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="RenderDX11.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="EngineFactory.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

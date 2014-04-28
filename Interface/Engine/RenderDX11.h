@@ -1,15 +1,43 @@
 #pragma once
 
+#include "EngineInterface.h"
 #include <D3D11.h>
 
-class RenderDX11
+#define SAFE_RELEASE(x) if( x ) { (x)->Release(); (x) = NULL; }
+#define SAFE_DELETE(x) if( x ) { delete(x); (x) = NULL; }
+
+class RenderDX11 : public EngineInterface
 {
 private:
-	IDXGISwapChain* swapChain;
+	RECT r;
+	HWND hWnd;
 
-	ID3D11Device* device;
-	ID3D11DeviceContext* deviceContext;
+	D3D_DRIVER_TYPE				g_driverType;
+	D3D_FEATURE_LEVEL			g_featureLevel;
+	ID3D11Device				*g_device;
+	ID3D11DeviceContext			*g_deviceContext;
+	IDXGISwapChain				*g_swapChain;
+	ID3D11RenderTargetView		*g_renderTargetView;
+	ID3D11ShaderResourceView	*g_shaderView;
+	ID3D11RasterizerState		*g_rasterizerState;
+
+	ID3D11Texture2D				*g_depthStencil,
+								*g_renderTargetTexture;
+	ID3D11DepthStencilView		*g_depthStencilView;
+								
+								
+	ID3D11BlendState			*g_blendEnable,
+								*g_blendDisable,
+								*g_blendAlpha;
+								
+	ID3D11DepthStencilState		*g_depthStencilStateEnable;
+	ID3D11DepthStencilState		*g_depthStencilStateDisable;
+
+	HRESULT init();
 public:
-	RenderDX11();
+	RenderDX11(HWND hWnd);
 	~RenderDX11();
+
+	void renderScene();
+	void setRect(RECT t)		{ r = t; }
 };
