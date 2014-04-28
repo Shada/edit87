@@ -8,18 +8,18 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-//using wrapperns;
+using wrap;
 
 namespace LevelEditor
 {
 	public partial class MapEditor : Form
 	{
-        // Umm... cant use this yet for some reason
-        //public wrapperns.GraphicsCommunicator graphics;
+        private wrap.GraphicsCommunicator graphics;
         int windowWidth, windowHeight;
 
 		public MapEditor()
 		{
+            graphics = new GraphicsCommunicator(this.Handle);
 			InitializeComponent();
             windowWidth = Size.Width;
             windowHeight = Size.Height;
