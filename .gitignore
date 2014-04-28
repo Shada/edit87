@@ -15,8 +15,8 @@
 *.a
 *.lib
 
-Debug/*
-Release/*
+*/Debug/*
+*/Release/*
 
 # Executables
 *.exe
@@ -34,3 +34,9 @@ TemporaryGeneratedFile*
 *sdf
 *.lastbuildstate
 *htm
+*.bi
+*.resources
+*.cache
+*.Cache
+*.exe.config
+*.manifest
