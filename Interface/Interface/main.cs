@@ -8,6 +8,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
+using Microsoft.DirectX;
+
 using wrap;
 
 namespace LevelEditor
@@ -23,6 +25,7 @@ namespace LevelEditor
 			InitializeComponent();
             windowWidth = Size.Width;
             windowHeight = Size.Height;
+            graphics.createTerrain(4, 5, 20, false);
 		}
 
 		private void button1_Click(object sender, EventArgs e)
@@ -33,7 +36,8 @@ namespace LevelEditor
 
 		private void btn_TerrainBrush_Click(object sender, EventArgs e)
 		{
-
+            //MessageBox.Show("this is fuckface");
+            graphics.renderScene();
 		}
 
 		private void btn_TextureBrush_Click(object sender, EventArgs e)

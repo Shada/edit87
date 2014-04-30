@@ -6,8 +6,10 @@ namespace wrap
 {
 	GraphicsCommunicator::GraphicsCommunicator(System::IntPtr win)
 	{
-		HWND hWnd = (HWND)((void*)win);
-		//gfx = EngineFactory::createGraphics(hWnd);
+		hWnd = (HWND)((void*)win);
+		gfx = EngineFactory::createGraphics(hWnd);
+		setRenderArea(0,0,200,200);
+		gfx->init();
 	}
 
 	void GraphicsCommunicator::setRenderArea(int x, int y, int width, int height)
@@ -18,6 +20,11 @@ namespace wrap
 		r.bottom = y + height;
 		r.right = x + width;
 		gfx->setRect(r);
+	}
+
+	void GraphicsCommunicator::createTerrain(int width, int height, int pointStep, bool fromPerlinMap)
+	{
+		gfx->createTerrain(width, height, pointStep, fromPerlinMap);
 	}
 
 	void GraphicsCommunicator::renderScene()

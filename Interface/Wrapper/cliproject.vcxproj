@@ -45,14 +45,14 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
     <TargetExt>.dll</TargetExt>
-    <OutDir>$(SolutionDir)Lib\</OutDir>
-    <LibraryPath>$(SolutionDir)\Lib;$(LibraryPath)</LibraryPath>
+    <OutDir>$(SolutionDir)Interface\bin\Debug\</OutDir>
+    <LibraryPath>$(SolutionDir)Interface\bin\Debug;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <TargetExt>.dll</TargetExt>
-    <OutDir>$(SolutionDir)Lib\</OutDir>
-    <LibraryPath>$(SolutionDir)\Lib;$(LibraryPath)</LibraryPath>
+    <OutDir>$(SolutionDir)Interface\bin\Release\</OutDir>
+    <LibraryPath>$(SolutionDir)Interface\bin\Release\;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -72,7 +72,7 @@
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies />
+      <AdditionalDependencies>Engine.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
