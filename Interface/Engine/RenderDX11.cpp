@@ -266,7 +266,6 @@ HRESULT RenderDX11::init()
         return hr;
 	}
 
-
     return S_OK;
 }
 HRESULT RenderDX11::compileShader(LPCWSTR filePath, LPCSTR shaderType)
