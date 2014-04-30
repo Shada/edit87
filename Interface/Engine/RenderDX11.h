@@ -1,7 +1,8 @@
 #pragma once
 
-#include "EngineInterface.h"
 #include <D3D11.h>
+#include <vector>
+#include "EngineInterface.h"
 
 #define SAFE_RELEASE(x) if( x ) { (x)->Release(); (x) = NULL; }
 #define SAFE_DELETE(x) if( x ) { delete(x); (x) = NULL; }
@@ -9,6 +10,8 @@
 class RenderDX11 : public EngineInterface
 {
 private:
+	int terrainID;
+	
 	RECT r;
 	HWND hWnd;
 
@@ -33,11 +36,16 @@ private:
 	ID3D11DepthStencilState		*g_depthStencilStateEnable;
 	ID3D11DepthStencilState		*g_depthStencilStateDisable;
 
-	HRESULT init();
+	std::vector<ID3D11Buffer>	*g_buffers;
+
 public:
 	RenderDX11(HWND hWnd);
 	~RenderDX11();
 
+	HRESULT init();
+
 	void renderScene();
 	void setRect(RECT t)		{ r = t; }
+
+	void createDynamicBuffer(void** bufferData, UINT nVertices);
 };

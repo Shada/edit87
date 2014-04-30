@@ -33,7 +33,8 @@ namespace LevelEditor
 
 		private void btn_TerrainBrush_Click(object sender, EventArgs e)
 		{
-
+            //MessageBox.Show("this is fuckface");
+            graphics.renderScene();
 		}
 
 		private void btn_TextureBrush_Click(object sender, EventArgs e)

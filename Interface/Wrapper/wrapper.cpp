@@ -7,7 +7,9 @@ namespace wrap
 	GraphicsCommunicator::GraphicsCommunicator(System::IntPtr win)
 	{
 		HWND hWnd = (HWND)((void*)win);
-		//gfx = EngineFactory::createGraphics(hWnd);
+		gfx = EngineFactory::createGraphics(hWnd);
+		setRenderArea(0,0,200,200);
+		gfx->init();
 	}
 
 	void GraphicsCommunicator::setRenderArea(int x, int y, int width, int height)

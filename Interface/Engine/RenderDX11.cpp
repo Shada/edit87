@@ -53,18 +53,27 @@ HRESULT RenderDX11::init()
             break;
     }
     if(FAILED(hr))
+	{
+		MessageBox(this->hWnd, "Swapchain made fail, lol", "fail, yo", 0);
         return hr;
+	}
 
 	 // Create a render target view
     ID3D11Texture2D *pBackBuffer = NULL, *pEditorBuffer = NULL;
     hr = g_swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&pBackBuffer);
     if(FAILED(hr))
+	{
+		MessageBox(this->hWnd, "Backbuffer made fail, lol", "fail, yo", 0);
         return hr;
+	}
 
     hr = g_device->CreateRenderTargetView(pBackBuffer, NULL, &g_renderTargetView);
     SAFE_RELEASE(pBackBuffer);
     if(FAILED(hr))
+	{
+		MessageBox(this->hWnd, "Rendertargetview made fail, lol", "fail, yo", 0);
         return hr;
+	}
 
     // Create depth stencil texture
     D3D11_TEXTURE2D_DESC descDepth;
@@ -83,13 +92,16 @@ HRESULT RenderDX11::init()
 
     hr = g_device->CreateTexture2D(&descDepth, NULL, &g_depthStencil);
     if(FAILED(hr))
+	{
+		MessageBox(this->hWnd, "depthstencil made fail, lol", "fail, yo", 0);
         return hr;
+	}
 
 	// Create render target for texture (used by the editor)
 	D3D11_TEXTURE2D_DESC textureDesc;
 	ZeroMemory(&textureDesc, sizeof(textureDesc));
-	textureDesc.Width = 120;
-	textureDesc.Height = 600;
+	textureDesc.Width = width;
+	textureDesc.Height = height;
 	textureDesc.MipLevels = 1;
 	textureDesc.ArraySize = 1;
 	textureDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
@@ -100,8 +112,11 @@ HRESULT RenderDX11::init()
 	textureDesc.MiscFlags = 0;
 
 	hr = g_device->CreateTexture2D(&textureDesc, NULL, &g_renderTargetTexture);
-	if(FAILED(hr))
-		return hr;
+    if(FAILED(hr))
+	{
+		MessageBox(this->hWnd, "rendertargettexture made fail, lol", "fail, yo", 0);
+        return hr;
+	}
 
 	// Setup the description of the render target view
 	D3D11_RENDER_TARGET_VIEW_DESC rtDesc;
@@ -111,8 +126,11 @@ HRESULT RenderDX11::init()
 
 	// Create the render target view.
 	hr = g_device->CreateRenderTargetView(g_renderTargetTexture, &rtDesc, &g_renderTargetView);
-	if(FAILED(hr))
-		return hr;
+    if(FAILED(hr))
+	{
+		MessageBox(this->hWnd, "rendertargetview made fail, lol", "fail, yo", 0);
+        return hr;
+	}
 
 	// Setup the description of the shader resource view
 	D3D11_SHADER_RESOURCE_VIEW_DESC srDesc;
@@ -123,8 +141,11 @@ HRESULT RenderDX11::init()
 
 	// Create the shader resource view.
 	hr = g_device->CreateShaderResourceView(g_renderTargetTexture, &srDesc, &g_shaderView);
-	if(FAILED(hr))
-		return hr;
+    if(FAILED(hr))
+	{
+		MessageBox(this->hWnd, "shaderview made fail, lol", "fail, yo", 0);
+        return hr;
+	}
 
     // Create the depth stencil view
     D3D11_DEPTH_STENCIL_VIEW_DESC descDSV;
@@ -134,7 +155,10 @@ HRESULT RenderDX11::init()
     descDSV.Texture2D.MipSlice = 0;
     hr = g_device->CreateDepthStencilView(g_depthStencil, &descDSV, &g_depthStencilView);
     if(FAILED(hr))
+	{
+		MessageBox(this->hWnd, "depthstencilview made fail, lol", "fail, yo", 0);
         return hr;
+	}
 
     g_deviceContext->OMSetRenderTargets(1, &g_renderTargetView, g_depthStencilView);
 
@@ -153,8 +177,11 @@ HRESULT RenderDX11::init()
 
 	// Create the rasterizer state from the description we just filled out.
 	hr = g_device->CreateRasterizerState(&rasterDesc, &g_rasterizerState);
-	if(FAILED(hr))
-		return false;
+    if(FAILED(hr))
+	{
+		MessageBox(this->hWnd, "rasterizerstate made fail, lol", "fail, yo", 0);
+        return hr;
+	}
 
 	// Now set the rasterizer state.
 	g_deviceContext->RSSetState(g_rasterizerState);
@@ -181,21 +208,30 @@ HRESULT RenderDX11::init()
     blendDesc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
     blendDesc.RenderTarget[0].RenderTargetWriteMask = 0x0f;
 	hr = g_device->CreateBlendState(&blendDesc, &g_blendEnable);
-	if(FAILED(hr))
-		return hr;
+    if(FAILED(hr))
+	{
+		MessageBox(this->hWnd, "blendenable made fail, lol", "fail, yo", 0);
+        return hr;
+	}
 
 	blendDesc.RenderTarget[0].BlendEnable = FALSE;
 	hr = g_device->CreateBlendState(&blendDesc, &g_blendDisable);
-	if(FAILED(hr))
-		return hr;
+    if(FAILED(hr))
+	{
+		MessageBox(this->hWnd, "blenddisable made fail, lol", "fail, yo", 0);
+        return hr;
+	}
 
 	blendDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
 	blendDesc.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
 	blendDesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ZERO;
 	blendDesc.RenderTarget[0].BlendEnable = TRUE;
 	hr = g_device->CreateBlendState(&blendDesc, &g_blendAlpha);
-	if(FAILED(hr))
-		return hr;
+    if(FAILED(hr))
+	{
+		MessageBox(this->hWnd, "blendalpha made fail, lol", "fail, yo", 0);
+        return hr;
+	}
 
 	//create depthstencil states
 	D3D11_DEPTH_STENCIL_DESC depthDesc;
@@ -214,20 +250,51 @@ HRESULT RenderDX11::init()
 	depthDesc.FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
 	depthDesc.BackFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
 	hr = g_device->CreateDepthStencilState(&depthDesc, &g_depthStencilStateEnable);
-	if(FAILED(hr))
-		return hr;
+    if(FAILED(hr))
+	{
+		MessageBox(this->hWnd, "g_depthStencilStateEnable made fail, lol", "fail, yo", 0);
+        return hr;
+	}
 
 	depthDesc.DepthEnable = FALSE;
 	hr = g_device->CreateDepthStencilState(&depthDesc, &g_depthStencilStateDisable);
 	if(FAILED(hr))
-		return hr;
+	{
+		MessageBox(this->hWnd, "g_depthStencilStateDisable made fail, lol", "fail, yo", 0);
+        return hr;
+	}
 
     return S_OK;
 }
 
+const float color[4] = {1.f, 1.f, 1.f, 0.f};
 void RenderDX11::renderScene()
 {
+	// Terrain
+	g_deviceContext->OMSetDepthStencilState(g_depthStencilStateEnable, 0);
+	g_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_3_CONTROL_POINT_PATCHLIST);
+	//g_deviceContext->IASetInputLayout(techs.at(shaderID).layout);
+	
+	float blendFactor[4] = {0.f, 0.f, 0.f, 0.f};
+	g_deviceContext->OMSetBlendState(g_blendDisable, blendFactor, 0xffffffff);
 
+	// Set vertex buffer
+	//UINT stride = sizeof(ModelVertex);
+	//UINT offset = 0;
+	//g_deviceContext->IASetVertexBuffers(0, 1, &vertexBuffer, &stride, &offset);
+
+	//g_deviceContext->VSSetShader(techs.at(shaderID).vertex, NULL, 0);
+	//g_deviceContext->PSSetShader(techs.at(shaderID).pixel, NULL, 0);
+	
+	//g_deviceContext->PSSetSamplers(0, 1, &techs.at(shaderID).sampler);
+
+	//g_deviceContext->Draw(vertexCount, startIndex);
+	
+	g_swapChain->Present(0, 0);
+	g_deviceContext->ClearRenderTargetView(g_renderTargetView, color);
+	g_deviceContext->ClearDepthStencilView(g_depthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
+
+	SetWindowTextA(hWnd, "This is now a draw application");
 }
 
 RenderDX11::~RenderDX11()

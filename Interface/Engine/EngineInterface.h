@@ -5,8 +5,10 @@
 class EngineInterface
 {
 public:
-	EngineInterface(){}
-	virtual ~EngineInterface(){}
+	EngineInterface() {}
+	virtual ~EngineInterface() {}
+
+	virtual HRESULT init() = 0;
 
 	virtual void renderScene() = 0;
 

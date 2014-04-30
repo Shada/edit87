@@ -42,10 +42,10 @@
     <TargetExt>.dll</TargetExt>
     <IncludePath>$(VCInstallDir)include;$(VCInstallDir)atlmfc\include;$(WindowsSDK_IncludePath);$(DXSDK_DIR)\Include</IncludePath>
     <LibraryPath>$(VCInstallDir)lib;$(VCInstallDir)atlmfc\lib;$(WindowsSDK_LibraryPath_x86);$(DXSDK_DIR)\Lib\x86</LibraryPath>
-    <OutDir>$(SolutionDir)Lib\</OutDir>
+    <OutDir>$(SolutionDir)Interface\bin\Release\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <OutDir>$(SolutionDir)Lib\</OutDir>
+    <OutDir>$(SolutionDir)Interface\bin\Debug\</OutDir>
     <TargetExt>.dll</TargetExt>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -76,10 +76,12 @@
     <ClInclude Include="EngineFactory.h" />
     <ClInclude Include="EngineInterface.h" />
     <ClInclude Include="RenderDX11.h" />
+    <ClInclude Include="Terrain.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="EngineFactory.cpp" />
     <ClCompile Include="RenderDX11.cpp" />
+    <ClCompile Include="Terrain.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
