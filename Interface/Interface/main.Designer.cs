@@ -86,14 +86,14 @@
 			this.btn_redo = new System.Windows.Forms.Button();
 			this.btn_undo = new System.Windows.Forms.Button();
 			this.pb_scene = new System.Windows.Forms.PictureBox();
-			this.bindingSource1 = new System.Windows.Forms.BindingSource(this.components);
 			this.panel_Left = new System.Windows.Forms.Panel();
+			this.ofd_load = new System.Windows.Forms.OpenFileDialog();
+			this.sfd_export = new System.Windows.Forms.SaveFileDialog();
 			((System.ComponentModel.ISupportInitialize)(this.nud_brushIntensity)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.nud_BrushSize)).BeginInit();
 			this.menuStrip.SuspendLayout();
 			this.panel_Right.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.pb_scene)).BeginInit();
-			((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).BeginInit();
 			this.panel_Left.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -261,35 +261,35 @@
 			// newProjectToolStripMenuItem
 			// 
 			this.newProjectToolStripMenuItem.Name = "newProjectToolStripMenuItem";
-			this.newProjectToolStripMenuItem.Size = new System.Drawing.Size(138, 22);
+			this.newProjectToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
 			this.newProjectToolStripMenuItem.Text = "New Project";
 			this.newProjectToolStripMenuItem.Click += new System.EventHandler(this.newProjectToolStripMenuItem_Click);
 			// 
 			// saveToolStripMenuItem
 			// 
 			this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-			this.saveToolStripMenuItem.Size = new System.Drawing.Size(138, 22);
+			this.saveToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
 			this.saveToolStripMenuItem.Text = "Save";
 			this.saveToolStripMenuItem.Click += new System.EventHandler(this.saveToolStripMenuItem_Click);
 			// 
 			// saveAsToolStripMenuItem
 			// 
 			this.saveAsToolStripMenuItem.Name = "saveAsToolStripMenuItem";
-			this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(138, 22);
+			this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
 			this.saveAsToolStripMenuItem.Text = "Save as";
 			this.saveAsToolStripMenuItem.Click += new System.EventHandler(this.saveAsToolStripMenuItem_Click);
 			// 
 			// loadToolStripMenuItem
 			// 
 			this.loadToolStripMenuItem.Name = "loadToolStripMenuItem";
-			this.loadToolStripMenuItem.Size = new System.Drawing.Size(138, 22);
+			this.loadToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
 			this.loadToolStripMenuItem.Text = "Load";
 			this.loadToolStripMenuItem.Click += new System.EventHandler(this.loadToolStripMenuItem_Click);
 			// 
 			// exportToolStripMenuItem
 			// 
 			this.exportToolStripMenuItem.Name = "exportToolStripMenuItem";
-			this.exportToolStripMenuItem.Size = new System.Drawing.Size(138, 22);
+			this.exportToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
 			this.exportToolStripMenuItem.Text = "Export";
 			this.exportToolStripMenuItem.Click += new System.EventHandler(this.exportToolStripMenuItem_Click);
 			// 
@@ -556,6 +556,10 @@
 			this.panel_Left.Size = new System.Drawing.Size(221, 612);
 			this.panel_Left.TabIndex = 32;
 			// 
+			// ofd_load
+			// 
+			this.ofd_load.FileName = "openFileDialog1";
+			// 
 			// MapEditor
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -583,7 +587,6 @@
 			this.panel_Right.ResumeLayout(false);
 			this.panel_Right.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)(this.pb_scene)).EndInit();
-			((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).EndInit();
 			this.panel_Left.ResumeLayout(false);
 			this.ResumeLayout(false);
 			this.PerformLayout();
@@ -636,10 +639,11 @@
         private System.Windows.Forms.TreeView tw_resources;
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.ToolStripMenuItem prefrencesToolStripMenuItem;
-        private System.Windows.Forms.Panel panel_Right;
-        private System.Windows.Forms.BindingSource bindingSource1;
+		private System.Windows.Forms.Panel panel_Right;
 		private System.Windows.Forms.ToolStripMenuItem newProjectToolStripMenuItem;
 		private System.Windows.Forms.Panel panel_Left;
+		private System.Windows.Forms.OpenFileDialog ofd_load;
+		private System.Windows.Forms.SaveFileDialog sfd_export;
 
 	}
 }

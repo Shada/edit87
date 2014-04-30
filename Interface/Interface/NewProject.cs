@@ -14,9 +14,15 @@ namespace LevelEditor
 {
 	public partial class NewProject : Form
 	{
-		public NewProject()
+		XmlDocument projectFile;
+		DirectoryInfo projectDirectory;
+
+		public NewProject(ref XmlDocument _projectFile, ref DirectoryInfo _projectDirectory)
 		{
 			InitializeComponent();
+
+			projectFile = _projectFile;
+			projectDirectory = _projectDirectory;
 			mtxb_mapSizeX.ValidatingType = typeof(uint);
 			mtxb_mapSizeY.ValidatingType = typeof(uint);
 		}
@@ -60,11 +66,12 @@ namespace LevelEditor
 			{
 				MessageBox.Show("The Y value for map size is invalid", "No can do!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 				return;
-			}			
+			}
 
-			DirectoryInfo root = Directory.CreateDirectory(folder);
-			DirectoryInfo brushes = Directory.CreateDirectory(folder + "\\brushes");
-			DirectoryInfo resources = Directory.CreateDirectory(folder + "\\resources");
+			projectDirectory = Directory.CreateDirectory(folder);
+			Directory.CreateDirectory(folder + "\\brushes");
+			Directory.CreateDirectory(folder + "\\resources");
+			Directory.CreateDirectory(folder + "\\maps");
 
 			using (XmlTextWriter writer = new XmlTextWriter(folder + "\\" + txb_projectName.Text + ".xml", Encoding.UTF8))
 			{
@@ -75,7 +82,7 @@ namespace LevelEditor
 				writer.WriteStartElement("root");
 
 				writer.WriteStartElement("header");
-				writer.WriteElementString("project name", txb_projectName.Text);
+				writer.WriteElementString("projectName", txb_projectName.Text);
 
 				writer.WriteStartElement("size");
 				writer.WriteElementString("X", X.ToString());
@@ -87,6 +94,8 @@ namespace LevelEditor
 				writer.WriteEndElement();
 				writer.WriteEndDocument();
 			}
+
+			projectFile.Load(folder + "\\" + txb_projectName.Text + ".xml");
 		}
 	}
 }

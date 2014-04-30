@@ -7,6 +7,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.IO;
+using System.IO.Compression;
+using System.Xml;
 
 //using wrapperns;
 
@@ -17,6 +20,8 @@ namespace LevelEditor
         // Umm... cant use this yet for some reason
         //public wrapperns.GraphicsCommunicator graphics;
         int windowWidth, windowHeight;
+		XmlDocument projectFile = new XmlDocument();
+		DirectoryInfo projectDirectory;
 
 		public MapEditor()
 		{
@@ -58,7 +63,7 @@ namespace LevelEditor
 
 		private void newProjectToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			NewProject project = new NewProject();
+			NewProject project = new NewProject(ref projectFile, ref projectDirectory);
 			project.Show();
 		}
 
@@ -74,12 +79,17 @@ namespace LevelEditor
 
 		private void loadToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-
+			loadProject();
 		}
 
 		private void exportToolStripMenuItem_Click(object sender, EventArgs e)
 		{
+			DialogResult res = sfd_export.ShowDialog();
 
+			if (res == DialogResult.OK)
+			{
+				ZipFile.CreateFromDirectory(projectDirectory.FullName, sfd_export.FileName, CompressionLevel.Fastest, true);				
+			}
 		}
 
 		private void importBrushesToolStripMenuItem_Click(object sender, EventArgs e)
@@ -232,6 +242,52 @@ namespace LevelEditor
 				btn_undo.Visible = true;
 				btn_redo.Visible = true;
 				cb_history.Visible = true;
+			}
+		}
+
+		private void loadProject()
+		{
+			DialogResult res = ofd_load.ShowDialog();
+
+			if (res == DialogResult.OK)
+			{
+				string file = ofd_load.FileName;
+				string[] checkDirs = new string[] { "maps", "brushes", "resources" };
+				string[] path = file.Split('\\');
+				string dir = "";
+
+				for (int i = 0; i < path.Length - 1; i++)
+				{
+					dir += path[i] + "\\";
+				}
+
+				dir = dir.Remove(dir.Length - 1);
+
+				projectFile.Load(file);
+				projectDirectory = new DirectoryInfo(dir);
+
+				DirectoryInfo[] dirs = projectDirectory.GetDirectories();
+
+				int dirCounter = 0;
+
+				foreach (DirectoryInfo di in dirs)
+				{
+					foreach (string s in checkDirs)
+					{
+						if (di.Name == s)
+						{
+							dirCounter++;
+						}
+					}
+				}
+
+				if (dirCounter != 3)
+				{
+					MessageBox.Show("The selected working directory doesn't contains the required directories", "No can do!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+					projectDirectory = null;
+					projectFile = null;
+					return;
+				}
 			}
 		}
 	}
