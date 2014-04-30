@@ -46,6 +46,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ImportRecource.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ImportRecource.Designer.cs">
+      <DependentUpon>ImportRecource.cs</DependentUpon>
+    </Compile>
     <Compile Include="main.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -72,6 +78,16 @@
     <Compile Include="properties_test.Designer.cs">
       <DependentUpon>properties_test.cs</DependentUpon>
     </Compile>
+    <Compile Include="NameFolder.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="NameFolder.Designer.cs">
+      <DependentUpon>NameFolder.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Utils.cs" />
+    <EmbeddedResource Include="ImportRecource.resx">
+      <DependentUpon>ImportRecource.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="main.resx">
       <DependentUpon>main.cs</DependentUpon>
     </EmbeddedResource>
@@ -85,6 +101,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="properties_test.resx">
       <DependentUpon>properties_test.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="NameFolder.resx">
+      <DependentUpon>NameFolder.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -107,6 +126,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="map_placeholder.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="noPreview.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="img.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

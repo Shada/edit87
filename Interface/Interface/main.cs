@@ -69,12 +69,12 @@ namespace LevelEditor
 
 		private void saveToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-
+			MessageBox.Show("This is not yet implemented you tool!", "FUCK FACE!", MessageBoxButtons.OK, MessageBoxIcon.Error);
 		}
 
 		private void saveAsToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-
+			MessageBox.Show("This is not yet implemented you tool!", "FUCK FACE!", MessageBoxButtons.OK, MessageBoxIcon.Error);
 		}
 
 		private void loadToolStripMenuItem_Click(object sender, EventArgs e)
@@ -84,12 +84,7 @@ namespace LevelEditor
 
 		private void exportToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			DialogResult res = sfd_export.ShowDialog();
-
-			if (res == DialogResult.OK)
-			{
-				ZipFile.CreateFromDirectory(projectDirectory.FullName, sfd_export.FileName, CompressionLevel.Fastest, true);				
-			}
+			export();
 		}
 
 		private void importBrushesToolStripMenuItem_Click(object sender, EventArgs e)
@@ -162,24 +157,15 @@ namespace LevelEditor
 
 		}
 
-		private void btn_importBrush_Click(object sender, EventArgs e)
-		{
-
-		}
-
 		private void lw_Brush_SelectedIndexChanged(object sender, EventArgs e)
-		{
-
-		}
-
-		private void btn_importTexture_Click(object sender, EventArgs e)
 		{
 
 		}
 
 		private void btn_importResource_Click(object sender, EventArgs e)
 		{
-
+			ImportRecource res = new ImportRecource();
+			res.Show();
 		}
 
 		private void nud_brushIntensity_ValueChanged(object sender, EventArgs e)
@@ -190,6 +176,18 @@ namespace LevelEditor
 		private void tw_resources_AfterSelect(object sender, TreeViewEventArgs e)
 		{
 
+		}
+
+		#region logic
+
+		private void export()
+		{
+			DialogResult res = sfd_export.ShowDialog();
+
+			if (res == DialogResult.OK)
+			{
+				ZipFile.CreateFromDirectory(projectDirectory.FullName, sfd_export.FileName + ".zip", CompressionLevel.Fastest, true);
+			}
 		}
 
 		private void resizeWindow()
@@ -290,5 +288,6 @@ namespace LevelEditor
 				}
 			}
 		}
+		#endregion
 	}
 }

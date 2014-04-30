@@ -29,19 +29,7 @@
 		private void InitializeComponent()
 		{
 			this.components = new System.ComponentModel.Container();
-			System.Windows.Forms.ListViewItem listViewItem1 = new System.Windows.Forms.ListViewItem(new string[] {
-            "Dirt",
-            "Test"}, 0);
-			System.Windows.Forms.ListViewItem listViewItem2 = new System.Windows.Forms.ListViewItem("Grass", 1);
-			System.Windows.Forms.ListViewItem listViewItem3 = new System.Windows.Forms.ListViewItem("Rock", 2);
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MapEditor));
-			System.Windows.Forms.ListViewItem listViewItem4 = new System.Windows.Forms.ListViewItem(new string[] {
-            "B1",
-            "Test"}, 0);
-			System.Windows.Forms.ListViewItem listViewItem5 = new System.Windows.Forms.ListViewItem("B2", 1);
-			System.Windows.Forms.ListViewItem listViewItem6 = new System.Windows.Forms.ListViewItem("B3", 2);
-			this.btn_importTexture = new System.Windows.Forms.Button();
-			this.btn_importBrush = new System.Windows.Forms.Button();
 			this.label5 = new System.Windows.Forms.Label();
 			this.nud_brushIntensity = new System.Windows.Forms.NumericUpDown();
 			this.label4 = new System.Windows.Forms.Label();
@@ -78,6 +66,9 @@
 			this.tw_resources = new System.Windows.Forms.TreeView();
 			this.label9 = new System.Windows.Forms.Label();
 			this.panel_Right = new System.Windows.Forms.Panel();
+			this.panel_Left = new System.Windows.Forms.Panel();
+			this.ofd_load = new System.Windows.Forms.OpenFileDialog();
+			this.sfd_export = new System.Windows.Forms.SaveFileDialog();
 			this.btn_TextureBrush = new System.Windows.Forms.Button();
 			this.btn_TerrainBrush = new System.Windows.Forms.Button();
 			this.btn_export = new System.Windows.Forms.Button();
@@ -86,41 +77,18 @@
 			this.btn_redo = new System.Windows.Forms.Button();
 			this.btn_undo = new System.Windows.Forms.Button();
 			this.pb_scene = new System.Windows.Forms.PictureBox();
-			this.panel_Left = new System.Windows.Forms.Panel();
-			this.ofd_load = new System.Windows.Forms.OpenFileDialog();
-			this.sfd_export = new System.Windows.Forms.SaveFileDialog();
 			((System.ComponentModel.ISupportInitialize)(this.nud_brushIntensity)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.nud_BrushSize)).BeginInit();
 			this.menuStrip.SuspendLayout();
 			this.panel_Right.SuspendLayout();
-			((System.ComponentModel.ISupportInitialize)(this.pb_scene)).BeginInit();
 			this.panel_Left.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)(this.pb_scene)).BeginInit();
 			this.SuspendLayout();
-			// 
-			// btn_importTexture
-			// 
-			this.btn_importTexture.Location = new System.Drawing.Point(98, 305);
-			this.btn_importTexture.Name = "btn_importTexture";
-			this.btn_importTexture.Size = new System.Drawing.Size(90, 23);
-			this.btn_importTexture.TabIndex = 30;
-			this.btn_importTexture.Text = "Import texture";
-			this.btn_importTexture.UseVisualStyleBackColor = true;
-			this.btn_importTexture.Click += new System.EventHandler(this.btn_importTexture_Click);
-			// 
-			// btn_importBrush
-			// 
-			this.btn_importBrush.Location = new System.Drawing.Point(98, 132);
-			this.btn_importBrush.Name = "btn_importBrush";
-			this.btn_importBrush.Size = new System.Drawing.Size(90, 23);
-			this.btn_importBrush.TabIndex = 29;
-			this.btn_importBrush.Text = "Import brush";
-			this.btn_importBrush.UseVisualStyleBackColor = true;
-			this.btn_importBrush.Click += new System.EventHandler(this.btn_importBrush_Click);
 			// 
 			// label5
 			// 
 			this.label5.AutoSize = true;
-			this.label5.Location = new System.Drawing.Point(5, 79);
+			this.label5.Location = new System.Drawing.Point(0, 83);
 			this.label5.Name = "label5";
 			this.label5.Size = new System.Drawing.Size(30, 13);
 			this.label5.TabIndex = 28;
@@ -128,7 +96,7 @@
 			// 
 			// nud_brushIntensity
 			// 
-			this.nud_brushIntensity.Location = new System.Drawing.Point(64, 103);
+			this.nud_brushIntensity.Location = new System.Drawing.Point(59, 107);
 			this.nud_brushIntensity.Name = "nud_brushIntensity";
 			this.nud_brushIntensity.Size = new System.Drawing.Size(50, 20);
 			this.nud_brushIntensity.TabIndex = 27;
@@ -137,7 +105,7 @@
 			// label4
 			// 
 			this.label4.AutoSize = true;
-			this.label4.Location = new System.Drawing.Point(5, 5);
+			this.label4.Location = new System.Drawing.Point(0, 9);
 			this.label4.Name = "label4";
 			this.label4.Size = new System.Drawing.Size(40, 13);
 			this.label4.TabIndex = 26;
@@ -146,7 +114,7 @@
 			// label2
 			// 
 			this.label2.AutoSize = true;
-			this.label2.Location = new System.Drawing.Point(61, 5);
+			this.label2.Location = new System.Drawing.Point(56, 9);
 			this.label2.Name = "label2";
 			this.label2.Size = new System.Drawing.Size(43, 13);
 			this.label2.TabIndex = 25;
@@ -155,7 +123,7 @@
 			// label8
 			// 
 			this.label8.AutoSize = true;
-			this.label8.Location = new System.Drawing.Point(5, 310);
+			this.label8.Location = new System.Drawing.Point(0, 314);
 			this.label8.Name = "label8";
 			this.label8.Size = new System.Drawing.Size(46, 13);
 			this.label8.TabIndex = 24;
@@ -164,7 +132,7 @@
 			// label7
 			// 
 			this.label7.AutoSize = true;
-			this.label7.Location = new System.Drawing.Point(5, 137);
+			this.label7.Location = new System.Drawing.Point(0, 141);
 			this.label7.Name = "label7";
 			this.label7.Size = new System.Drawing.Size(37, 13);
 			this.label7.TabIndex = 23;
@@ -172,12 +140,8 @@
 			// 
 			// lv_Textures
 			// 
-			this.lv_Textures.Items.AddRange(new System.Windows.Forms.ListViewItem[] {
-            listViewItem1,
-            listViewItem2,
-            listViewItem3});
 			this.lv_Textures.LargeImageList = this.il_textures;
-			this.lv_Textures.Location = new System.Drawing.Point(8, 334);
+			this.lv_Textures.Location = new System.Drawing.Point(3, 338);
 			this.lv_Textures.Name = "lv_Textures";
 			this.lv_Textures.Size = new System.Drawing.Size(180, 141);
 			this.lv_Textures.SmallImageList = this.il_textures;
@@ -187,16 +151,14 @@
 			// 
 			// il_textures
 			// 
-			this.il_textures.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("il_textures.ImageStream")));
+			this.il_textures.ColorDepth = System.Windows.Forms.ColorDepth.Depth8Bit;
+			this.il_textures.ImageSize = new System.Drawing.Size(32, 32);
 			this.il_textures.TransparentColor = System.Drawing.Color.Transparent;
-			this.il_textures.Images.SetKeyName(0, "dirt.png");
-			this.il_textures.Images.SetKeyName(1, "grass.png");
-			this.il_textures.Images.SetKeyName(2, "rock.png");
 			// 
 			// label6
 			// 
 			this.label6.AutoSize = true;
-			this.label6.Location = new System.Drawing.Point(5, 105);
+			this.label6.Location = new System.Drawing.Point(0, 109);
 			this.label6.Name = "label6";
 			this.label6.Size = new System.Drawing.Size(49, 13);
 			this.label6.TabIndex = 21;
@@ -204,7 +166,7 @@
 			// 
 			// nud_BrushSize
 			// 
-			this.nud_BrushSize.Location = new System.Drawing.Point(64, 77);
+			this.nud_BrushSize.Location = new System.Drawing.Point(59, 81);
 			this.nud_BrushSize.Name = "nud_BrushSize";
 			this.nud_BrushSize.Size = new System.Drawing.Size(50, 20);
 			this.nud_BrushSize.TabIndex = 20;
@@ -212,12 +174,8 @@
 			// 
 			// lw_Brush
 			// 
-			this.lw_Brush.Items.AddRange(new System.Windows.Forms.ListViewItem[] {
-            listViewItem4,
-            listViewItem5,
-            listViewItem6});
 			this.lw_Brush.LargeImageList = this.il_terrainBrushes;
-			this.lw_Brush.Location = new System.Drawing.Point(8, 158);
+			this.lw_Brush.Location = new System.Drawing.Point(3, 162);
 			this.lw_Brush.Name = "lw_Brush";
 			this.lw_Brush.Size = new System.Drawing.Size(180, 141);
 			this.lw_Brush.SmallImageList = this.il_terrainBrushes;
@@ -227,11 +185,9 @@
 			// 
 			// il_terrainBrushes
 			// 
-			this.il_terrainBrushes.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("il_terrainBrushes.ImageStream")));
+			this.il_terrainBrushes.ColorDepth = System.Windows.Forms.ColorDepth.Depth8Bit;
+			this.il_terrainBrushes.ImageSize = new System.Drawing.Size(32, 32);
 			this.il_terrainBrushes.TransparentColor = System.Drawing.Color.Transparent;
-			this.il_terrainBrushes.Images.SetKeyName(0, "b1.png");
-			this.il_terrainBrushes.Images.SetKeyName(1, "b2.png");
-			this.il_terrainBrushes.Images.SetKeyName(2, "b3.png");
 			// 
 			// menuStrip
 			// 
@@ -261,35 +217,35 @@
 			// newProjectToolStripMenuItem
 			// 
 			this.newProjectToolStripMenuItem.Name = "newProjectToolStripMenuItem";
-			this.newProjectToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+			this.newProjectToolStripMenuItem.Size = new System.Drawing.Size(138, 22);
 			this.newProjectToolStripMenuItem.Text = "New Project";
 			this.newProjectToolStripMenuItem.Click += new System.EventHandler(this.newProjectToolStripMenuItem_Click);
 			// 
 			// saveToolStripMenuItem
 			// 
 			this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-			this.saveToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+			this.saveToolStripMenuItem.Size = new System.Drawing.Size(138, 22);
 			this.saveToolStripMenuItem.Text = "Save";
 			this.saveToolStripMenuItem.Click += new System.EventHandler(this.saveToolStripMenuItem_Click);
 			// 
 			// saveAsToolStripMenuItem
 			// 
 			this.saveAsToolStripMenuItem.Name = "saveAsToolStripMenuItem";
-			this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+			this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(138, 22);
 			this.saveAsToolStripMenuItem.Text = "Save as";
 			this.saveAsToolStripMenuItem.Click += new System.EventHandler(this.saveAsToolStripMenuItem_Click);
 			// 
 			// loadToolStripMenuItem
 			// 
 			this.loadToolStripMenuItem.Name = "loadToolStripMenuItem";
-			this.loadToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+			this.loadToolStripMenuItem.Size = new System.Drawing.Size(138, 22);
 			this.loadToolStripMenuItem.Text = "Load";
 			this.loadToolStripMenuItem.Click += new System.EventHandler(this.loadToolStripMenuItem_Click);
 			// 
 			// exportToolStripMenuItem
 			// 
 			this.exportToolStripMenuItem.Name = "exportToolStripMenuItem";
-			this.exportToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+			this.exportToolStripMenuItem.Size = new System.Drawing.Size(138, 22);
 			this.exportToolStripMenuItem.Text = "Export";
 			this.exportToolStripMenuItem.Click += new System.EventHandler(this.exportToolStripMenuItem_Click);
 			// 
@@ -408,7 +364,7 @@
 			// 
 			// btn_importResource
 			// 
-			this.btn_importResource.Location = new System.Drawing.Point(8, 481);
+			this.btn_importResource.Location = new System.Drawing.Point(3, 485);
 			this.btn_importResource.Name = "btn_importResource";
 			this.btn_importResource.Size = new System.Drawing.Size(180, 23);
 			this.btn_importResource.TabIndex = 0;
@@ -418,7 +374,7 @@
 			// 
 			// tw_resources
 			// 
-			this.tw_resources.Location = new System.Drawing.Point(8, 523);
+			this.tw_resources.Location = new System.Drawing.Point(3, 527);
 			this.tw_resources.Name = "tw_resources";
 			this.tw_resources.Size = new System.Drawing.Size(180, 200);
 			this.tw_resources.TabIndex = 1;
@@ -427,7 +383,7 @@
 			// label9
 			// 
 			this.label9.AutoSize = true;
-			this.label9.Location = new System.Drawing.Point(8, 507);
+			this.label9.Location = new System.Drawing.Point(3, 511);
 			this.label9.Name = "label9";
 			this.label9.Size = new System.Drawing.Size(58, 13);
 			this.label9.TabIndex = 2;
@@ -438,14 +394,12 @@
 			this.panel_Right.AutoScroll = true;
 			this.panel_Right.Controls.Add(this.label9);
 			this.panel_Right.Controls.Add(this.btn_TextureBrush);
-			this.panel_Right.Controls.Add(this.btn_importTexture);
 			this.panel_Right.Controls.Add(this.btn_TerrainBrush);
 			this.panel_Right.Controls.Add(this.tw_resources);
 			this.panel_Right.Controls.Add(this.lw_Brush);
 			this.panel_Right.Controls.Add(this.nud_BrushSize);
 			this.panel_Right.Controls.Add(this.btn_importResource);
 			this.panel_Right.Controls.Add(this.label6);
-			this.panel_Right.Controls.Add(this.btn_importBrush);
 			this.panel_Right.Controls.Add(this.lv_Textures);
 			this.panel_Right.Controls.Add(this.label7);
 			this.panel_Right.Controls.Add(this.label5);
@@ -458,11 +412,24 @@
 			this.panel_Right.Size = new System.Drawing.Size(210, 612);
 			this.panel_Right.TabIndex = 31;
 			// 
+			// panel_Left
+			// 
+			this.panel_Left.AutoScroll = true;
+			this.panel_Left.Controls.Add(this.tw_objects);
+			this.panel_Left.Location = new System.Drawing.Point(12, 58);
+			this.panel_Left.Name = "panel_Left";
+			this.panel_Left.Size = new System.Drawing.Size(221, 612);
+			this.panel_Left.TabIndex = 32;
+			// 
+			// ofd_load
+			// 
+			this.ofd_load.FileName = "openFileDialog1";
+			// 
 			// btn_TextureBrush
 			// 
 			this.btn_TextureBrush.BackgroundImage = global::Interface.Properties.Resources.brush;
 			this.btn_TextureBrush.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-			this.btn_TextureBrush.Location = new System.Drawing.Point(64, 21);
+			this.btn_TextureBrush.Location = new System.Drawing.Point(59, 25);
 			this.btn_TextureBrush.Name = "btn_TextureBrush";
 			this.btn_TextureBrush.Size = new System.Drawing.Size(50, 50);
 			this.btn_TextureBrush.TabIndex = 5;
@@ -473,7 +440,7 @@
 			// 
 			this.btn_TerrainBrush.BackgroundImage = global::Interface.Properties.Resources.brush;
 			this.btn_TerrainBrush.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-			this.btn_TerrainBrush.Location = new System.Drawing.Point(8, 21);
+			this.btn_TerrainBrush.Location = new System.Drawing.Point(3, 25);
 			this.btn_TerrainBrush.Name = "btn_TerrainBrush";
 			this.btn_TerrainBrush.Size = new System.Drawing.Size(50, 50);
 			this.btn_TerrainBrush.TabIndex = 2;
@@ -547,19 +514,6 @@
 			this.pb_scene.TabIndex = 4;
 			this.pb_scene.TabStop = false;
 			// 
-			// panel_Left
-			// 
-			this.panel_Left.AutoScroll = true;
-			this.panel_Left.Controls.Add(this.tw_objects);
-			this.panel_Left.Location = new System.Drawing.Point(12, 58);
-			this.panel_Left.Name = "panel_Left";
-			this.panel_Left.Size = new System.Drawing.Size(221, 612);
-			this.panel_Left.TabIndex = 32;
-			// 
-			// ofd_load
-			// 
-			this.ofd_load.FileName = "openFileDialog1";
-			// 
 			// MapEditor
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -586,8 +540,8 @@
 			this.menuStrip.PerformLayout();
 			this.panel_Right.ResumeLayout(false);
 			this.panel_Right.PerformLayout();
-			((System.ComponentModel.ISupportInitialize)(this.pb_scene)).EndInit();
 			this.panel_Left.ResumeLayout(false);
+			((System.ComponentModel.ISupportInitialize)(this.pb_scene)).EndInit();
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -630,9 +584,7 @@
         private System.Windows.Forms.ToolStripMenuItem viewToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem toolsShortcutsToolStripMenuItem;
         private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.NumericUpDown nud_brushIntensity;
-        private System.Windows.Forms.Button btn_importTexture;
-        private System.Windows.Forms.Button btn_importBrush;
+		private System.Windows.Forms.NumericUpDown nud_brushIntensity;
         private System.Windows.Forms.ImageList il_textures;
         private System.Windows.Forms.ImageList il_icons;
         private System.Windows.Forms.Button btn_importResource;
