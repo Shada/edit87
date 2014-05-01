@@ -57,7 +57,7 @@
             listViewItem2,
             listViewItem3});
             this.lv_Textures.LargeImageList = this.textureList;
-            this.lv_Textures.Location = new System.Drawing.Point(0, 32);
+            this.lv_Textures.Location = new System.Drawing.Point(2, 32);
             this.lv_Textures.Name = "lv_Textures";
             this.lv_Textures.Size = new System.Drawing.Size(180, 141);
             this.lv_Textures.TabIndex = 31;
@@ -84,11 +84,12 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(181, 174);
+            this.ClientSize = new System.Drawing.Size(184, 182);
             this.Controls.Add(this.btn_importTexture);
             this.Controls.Add(this.lv_Textures);
             this.Controls.Add(this.label8);
             this.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Name = "PanTextures";
             this.Text = "PanTextures";
             this.ResumeLayout(false);

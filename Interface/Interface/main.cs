@@ -26,7 +26,8 @@ namespace LevelEditor
 			InitializeComponent();
             windowWidth = Size.Width;
             windowHeight = Size.Height;
-
+            mainDockPanel.DockRightPortion = 200;
+            mainDockPanel.DockLeftPortion = 200;
             panels[0] = new PanBrushes();
             panels[0].Show(mainDockPanel, DockState.DockRight);
             panels[1] = new PanTextures();
@@ -261,6 +262,16 @@ namespace LevelEditor
         private void menuStrip_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
         {
 
+        }
+
+        private void exportPreferencesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            mainDockPanel.SaveAsXml("test");
+        }
+
+        private void importPreferencesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            throw new NotImplementedException("yet to be implemented");
         }
 	}
 }
