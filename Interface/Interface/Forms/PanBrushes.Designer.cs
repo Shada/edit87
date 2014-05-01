@@ -58,9 +58,9 @@
             listViewItem2,
             listViewItem3});
             this.lw_Brush.LargeImageList = this.brushList;
-            this.lw_Brush.Location = new System.Drawing.Point(4, 158);
+            this.lw_Brush.Location = new System.Drawing.Point(6, 158);
             this.lw_Brush.Name = "lw_Brush";
-            this.lw_Brush.Size = new System.Drawing.Size(180, 141);
+            this.lw_Brush.Size = new System.Drawing.Size(125, 141);
             this.lw_Brush.TabIndex = 32;
             this.lw_Brush.UseCompatibleStateImageBehavior = false;
             // 
@@ -77,7 +77,7 @@
             // 
             // nud_BrushSize
             // 
-            this.nud_BrushSize.Location = new System.Drawing.Point(60, 77);
+            this.nud_BrushSize.Location = new System.Drawing.Point(62, 77);
             this.nud_BrushSize.Name = "nud_BrushSize";
             this.nud_BrushSize.Size = new System.Drawing.Size(50, 20);
             this.nud_BrushSize.TabIndex = 33;
@@ -85,7 +85,7 @@
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(1, 105);
+            this.label6.Location = new System.Drawing.Point(3, 105);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(49, 13);
             this.label6.TabIndex = 34;
@@ -93,7 +93,7 @@
             // 
             // btn_importBrush
             // 
-            this.btn_importBrush.Location = new System.Drawing.Point(94, 132);
+            this.btn_importBrush.Location = new System.Drawing.Point(41, 132);
             this.btn_importBrush.Name = "btn_importBrush";
             this.btn_importBrush.Size = new System.Drawing.Size(90, 23);
             this.btn_importBrush.TabIndex = 40;
@@ -103,7 +103,7 @@
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(1, 137);
+            this.label7.Location = new System.Drawing.Point(3, 137);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(37, 13);
             this.label7.TabIndex = 35;
@@ -112,7 +112,7 @@
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(1, 79);
+            this.label5.Location = new System.Drawing.Point(3, 79);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(30, 13);
             this.label5.TabIndex = 39;
@@ -121,7 +121,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(57, 5);
+            this.label2.Location = new System.Drawing.Point(59, 5);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(43, 13);
             this.label2.TabIndex = 36;
@@ -129,7 +129,7 @@
             // 
             // nud_brushIntensity
             // 
-            this.nud_brushIntensity.Location = new System.Drawing.Point(60, 103);
+            this.nud_brushIntensity.Location = new System.Drawing.Point(62, 103);
             this.nud_brushIntensity.Name = "nud_brushIntensity";
             this.nud_brushIntensity.Size = new System.Drawing.Size(50, 20);
             this.nud_brushIntensity.TabIndex = 38;
@@ -137,7 +137,7 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(1, 5);
+            this.label4.Location = new System.Drawing.Point(3, 5);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(40, 13);
             this.label4.TabIndex = 37;
@@ -147,7 +147,7 @@
             // 
             this.btn_TextureBrush.BackgroundImage = global::Interface.Properties.Resources.brush;
             this.btn_TextureBrush.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.btn_TextureBrush.Location = new System.Drawing.Point(60, 21);
+            this.btn_TextureBrush.Location = new System.Drawing.Point(62, 21);
             this.btn_TextureBrush.Name = "btn_TextureBrush";
             this.btn_TextureBrush.Size = new System.Drawing.Size(50, 50);
             this.btn_TextureBrush.TabIndex = 31;
@@ -157,7 +157,7 @@
             // 
             this.btn_TerrainBrush.BackgroundImage = global::Interface.Properties.Resources.brush;
             this.btn_TerrainBrush.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.btn_TerrainBrush.Location = new System.Drawing.Point(4, 21);
+            this.btn_TerrainBrush.Location = new System.Drawing.Point(6, 21);
             this.btn_TerrainBrush.Name = "btn_TerrainBrush";
             this.btn_TerrainBrush.Size = new System.Drawing.Size(50, 50);
             this.btn_TerrainBrush.TabIndex = 30;
@@ -167,7 +167,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(186, 299);
+            this.ClientSize = new System.Drawing.Size(132, 299);
             this.Controls.Add(this.btn_TextureBrush);
             this.Controls.Add(this.btn_TerrainBrush);
             this.Controls.Add(this.lw_Brush);
@@ -183,6 +183,7 @@
             this.Name = "PanBrushes";
             this.Text = "PanBrushes";
             this.Load += new System.EventHandler(this.PanBrushes_Load);
+            this.SizeChanged += new System.EventHandler(this.PanBrushes_SizeChanged);
             ((System.ComponentModel.ISupportInitialize)(this.nud_BrushSize)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nud_brushIntensity)).EndInit();
             this.ResumeLayout(false);

@@ -11,21 +11,26 @@ using WeifenLuo.WinFormsUI.Docking;
 
 namespace LevelEditor
 {
-    public partial class PanTextures : DockContent
+    public partial class PanRender : DockContent
     {
-        int lv_TexturesSizeDiff = 12;
-        public PanTextures()
+        int pb_sceneSizeDiff = 0;
+        public PanRender()
         {
             InitializeComponent();
         }
 
-        private void PanTextures_SizeChanged(object sender, EventArgs e)
+        private void PanRender_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        private void PanRender_SizeChanged(object sender, EventArgs e)
         {
             resizeWindow();
         }
         private void resizeWindow()
         {
-            lv_Textures.Size = new Size(Size.Width - lv_TexturesSizeDiff, Size.Height - lv_TexturesSizeDiff - 24);
+            pb_scene.Size = new Size(Size.Width - pb_sceneSizeDiff, Size.Height - pb_sceneSizeDiff);
         }
     }
 }

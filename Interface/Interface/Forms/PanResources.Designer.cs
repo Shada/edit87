@@ -71,6 +71,7 @@
             this.Name = "PanResources";
             this.Text = "PanResources";
             this.Load += new System.EventHandler(this.PanResources_Load);
+            this.SizeChanged += new System.EventHandler(this.PanResources_SizeChanged);
             this.ResumeLayout(false);
             this.PerformLayout();
 

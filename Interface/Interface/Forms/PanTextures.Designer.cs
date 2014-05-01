@@ -43,7 +43,7 @@
             // 
             // btn_importTexture
             // 
-            this.btn_importTexture.Location = new System.Drawing.Point(90, 3);
+            this.btn_importTexture.Location = new System.Drawing.Point(94, 3);
             this.btn_importTexture.Name = "btn_importTexture";
             this.btn_importTexture.Size = new System.Drawing.Size(90, 23);
             this.btn_importTexture.TabIndex = 33;
@@ -57,7 +57,7 @@
             listViewItem2,
             listViewItem3});
             this.lv_Textures.LargeImageList = this.textureList;
-            this.lv_Textures.Location = new System.Drawing.Point(2, 32);
+            this.lv_Textures.Location = new System.Drawing.Point(6, 32);
             this.lv_Textures.Name = "lv_Textures";
             this.lv_Textures.Size = new System.Drawing.Size(180, 141);
             this.lv_Textures.TabIndex = 31;
@@ -74,7 +74,7 @@
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(3, 8);
+            this.label8.Location = new System.Drawing.Point(7, 8);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(46, 13);
             this.label8.TabIndex = 32;
@@ -92,6 +92,7 @@
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Name = "PanTextures";
             this.Text = "PanTextures";
+            this.SizeChanged += new System.EventHandler(this.PanTextures_SizeChanged);
             this.ResumeLayout(false);
             this.PerformLayout();
 

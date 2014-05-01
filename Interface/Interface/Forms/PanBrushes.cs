@@ -13,6 +13,7 @@ namespace LevelEditor
 {
     public partial class PanBrushes : DockContent
     {
+        int lw_BrushSizeDiff = 12;
         public PanBrushes()
         {
             InitializeComponent();
@@ -20,6 +21,15 @@ namespace LevelEditor
 
         private void PanBrushes_Load(object sender, EventArgs e)
         {
+        }
+
+        private void PanBrushes_SizeChanged(object sender, EventArgs e)
+        {
+            resizeWindow();
+        }
+        private void resizeWindow()
+        {
+            lw_Brush.Size = new Size(Size.Width - lw_BrushSizeDiff, Size.Height - lw_BrushSizeDiff - 150);
         }
     }
 }

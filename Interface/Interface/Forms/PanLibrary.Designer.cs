@@ -39,25 +39,27 @@
             this.panel_Left.Controls.Add(this.tw_objects);
             this.panel_Left.Location = new System.Drawing.Point(5, 5);
             this.panel_Left.Name = "panel_Left";
-            this.panel_Left.Size = new System.Drawing.Size(201, 616);
+            this.panel_Left.Size = new System.Drawing.Size(211, 616);
             this.panel_Left.TabIndex = 33;
             // 
             // tw_objects
             // 
             this.tw_objects.Location = new System.Drawing.Point(0, 0);
             this.tw_objects.Name = "tw_objects";
-            this.tw_objects.Size = new System.Drawing.Size(200, 612);
+            this.tw_objects.Size = new System.Drawing.Size(144, 612);
             this.tw_objects.TabIndex = 6;
             // 
             // PanLibrary
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(208, 621);
+            this.ClientSize = new System.Drawing.Size(247, 621);
             this.Controls.Add(this.panel_Left);
+            this.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Name = "PanLibrary";
             this.Text = "PanLibrary";
             this.Load += new System.EventHandler(this.PanLibrary_Load);
+            this.SizeChanged += new System.EventHandler(this.PanLibrary_SizeChanged);
             this.panel_Left.ResumeLayout(false);
             this.ResumeLayout(false);
 
