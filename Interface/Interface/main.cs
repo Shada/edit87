@@ -46,12 +46,6 @@ namespace LevelEditor
             panels[5].DockHandler.FloatPane.DockTo(mainDockPanel.DockWindows[DockState.DockLeft]);
 		}
 
-		private void button1_Click(object sender, EventArgs e)
-		{
-			properties_test test = new properties_test();
-			test.Show();
-		}
-
 		private void btn_TerrainBrush_Click(object sender, EventArgs e)
 		{
 
@@ -226,6 +220,24 @@ namespace LevelEditor
             }
 		}
 
+        private void toggleDisplay(DockContent panel)
+        {
+            if (!panel.IsDisposed)
+            {
+                if (panel.IsHidden)
+                    panel.IsHidden = false;
+                else
+                    panel.Hide();
+            }
+            else
+            {
+                panel = new PanBrushes();
+                panel.Show(mainDockPanel, DockState.Float);
+                panel.DockHandler.FloatPane.DockTo(mainDockPanel.DockWindows[DockState.DockRight]);
+            }
+            
+        }
+
         private void MapEditor_Load(object sender, EventArgs e)
         {
 
@@ -254,6 +266,11 @@ namespace LevelEditor
         private void toolsShortcutsToolStripMenuItem_Click_1(object sender, EventArgs e)
         {
             hideToolsMenu(sender);
+        }
+
+        private void brushToolsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            toggleDisplay(panels[0]);
         }
 	}
 }

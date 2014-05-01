@@ -219,6 +219,7 @@
             this.brushToolsToolStripMenuItem.Name = "brushToolsToolStripMenuItem";
             this.brushToolsToolStripMenuItem.Size = new System.Drawing.Size(155, 22);
             this.brushToolsToolStripMenuItem.Text = "Brush Tools";
+            this.brushToolsToolStripMenuItem.Click += new System.EventHandler(this.brushToolsToolStripMenuItem_Click);
             // 
             // helpToolStripMenuItem
             // 
