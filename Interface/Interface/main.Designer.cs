@@ -37,11 +37,9 @@
 			this.label8 = new System.Windows.Forms.Label();
 			this.label7 = new System.Windows.Forms.Label();
 			this.lv_Textures = new System.Windows.Forms.ListView();
-			this.il_textures = new System.Windows.Forms.ImageList(this.components);
 			this.label6 = new System.Windows.Forms.Label();
 			this.nud_BrushSize = new System.Windows.Forms.NumericUpDown();
 			this.lw_Brush = new System.Windows.Forms.ListView();
-			this.il_terrainBrushes = new System.Windows.Forms.ImageList(this.components);
 			this.menuStrip = new System.Windows.Forms.MenuStrip();
 			this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.newProjectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -60,18 +58,18 @@
 			this.haalpPleaseToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.tw_objects = new System.Windows.Forms.TreeView();
-			this.il_icons = new System.Windows.Forms.ImageList(this.components);
 			this.cb_history = new System.Windows.Forms.ComboBox();
 			this.btn_importResource = new System.Windows.Forms.Button();
 			this.tw_resources = new System.Windows.Forms.TreeView();
 			this.label9 = new System.Windows.Forms.Label();
 			this.panel_Right = new System.Windows.Forms.Panel();
+			this.btn_TextureBrush = new System.Windows.Forms.Button();
+			this.btn_TerrainBrush = new System.Windows.Forms.Button();
 			this.panel_Left = new System.Windows.Forms.Panel();
 			this.ofd_load = new System.Windows.Forms.OpenFileDialog();
 			this.sfd_export = new System.Windows.Forms.SaveFileDialog();
-			this.btn_TextureBrush = new System.Windows.Forms.Button();
-			this.btn_TerrainBrush = new System.Windows.Forms.Button();
 			this.btn_export = new System.Windows.Forms.Button();
+			this.il_mainIcons = new System.Windows.Forms.ImageList(this.components);
 			this.btn_load = new System.Windows.Forms.Button();
 			this.btn_save = new System.Windows.Forms.Button();
 			this.btn_redo = new System.Windows.Forms.Button();
@@ -140,20 +138,12 @@
 			// 
 			// lv_Textures
 			// 
-			this.lv_Textures.LargeImageList = this.il_textures;
 			this.lv_Textures.Location = new System.Drawing.Point(3, 338);
 			this.lv_Textures.Name = "lv_Textures";
 			this.lv_Textures.Size = new System.Drawing.Size(180, 141);
-			this.lv_Textures.SmallImageList = this.il_textures;
 			this.lv_Textures.TabIndex = 22;
 			this.lv_Textures.UseCompatibleStateImageBehavior = false;
 			this.lv_Textures.SelectedIndexChanged += new System.EventHandler(this.lv_Textures_SelectedIndexChanged);
-			// 
-			// il_textures
-			// 
-			this.il_textures.ColorDepth = System.Windows.Forms.ColorDepth.Depth8Bit;
-			this.il_textures.ImageSize = new System.Drawing.Size(32, 32);
-			this.il_textures.TransparentColor = System.Drawing.Color.Transparent;
 			// 
 			// label6
 			// 
@@ -174,20 +164,12 @@
 			// 
 			// lw_Brush
 			// 
-			this.lw_Brush.LargeImageList = this.il_terrainBrushes;
 			this.lw_Brush.Location = new System.Drawing.Point(3, 162);
 			this.lw_Brush.Name = "lw_Brush";
 			this.lw_Brush.Size = new System.Drawing.Size(180, 141);
-			this.lw_Brush.SmallImageList = this.il_terrainBrushes;
 			this.lw_Brush.TabIndex = 15;
 			this.lw_Brush.UseCompatibleStateImageBehavior = false;
 			this.lw_Brush.SelectedIndexChanged += new System.EventHandler(this.lw_Brush_SelectedIndexChanged);
-			// 
-			// il_terrainBrushes
-			// 
-			this.il_terrainBrushes.ColorDepth = System.Windows.Forms.ColorDepth.Depth8Bit;
-			this.il_terrainBrushes.ImageSize = new System.Drawing.Size(32, 32);
-			this.il_terrainBrushes.TransparentColor = System.Drawing.Color.Transparent;
 			// 
 			// menuStrip
 			// 
@@ -336,16 +318,6 @@
 			this.tw_objects.TabIndex = 6;
 			this.tw_objects.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.tw_objects_AfterSelect);
 			// 
-			// il_icons
-			// 
-			this.il_icons.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("il_icons.ImageStream")));
-			this.il_icons.TransparentColor = System.Drawing.Color.Transparent;
-			this.il_icons.Images.SetKeyName(0, "export.png");
-			this.il_icons.Images.SetKeyName(1, "load.png");
-			this.il_icons.Images.SetKeyName(2, "redo.png");
-			this.il_icons.Images.SetKeyName(3, "save.png");
-			this.il_icons.Images.SetKeyName(4, "undo.png");
-			// 
 			// cb_history
 			// 
 			this.cb_history.FormattingEnabled = true;
@@ -368,7 +340,7 @@
 			this.btn_importResource.Name = "btn_importResource";
 			this.btn_importResource.Size = new System.Drawing.Size(180, 23);
 			this.btn_importResource.TabIndex = 0;
-			this.btn_importResource.Text = "Import resource";
+			this.btn_importResource.Text = "Manage resources";
 			this.btn_importResource.UseVisualStyleBackColor = true;
 			this.btn_importResource.Click += new System.EventHandler(this.btn_importResource_Click);
 			// 
@@ -412,6 +384,26 @@
 			this.panel_Right.Size = new System.Drawing.Size(210, 612);
 			this.panel_Right.TabIndex = 31;
 			// 
+			// btn_TextureBrush
+			// 
+			this.btn_TextureBrush.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+			this.btn_TextureBrush.Location = new System.Drawing.Point(59, 25);
+			this.btn_TextureBrush.Name = "btn_TextureBrush";
+			this.btn_TextureBrush.Size = new System.Drawing.Size(50, 50);
+			this.btn_TextureBrush.TabIndex = 5;
+			this.btn_TextureBrush.UseVisualStyleBackColor = true;
+			this.btn_TextureBrush.Click += new System.EventHandler(this.btn_TextureBrush_Click);
+			// 
+			// btn_TerrainBrush
+			// 
+			this.btn_TerrainBrush.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+			this.btn_TerrainBrush.Location = new System.Drawing.Point(3, 25);
+			this.btn_TerrainBrush.Name = "btn_TerrainBrush";
+			this.btn_TerrainBrush.Size = new System.Drawing.Size(50, 50);
+			this.btn_TerrainBrush.TabIndex = 2;
+			this.btn_TerrainBrush.UseVisualStyleBackColor = true;
+			this.btn_TerrainBrush.Click += new System.EventHandler(this.btn_TerrainBrush_Click);
+			// 
 			// panel_Left
 			// 
 			this.panel_Left.AutoScroll = true;
@@ -425,44 +417,31 @@
 			// 
 			this.ofd_load.FileName = "openFileDialog1";
 			// 
-			// btn_TextureBrush
-			// 
-			this.btn_TextureBrush.BackgroundImage = global::Interface.Properties.Resources.brush;
-			this.btn_TextureBrush.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-			this.btn_TextureBrush.Location = new System.Drawing.Point(59, 25);
-			this.btn_TextureBrush.Name = "btn_TextureBrush";
-			this.btn_TextureBrush.Size = new System.Drawing.Size(50, 50);
-			this.btn_TextureBrush.TabIndex = 5;
-			this.btn_TextureBrush.UseVisualStyleBackColor = true;
-			this.btn_TextureBrush.Click += new System.EventHandler(this.btn_TextureBrush_Click);
-			// 
-			// btn_TerrainBrush
-			// 
-			this.btn_TerrainBrush.BackgroundImage = global::Interface.Properties.Resources.brush;
-			this.btn_TerrainBrush.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-			this.btn_TerrainBrush.Location = new System.Drawing.Point(3, 25);
-			this.btn_TerrainBrush.Name = "btn_TerrainBrush";
-			this.btn_TerrainBrush.Size = new System.Drawing.Size(50, 50);
-			this.btn_TerrainBrush.TabIndex = 2;
-			this.btn_TerrainBrush.UseVisualStyleBackColor = true;
-			this.btn_TerrainBrush.Click += new System.EventHandler(this.btn_TerrainBrush_Click);
-			// 
 			// btn_export
 			// 
 			this.btn_export.ImageIndex = 0;
-			this.btn_export.ImageList = this.il_icons;
+			this.btn_export.ImageList = this.il_mainIcons;
 			this.btn_export.Location = new System.Drawing.Point(74, 27);
 			this.btn_export.Name = "btn_export";
 			this.btn_export.Size = new System.Drawing.Size(25, 25);
 			this.btn_export.TabIndex = 12;
-			this.btn_export.Text = "E";
 			this.btn_export.UseVisualStyleBackColor = true;
 			this.btn_export.Click += new System.EventHandler(this.btn_export_Click);
+			// 
+			// il_mainIcons
+			// 
+			this.il_mainIcons.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("il_mainIcons.ImageStream")));
+			this.il_mainIcons.TransparentColor = System.Drawing.Color.Transparent;
+			this.il_mainIcons.Images.SetKeyName(0, "export");
+			this.il_mainIcons.Images.SetKeyName(1, "load");
+			this.il_mainIcons.Images.SetKeyName(2, "redo");
+			this.il_mainIcons.Images.SetKeyName(3, "save");
+			this.il_mainIcons.Images.SetKeyName(4, "undo");
 			// 
 			// btn_load
 			// 
 			this.btn_load.ImageIndex = 1;
-			this.btn_load.ImageList = this.il_icons;
+			this.btn_load.ImageList = this.il_mainIcons;
 			this.btn_load.Location = new System.Drawing.Point(43, 27);
 			this.btn_load.Name = "btn_load";
 			this.btn_load.Size = new System.Drawing.Size(25, 25);
@@ -473,7 +452,7 @@
 			// btn_save
 			// 
 			this.btn_save.ImageIndex = 3;
-			this.btn_save.ImageList = this.il_icons;
+			this.btn_save.ImageList = this.il_mainIcons;
 			this.btn_save.Location = new System.Drawing.Point(12, 27);
 			this.btn_save.Name = "btn_save";
 			this.btn_save.Size = new System.Drawing.Size(25, 25);
@@ -484,30 +463,28 @@
 			// btn_redo
 			// 
 			this.btn_redo.ImageIndex = 2;
-			this.btn_redo.ImageList = this.il_icons;
+			this.btn_redo.ImageList = this.il_mainIcons;
 			this.btn_redo.Location = new System.Drawing.Point(263, 27);
 			this.btn_redo.Name = "btn_redo";
 			this.btn_redo.Size = new System.Drawing.Size(25, 25);
 			this.btn_redo.TabIndex = 8;
-			this.btn_redo.Text = "R";
 			this.btn_redo.UseVisualStyleBackColor = true;
 			this.btn_redo.Click += new System.EventHandler(this.btn_redo_Click);
 			// 
 			// btn_undo
 			// 
 			this.btn_undo.ImageIndex = 4;
-			this.btn_undo.ImageList = this.il_icons;
+			this.btn_undo.ImageList = this.il_mainIcons;
 			this.btn_undo.Location = new System.Drawing.Point(232, 27);
 			this.btn_undo.Name = "btn_undo";
 			this.btn_undo.Size = new System.Drawing.Size(25, 25);
 			this.btn_undo.TabIndex = 7;
-			this.btn_undo.Text = "U";
 			this.btn_undo.UseVisualStyleBackColor = true;
 			this.btn_undo.Click += new System.EventHandler(this.btn_undo_Click);
 			// 
 			// pb_scene
 			// 
-			this.pb_scene.BackgroundImage = global::Interface.Properties.Resources.map_placeholder;
+			this.pb_scene.Image = ((System.Drawing.Image)(resources.GetObject("pb_scene.Image")));
 			this.pb_scene.Location = new System.Drawing.Point(232, 58);
 			this.pb_scene.Name = "pb_scene";
 			this.pb_scene.Size = new System.Drawing.Size(816, 612);
@@ -533,6 +510,7 @@
 			this.MinimumSize = new System.Drawing.Size(1280, 720);
 			this.Name = "MapEditor";
 			this.Text = "Map Editor";
+			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MapEditor_FormClosing);
 			this.Resize += new System.EventHandler(this.MapEditor_Resize);
 			((System.ComponentModel.ISupportInitialize)(this.nud_brushIntensity)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.nud_BrushSize)).EndInit();
@@ -558,7 +536,6 @@
 		private System.Windows.Forms.Button btn_TerrainBrush;
 		private System.Windows.Forms.Button btn_TextureBrush;
 		private System.Windows.Forms.ListView lw_Brush;
-		private System.Windows.Forms.ImageList il_terrainBrushes;
 		private System.Windows.Forms.Label label6;
 		private System.Windows.Forms.NumericUpDown nud_BrushSize;
 		private System.Windows.Forms.ListView lv_Textures;
@@ -585,10 +562,8 @@
         private System.Windows.Forms.ToolStripMenuItem toolsShortcutsToolStripMenuItem;
         private System.Windows.Forms.Label label5;
 		private System.Windows.Forms.NumericUpDown nud_brushIntensity;
-        private System.Windows.Forms.ImageList il_textures;
-        private System.Windows.Forms.ImageList il_icons;
         private System.Windows.Forms.Button btn_importResource;
-        private System.Windows.Forms.TreeView tw_resources;
+		private System.Windows.Forms.TreeView tw_resources;
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.ToolStripMenuItem prefrencesToolStripMenuItem;
 		private System.Windows.Forms.Panel panel_Right;
@@ -596,7 +571,7 @@
 		private System.Windows.Forms.Panel panel_Left;
 		private System.Windows.Forms.OpenFileDialog ofd_load;
 		private System.Windows.Forms.SaveFileDialog sfd_export;
-
+		private System.Windows.Forms.ImageList il_mainIcons;
 	}
 }
 

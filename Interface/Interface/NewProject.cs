@@ -14,15 +14,17 @@ namespace LevelEditor
 {
 	public partial class NewProject : Form
 	{
-		XmlDocument projectFile;
-		DirectoryInfo projectDirectory;
+		//XmlDocument projectFile;
+		//DirectoryInfo projectDirectory;
+		MapEditor edit;
 
-		public NewProject(ref XmlDocument _projectFile, ref DirectoryInfo _projectDirectory)
+		public NewProject(MapEditor _edit)
 		{
 			InitializeComponent();
 
-			projectFile = _projectFile;
-			projectDirectory = _projectDirectory;
+			edit = _edit;
+			//projectFile = _projectFile;
+			//projectDirectory = _projectDirectory;
 			mtxb_mapSizeX.ValidatingType = typeof(uint);
 			mtxb_mapSizeY.ValidatingType = typeof(uint);
 		}
@@ -68,7 +70,7 @@ namespace LevelEditor
 				return;
 			}
 
-			projectDirectory = Directory.CreateDirectory(folder);
+			edit.projectDirectory = Directory.CreateDirectory(folder);
 			Directory.CreateDirectory(folder + "\\brushes");
 			Directory.CreateDirectory(folder + "\\resources");
 			Directory.CreateDirectory(folder + "\\maps");
@@ -87,15 +89,14 @@ namespace LevelEditor
 				writer.WriteStartElement("size");
 				writer.WriteElementString("X", X.ToString());
 				writer.WriteElementString("Y", Y.ToString());
-				writer.WriteEndElement(); 
-
-				writer.WriteEndElement();
-
-				writer.WriteEndElement();
+				writer.WriteEndElement(); //SIZE
+				writer.WriteEndElement(); //HEADER
+				writer.WriteEndElement(); //ROOT
 				writer.WriteEndDocument();
 			}
 
-			projectFile.Load(folder + "\\" + txb_projectName.Text + ".xml");
+			edit.projectFile.Load(folder + "\\" + txb_projectName.Text + ".xml");
+			this.Close();
 		}
 	}
 }

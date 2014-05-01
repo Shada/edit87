@@ -38,6 +38,7 @@
 			this.txb_newName.Name = "txb_newName";
 			this.txb_newName.Size = new System.Drawing.Size(179, 20);
 			this.txb_newName.TabIndex = 1;
+			this.txb_newName.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txb_newName_KeyPress);
 			// 
 			// btn_change
 			// 

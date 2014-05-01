@@ -26,5 +26,14 @@ namespace LevelEditor
 			tn.Text = txb_newName.Text;
 			this.Close();
 		}
+
+		private void txb_newName_KeyPress(object sender, KeyPressEventArgs e)
+		{
+			if (e.KeyChar == 13)
+			{
+				tn.Text = txb_newName.Text;
+				this.Close();
+			}
+		}
 	}
 }

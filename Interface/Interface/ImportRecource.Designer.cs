@@ -29,7 +29,6 @@
 		private void InitializeComponent()
 		{
 			this.components = new System.ComponentModel.Container();
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ImportRecource));
 			this.ofd_importResource = new System.Windows.Forms.OpenFileDialog();
 			this.btn_browse = new System.Windows.Forms.Button();
 			this.txb_input = new System.Windows.Forms.TextBox();
@@ -38,7 +37,6 @@
 			this.txb_fileName = new System.Windows.Forms.TextBox();
 			this.btn_import = new System.Windows.Forms.Button();
 			this.tw_fileTree = new System.Windows.Forms.TreeView();
-			this.il_treeViewImgs = new System.Windows.Forms.ImageList(this.components);
 			this.btn_createFolder = new System.Windows.Forms.Button();
 			this.btn_renameFile = new System.Windows.Forms.Button();
 			this.cms_treeView = new System.Windows.Forms.ContextMenuStrip(this.components);
@@ -105,22 +103,19 @@
 			// 
 			// tw_fileTree
 			// 
-			this.tw_fileTree.ImageIndex = 0;
-			this.tw_fileTree.ImageList = this.il_treeViewImgs;
+			this.tw_fileTree.AllowDrop = true;
 			this.tw_fileTree.Location = new System.Drawing.Point(15, 90);
 			this.tw_fileTree.Name = "tw_fileTree";
-			this.tw_fileTree.SelectedImageIndex = 0;
 			this.tw_fileTree.Size = new System.Drawing.Size(281, 324);
 			this.tw_fileTree.TabIndex = 8;
+			this.tw_fileTree.ItemDrag += new System.Windows.Forms.ItemDragEventHandler(this.tw_fileTree_ItemDrag);
 			this.tw_fileTree.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.tw_fileTree_AfterSelect);
 			this.tw_fileTree.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.tw_fileTree_NodeMouseClick);
-			// 
-			// il_treeViewImgs
-			// 
-			this.il_treeViewImgs.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("il_treeViewImgs.ImageStream")));
-			this.il_treeViewImgs.TransparentColor = System.Drawing.Color.Transparent;
-			this.il_treeViewImgs.Images.SetKeyName(0, "img.ico");
-			this.il_treeViewImgs.Images.SetKeyName(1, "folder.ico");
+			this.tw_fileTree.DragDrop += new System.Windows.Forms.DragEventHandler(this.tw_fileTree_DragDrop);
+			this.tw_fileTree.DragEnter += new System.Windows.Forms.DragEventHandler(this.tw_fileTree_DragEnter);
+			this.tw_fileTree.DragOver += new System.Windows.Forms.DragEventHandler(this.tw_fileTree_DragOver);
+			this.tw_fileTree.KeyDown += new System.Windows.Forms.KeyEventHandler(this.tw_fileTree_KeyDown);
+			this.tw_fileTree.KeyUp += new System.Windows.Forms.KeyEventHandler(this.tw_fileTree_KeyUp);
 			// 
 			// btn_createFolder
 			// 
@@ -183,6 +178,7 @@
 			this.Controls.Add(this.label1);
 			this.Controls.Add(this.txb_input);
 			this.Controls.Add(this.btn_browse);
+			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
 			this.Name = "ImportRecource";
 			this.Text = "Import Recource";
 			((System.ComponentModel.ISupportInitialize)(this.pb_preView)).EndInit();
@@ -204,7 +200,6 @@
 		private System.Windows.Forms.Button btn_createFolder;
 		private System.Windows.Forms.PictureBox pb_preView;
 		private System.Windows.Forms.Button btn_renameFile;
-		private System.Windows.Forms.ImageList il_treeViewImgs;
 		private System.Windows.Forms.ContextMenuStrip cms_treeView;
 		private System.Windows.Forms.Button btn_removeFolder;
 	}

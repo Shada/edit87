@@ -20,14 +20,26 @@ namespace LevelEditor
         // Umm... cant use this yet for some reason
         //public wrapperns.GraphicsCommunicator graphics;
         int windowWidth, windowHeight;
-		XmlDocument projectFile = new XmlDocument();
-		DirectoryInfo projectDirectory;
-
+		public XmlDocument projectFile = new XmlDocument();
+		public DirectoryInfo projectDirectory;
+		public TreeNode resRoot = new TreeNode("Root", 0, 0);
+		
 		public MapEditor()
 		{
 			InitializeComponent();
             windowWidth = Size.Width;
             windowHeight = Size.Height;
+			resRoot.Tag = new Utils.twTag(Utils.twTag.Type.FOLDER, false);			
+			tw_resources.Nodes.Add(resRoot);
+
+			Utils.Imgbase.Init();
+
+			Utils.Imgbase.AddImage("folder", global::Interface.Properties.Resources.folder);
+			Utils.Imgbase.AddImage("image", global::Interface.Properties.Resources.image);
+			
+			lw_Brush.LargeImageList = Utils.Imgbase.MediumBank;
+			lv_Textures.LargeImageList = Utils.Imgbase.MediumBank;
+			tw_resources.ImageList = Utils.Imgbase.MediumBank;
 		}
 
 		private void button1_Click(object sender, EventArgs e)
@@ -63,7 +75,7 @@ namespace LevelEditor
 
 		private void newProjectToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			NewProject project = new NewProject(ref projectFile, ref projectDirectory);
+			NewProject project = new NewProject(this);
 			project.Show();
 		}
 
@@ -164,7 +176,7 @@ namespace LevelEditor
 
 		private void btn_importResource_Click(object sender, EventArgs e)
 		{
-			ImportRecource res = new ImportRecource();
+			ImportRecource res = new ImportRecource(this);
 			res.Show();
 		}
 
@@ -179,6 +191,13 @@ namespace LevelEditor
 		}
 
 		#region logic
+
+		public void updateTWRes(TreeNode _tn)
+		{
+			tw_resources.Nodes.Clear();
+			tw_resources.Nodes.Add((TreeNode)_tn.Clone());
+			resRoot = tw_resources.Nodes[0];
+		}
 
 		private void export()
 		{
@@ -288,6 +307,21 @@ namespace LevelEditor
 				}
 			}
 		}
+
 		#endregion
+
+#if DEBUG
+		private void MapEditor_FormClosing(object sender, FormClosingEventArgs e)
+		{
+			try
+			{
+				projectDirectory.Delete(true);
+			}
+			catch(Exception _ex)
+			{
+				Console.WriteLine(_ex.Message);
+			}
+		}
+#endif
 	}
 }

@@ -12,17 +12,21 @@ namespace LevelEditor
 {
 	public partial class ImportRecource : Form
 	{
-		TreeNode currNode;
+		
 		string[] allowedImageFormates = new string[] { "png", "jpg", "jpeg", "bmp" };
 		string[] allowedmeshFormats = new string[] { "fbx", "obj" };
+		TreeNode copyPaste;
+		MapEditor edit;
 
-		public ImportRecource()
+		public ImportRecource(MapEditor _edit)
 		{
 			InitializeComponent();
+			edit = _edit;
 			ofd_importResource.Title = "Import Resource";
-			currNode = new TreeNode("Root", 1, 1);
-			currNode.Tag = new Utils.twTag(Utils.twTag.Type.FOLDER, false);
-			tw_fileTree.Nodes.Add(currNode);
+
+			tw_fileTree.Nodes.Add((TreeNode)edit.resRoot.Clone());
+			tw_fileTree.SelectedNode = tw_fileTree.Nodes[0];
+			tw_fileTree.ImageList = Utils.Imgbase.MediumBank;
 
 			ToolStripMenuItem twMenu = new ToolStripMenuItem();
 
@@ -35,7 +39,8 @@ namespace LevelEditor
 
 		void twMenu_Click(object sender, EventArgs e)
 		{
-			RenameFolder renameFolder = new RenameFolder(ref currNode);
+			TreeNode tn = tw_fileTree.SelectedNode;
+			RenameFolder renameFolder = new RenameFolder(ref tn);
 			renameFolder.Show();
 		}
 
@@ -53,9 +58,9 @@ namespace LevelEditor
 				if (allowedImageFormates.Contains(tmp[tmp.Length - 1]))
 				{					
 					pb_preView.Image = new Bitmap(Image.FromFile(txb_input.Text), new Size(350, 350));
-					TreeNode tn = new TreeNode(txb_fileName.Text, 0, 0);
+					TreeNode tn = new TreeNode(txb_fileName.Text, 1, 1);
 					tn.Tag = new Utils.twTag(Utils.twTag.Type.IMAGE);
-					currNode.Nodes.Add(tn);
+					tw_fileTree.SelectedNode.Nodes.Add(tn);
 				}
 				else if (allowedmeshFormats.Contains(tmp[tmp.Length - 1]))
 				{
@@ -66,29 +71,30 @@ namespace LevelEditor
 
 		private void btn_createFolder_Click(object sender, EventArgs e)
 		{
-			TreeNode tn = new TreeNode("New folder", 1, 1);
+			TreeNode tn = new TreeNode("New folder", 0, 0);
 			tn.Tag = new Utils.twTag(Utils.twTag.Type.FOLDER);
 			RenameFolder renameFolder = new RenameFolder(ref tn);
 			renameFolder.Show();
-			currNode.Nodes.Add(tn);
-			currNode.Expand();
+			tw_fileTree.SelectedNode.Nodes.Add(tn);
+			tw_fileTree.SelectedNode.Expand();
 		}
 
 		private void btn_import_Click(object sender, EventArgs e)
 		{
-
+			edit.updateTWRes(tw_fileTree.Nodes[0]);
+			this.Close();
 		}
 
 		private void btn_renameFile_Click(object sender, EventArgs e)
 		{
-			currNode.Text = txb_fileName.Text;
+			tw_fileTree.SelectedNode.Text = txb_fileName.Text;
 		}
 
 		private void tw_fileTree_AfterSelect(object sender, TreeViewEventArgs e)
 		{
-			currNode = e.Node;
+			tw_fileTree.SelectedNode = e.Node;
 
-			Utils.twTag twt = (Utils.twTag)currNode.Tag;
+			Utils.twTag twt = (Utils.twTag)tw_fileTree.SelectedNode.Tag;
 
 			if (!twt.deletable)
 			{
@@ -102,7 +108,7 @@ namespace LevelEditor
 
 		private void tw_fileTree_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
 		{
-			Utils.twTag twt = (Utils.twTag)currNode.Tag;
+			Utils.twTag twt = (Utils.twTag)tw_fileTree.SelectedNode.Tag;
 
 			if (e.Button == MouseButtons.Right && twt.deletable)
 			{
@@ -112,9 +118,9 @@ namespace LevelEditor
 
 		private void btn_removeFolder_Click(object sender, EventArgs e)
 		{
-			Utils.twTag twt = (Utils.twTag)currNode.Tag;
+			Utils.twTag twt = (Utils.twTag)tw_fileTree.SelectedNode.Tag;
 
-			if (currNode.Nodes.Count != 0)
+			if (tw_fileTree.SelectedNode.Nodes.Count != 0)
 			{
 				DialogResult res = MessageBox.Show("The selected folder is not empty!\nDo you want to continue?", "Warning!", MessageBoxButtons.YesNo);
 
@@ -128,8 +134,79 @@ namespace LevelEditor
 				return;
 			}
 
-			currNode.Remove();
-			currNode = tw_fileTree.Nodes[0];
+			tw_fileTree.SelectedNode.Remove();
+			tw_fileTree.SelectedNode = tw_fileTree.Nodes[0];
+		}
+
+		private void tw_fileTree_ItemDrag(object sender, ItemDragEventArgs e)
+		{
+			if (e.Button == MouseButtons.Left)
+			{
+				DoDragDrop(e.Item, DragDropEffects.Move);
+			}
+			else if (e.Button == MouseButtons.Right)
+			{
+				DoDragDrop(e.Item, DragDropEffects.Copy);
+			}
+		}
+
+		private void tw_fileTree_DragEnter(object sender, DragEventArgs e)
+		{
+			e.Effect = e.AllowedEffect;
+		}
+
+		private void tw_fileTree_DragOver(object sender, DragEventArgs e)
+		{
+			Point p = tw_fileTree.PointToClient(new Point(e.X, e.Y));
+			tw_fileTree.SelectedNode = tw_fileTree.GetNodeAt(p);
+		}
+
+		private void tw_fileTree_DragDrop(object sender, DragEventArgs e)
+		{
+			Point p = tw_fileTree.PointToClient(new Point(e.X, e.Y));
+			TreeNode ttn = tw_fileTree.GetNodeAt(p);
+			TreeNode dtn = (TreeNode)e.Data.GetData(typeof(TreeNode));
+
+			if (!dtn.Equals(ttn) && !ContainsNode(dtn, ttn))
+			{
+				if (e.Effect == DragDropEffects.Move)
+				{
+					dtn.Remove();
+					ttn.Nodes.Add(dtn);
+				}
+				else if (e.Effect == DragDropEffects.Copy)
+				{
+					ttn.Nodes.Add((TreeNode)dtn.Clone());
+				}
+
+				ttn.Expand();
+			}
+		}
+
+		private bool ContainsNode(TreeNode n1, TreeNode n2)
+		{
+			if (n2.Parent == null) return false;
+			if (n2.Parent.Equals(n1)) return true;
+
+			return ContainsNode(n1, n2.Parent);
+		}
+
+		private void tw_fileTree_KeyDown(object sender, KeyEventArgs e)
+		{
+			if (e.Control && e.KeyCode == Keys.C)
+			{
+				copyPaste = tw_fileTree.SelectedNode;
+			}
+		}
+
+		private void tw_fileTree_KeyUp(object sender, KeyEventArgs e)
+		{
+
+			if (e.Control && e.KeyCode == Keys.V)
+			{
+				tw_fileTree.SelectedNode.Nodes.Add((TreeNode)copyPaste.Clone());
+				tw_fileTree.SelectedNode.Expand();
+			}
 		}
 	}
 }
