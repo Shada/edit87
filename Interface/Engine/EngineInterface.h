@@ -14,5 +14,5 @@ public:
 
 	virtual void setRect(RECT t) = 0;
 
-	virtual HRESULT createTerrain(int width, int height, int pointStep, bool fromPerlinMap) = 0;
+	virtual HRESULT createTerrain(int width, int height, float pointStep, bool fromPerlinMap) = 0;
 };

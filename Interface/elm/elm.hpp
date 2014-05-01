@@ -11,6 +11,8 @@
 #ifndef _ELM_HPP_
 #define _ELM_HPP_
 
+#define PI 3.14159265359f
+
 #include "type_vec2.hpp"
 #include "type_vec3.hpp"
 #include "type_vec4.hpp"

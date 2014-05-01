@@ -22,7 +22,7 @@ namespace wrap
 		gfx->setRect(r);
 	}
 
-	void GraphicsCommunicator::createTerrain(int width, int height, int pointStep, bool fromPerlinMap)
+	void GraphicsCommunicator::createTerrain(int width, int height, float pointStep, bool fromPerlinMap)
 	{
 		gfx->createTerrain(width, height, pointStep, fromPerlinMap);
 	}

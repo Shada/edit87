@@ -1,10 +1,34 @@
 #include "RenderDX11.h"
+#pragma comment(lib, "D3DX11.lib")
+#include <D3DX11async.h>
 #include <d3dcompiler.h>
 
 RenderDX11::RenderDX11(HWND hWnd) : EngineInterface()
 {
 	this->hWnd = hWnd;
 	terrain = new Terrain();
+	terrainPos = terrain->getPosition();
+
+	camera = nullptr;
+	g_swapChain = nullptr;
+}
+
+void RenderDX11::setRect(RECT t)
+{
+	r = t;
+	int w = abs(r.right - r.left);
+	int h = abs(r.bottom - r.top);
+	if(!camera)
+		camera = new Camera(w, h, terrainPos, terrain->getWidth(), terrain->getHeight());
+	else
+		camera->resizeWindow(w, h);
+
+	if(!g_swapChain)
+		init();
+
+	CBOnce cb;
+	cb.projection = camera->getProj();
+	g_deviceContext->UpdateSubresource(g_buffers.at(cbOnceID), 0, NULL, &cb, 0, 0);
 }
 
 HRESULT RenderDX11::init()
@@ -61,7 +85,7 @@ HRESULT RenderDX11::init()
 	}
 
 	 // Create a render target view
-    ID3D11Texture2D *pBackBuffer = NULL, *pEditorBuffer = NULL;
+    ID3D11Texture2D *pBackBuffer = NULL;
     hr = g_swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&pBackBuffer);
     if(FAILED(hr))
 	{
@@ -92,7 +116,8 @@ HRESULT RenderDX11::init()
     descDepth.CPUAccessFlags = 0;
     descDepth.MiscFlags = 0;
 
-    hr = g_device->CreateTexture2D(&descDepth, NULL, &g_depthStencil);
+	ID3D11Texture2D *depthStencil = nullptr;
+    hr = g_device->CreateTexture2D(&descDepth, NULL, &depthStencil);
     if(FAILED(hr))
 	{
 		MessageBox(this->hWnd, "depthstencil made fail, lol", "fail, yo", 0);
@@ -113,7 +138,8 @@ HRESULT RenderDX11::init()
 	textureDesc.CPUAccessFlags = 0;
 	textureDesc.MiscFlags = 0;
 
-	hr = g_device->CreateTexture2D(&textureDesc, NULL, &g_renderTargetTexture);
+	ID3D11Texture2D *renderTargetTexture = nullptr;
+	hr = g_device->CreateTexture2D(&textureDesc, NULL, &renderTargetTexture);
     if(FAILED(hr))
 	{
 		MessageBox(this->hWnd, "rendertargettexture made fail, lol", "fail, yo", 0);
@@ -127,7 +153,7 @@ HRESULT RenderDX11::init()
 	rtDesc.Texture2D.MipSlice = 0;
 
 	// Create the render target view.
-	hr = g_device->CreateRenderTargetView(g_renderTargetTexture, &rtDesc, &g_renderTargetView);
+	hr = g_device->CreateRenderTargetView(renderTargetTexture, &rtDesc, &g_renderTargetView);
     if(FAILED(hr))
 	{
 		MessageBox(this->hWnd, "rendertargetview made fail, lol", "fail, yo", 0);
@@ -142,12 +168,14 @@ HRESULT RenderDX11::init()
 	srDesc.Texture2D.MipLevels = 1;
 
 	// Create the shader resource view.
-	hr = g_device->CreateShaderResourceView(g_renderTargetTexture, &srDesc, &g_shaderView);
+	hr = g_device->CreateShaderResourceView(renderTargetTexture, &srDesc, &g_shaderView);
     if(FAILED(hr))
 	{
 		MessageBox(this->hWnd, "shaderview made fail, lol", "fail, yo", 0);
         return hr;
 	}
+
+	SAFE_RELEASE(renderTargetTexture);
 
     // Create the depth stencil view
     D3D11_DEPTH_STENCIL_VIEW_DESC descDSV;
@@ -155,12 +183,14 @@ HRESULT RenderDX11::init()
     descDSV.Format = descDepth.Format;
     descDSV.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
     descDSV.Texture2D.MipSlice = 0;
-    hr = g_device->CreateDepthStencilView(g_depthStencil, &descDSV, &g_depthStencilView);
+    hr = g_device->CreateDepthStencilView(depthStencil, &descDSV, &g_depthStencilView);
     if(FAILED(hr))
 	{
 		MessageBox(this->hWnd, "depthstencilview made fail, lol", "fail, yo", 0);
         return hr;
 	}
+
+	SAFE_RELEASE(depthStencil);
 
     g_deviceContext->OMSetRenderTargets(1, &g_renderTargetView, g_depthStencilView);
 
@@ -266,9 +296,49 @@ HRESULT RenderDX11::init()
         return hr;
 	}
 
+	//create constant buffers
+	D3D11_BUFFER_DESC bd;
+	ZeroMemory(&bd, sizeof(bd));
+	bd.Usage = D3D11_USAGE_DEFAULT;
+	bd.ByteWidth = sizeof(CBOnce);
+	bd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	bd.CPUAccessFlags = 0;
+
+	ID3D11Buffer *b = nullptr;
+	hr = g_device->CreateBuffer(&bd, NULL, &b);
+	if(FAILED(hr))
+		return hr;
+
+	cbOnceID = g_buffers.size();
+	g_buffers.push_back(b);
+
+	b = nullptr;
+	hr = g_device->CreateBuffer(&bd, NULL, &b);
+	if(FAILED(hr))
+		return hr;
+
+	cbOnChangeID = g_buffers.size();
+	g_buffers.push_back(b);
+
+	D3D11_INPUT_ELEMENT_DESC standardLayout[] =
+	{
+		{ "POSITION",	0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 }
+	};
+
+	/* Create shaders */
+	ID3DBlob *terrainBlob;
+	compileShader("Shaders\\defaultVS.hlsl", "vs_4_0", &terrainBlob);
+	g_device->CreateVertexShader(terrainBlob->GetBufferPointer(), terrainBlob->GetBufferSize(), NULL, &g_terrainVS);
+	g_device->CreateInputLayout(standardLayout, ARRAYSIZE(standardLayout), terrainBlob->GetBufferPointer(), terrainBlob->GetBufferSize(), &g_layout);
+	terrainBlob->Release();
+
+	compileShader("Shaders\\defaultPS.hlsl", "ps_4_0", &terrainBlob);
+	g_device->CreatePixelShader(terrainBlob->GetBufferPointer(), terrainBlob->GetBufferSize(), NULL, &g_terrainPS);
+
+	terrainBlob->Release();
     return S_OK;
 }
-HRESULT RenderDX11::compileShader(LPCWSTR filePath, LPCSTR shaderType)
+HRESULT RenderDX11::compileShader(LPCSTR filePath, LPCSTR shaderType, ID3DBlob **shaderBlob)
 {
 	UINT flags = D3DCOMPILE_ENABLE_STRICTNESS;
 #if defined( DEBUG ) || defined( _DEBUG )
@@ -277,17 +347,24 @@ HRESULT RenderDX11::compileShader(LPCWSTR filePath, LPCSTR shaderType)
 	flags |= D3DCOMPILE_OPTIMIZATION_LEVEL3;
 #endif
 
-    ID3DBlob* shaderBlob = nullptr;
     ID3DBlob* errorBlob = nullptr;
-	ID3DBlob *blob = NULL;
+	HRESULT hr = D3DX11CompileFromFile(filePath, NULL, NULL, "main", shaderType, flags, 0, NULL, shaderBlob, &errorBlob, NULL);
+	if(FAILED(hr))
+    {
+        if(errorBlob != NULL)
+            OutputDebugStringA((char*)errorBlob->GetBufferPointer());
+        SAFE_RELEASE( errorBlob );
+        return hr;
+    }
+    SAFE_RELEASE(errorBlob);
 	//D3DReadFileToBlob(filePath,&blob);
     //HRESULT hr = D3DCompileFromFile( filePath, NULL, D3D_COMPILE_STANDARD_FILE_INCLUDE,
     //                                 "main", shaderType,
     //                                 flags, 0, &shaderBlob, &errorBlob );
-	return S_OK;
+	return hr;
 }
 
-HRESULT RenderDX11::createTerrain(int width, int height, int pointStep, bool fromPerlinMap)
+HRESULT RenderDX11::createTerrain(int width, int height, float pointStep, bool fromPerlinMap)
 {
 	std::vector<elm::vec3> points = *terrain->createTerrain(width, height, pointStep, fromPerlinMap);
 
@@ -318,14 +395,23 @@ HRESULT RenderDX11::createTerrain(int width, int height, int pointStep, bool fro
 	return S_OK;
 }
 
-const float color[4] = {1.f, 1.f, 1.f, 0.f};
+const float color[4] = {1.f, 1.f, 1.f, 0.5f};
 void RenderDX11::renderScene()
 {
+	CBOnChange cb;
+	cb.view = camera->getView();
+	cb.position = elm::vec4(camera->getEye(), 1.f);
+	cb.world = elm::mat4();
+	g_deviceContext->UpdateSubresource(g_buffers.at(cbOnChangeID), 0, NULL, &cb, 0, 0);
+
 	// Terrain
 	g_deviceContext->OMSetDepthStencilState(g_depthStencilStateEnable, 0);
 	g_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	//g_deviceContext->IASetInputLayout(techs.at(shaderID).layout);
+	g_deviceContext->IASetInputLayout(g_layout);
 	
+	g_deviceContext->VSSetConstantBuffers(0, 1, &g_buffers.at(cbOnceID));
+	g_deviceContext->VSSetConstantBuffers(1, 1, &g_buffers.at(cbOnChangeID));
+
 	float blendFactor[4] = {0.f, 0.f, 0.f, 0.f};
 	g_deviceContext->OMSetBlendState(g_blendDisable, blendFactor, 0xffffffff);
 
@@ -334,8 +420,8 @@ void RenderDX11::renderScene()
 	UINT offset = 0;
 	g_deviceContext->IASetVertexBuffers(0, 1, &g_buffers.at(terrainID), &stride, &offset);
 
-	//g_deviceContext->VSSetShader(techs.at(shaderID).vertex, NULL, 0);
-	//g_deviceContext->PSSetShader(techs.at(shaderID).pixel, NULL, 0);
+	g_deviceContext->VSSetShader(g_terrainVS, NULL, 0);
+	g_deviceContext->PSSetShader(g_terrainPS, NULL, 0);
 	
 	//g_deviceContext->PSSetSamplers(0, 1, &techs.at(shaderID).sampler);
 
@@ -343,7 +429,7 @@ void RenderDX11::renderScene()
 	
 	g_swapChain->Present(0, 0);
 	g_deviceContext->ClearRenderTargetView(g_renderTargetView, color);
-	g_deviceContext->ClearDepthStencilView(g_depthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
+	g_deviceContext->ClearDepthStencilView(g_depthStencilView, D3D11_CLEAR_DEPTH, 1.f, 0);
 
 	SetWindowTextA(hWnd, "This is now a draw application");
 }
@@ -356,8 +442,6 @@ RenderDX11::~RenderDX11()
     g_deviceContext->ClearState();
     SAFE_RELEASE(g_swapChain);
 	SAFE_RELEASE(g_renderTargetView);
-	SAFE_RELEASE(g_depthStencil);
-	SAFE_RELEASE(g_renderTargetTexture);
 	SAFE_RELEASE(g_depthStencilView);
 	SAFE_RELEASE(g_shaderView);
 

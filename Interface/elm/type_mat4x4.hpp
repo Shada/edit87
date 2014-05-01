@@ -42,7 +42,7 @@ namespace elm
 		}
 		const vec4& operator[](int i) const
 		{
-			return r[0];
+			return r[i];
 		}
 		friend mat4 operator+(const mat4 &m, const mat4 &n)
 		{

@@ -15,7 +15,7 @@ namespace wrap
 
 		void setRenderArea(int x, int y, int width, int height);
 
-		void createTerrain(int width, int height, int pointStep, bool fromPerlinMap);
+		void createTerrain(int width, int height, float pointStep, bool fromPerlinMap);
 
 		void renderScene();
 		void mouseReleased(MouseKeyType mType);

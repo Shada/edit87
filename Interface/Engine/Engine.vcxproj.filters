@@ -30,6 +30,9 @@
     <ClInclude Include="Terrain.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Camera.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="RenderDX11.cpp">
@@ -41,12 +44,15 @@
     <ClCompile Include="Terrain.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Camera.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="Shaders\defaultVS.hlsl">
+    <FxCompile Include="..\Interface\bin\Shaders\defaultPS.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
-    <FxCompile Include="Shaders\defaultPS.hlsl">
+    <FxCompile Include="..\Interface\bin\Shaders\defaultVS.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
   </ItemGroup>

@@ -3,15 +3,13 @@ Assembly Wrapper, Version=0.0.*, Culture=Invariant Language (Invariant Country):
 	hash=SHA1, flags=PublicKey
 Assembly mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089: 
 	hash=None, flags=None
-Assembly System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089: 
-	hash=None, flags=None
 Class wrap.GraphicsCommunicator: AutoLayout, AnsiClass, Class, Public, BeforeFieldInit
     Void .ctor(IntPtr): PrivateScope, Public, HideBySig, SpecialName, RTSpecialName
   Interfaces:
     System.IDisposable
   Methods:
     setRenderArea(Int32, Int32, Int32, Int32): PrivateScope, Public, HideBySig
-    createTerrain(Int32, Int32, Single, Boolean(HasFieldMarshal)): PrivateScope, Public, HideBySig
+    createTerrain(Int32, Int32, Int32, Boolean(HasFieldMarshal)): PrivateScope, Public, HideBySig
     renderScene(): PrivateScope, Public, HideBySig
     mouseReleased(MouseKeyType): PrivateScope, Public, HideBySig
     mousePressed(MouseKeyType): PrivateScope, Public, HideBySig
