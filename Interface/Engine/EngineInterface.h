@@ -8,8 +8,6 @@ public:
 	EngineInterface() {}
 	virtual ~EngineInterface() {}
 
-	virtual HRESULT init() = 0;
-
 	virtual void renderScene() = 0;
 
 	virtual void setRect(RECT t) = 0;

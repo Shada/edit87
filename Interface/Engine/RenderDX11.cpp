@@ -25,10 +25,6 @@ void RenderDX11::setRect(RECT t)
 
 	if(!g_swapChain)
 		init();
-
-	CBOnce cb;
-	cb.projection = camera->getProj();
-	g_deviceContext->UpdateSubresource(g_buffers.at(cbOnceID), 0, NULL, &cb, 0, 0);
 }
 
 HRESULT RenderDX11::init()
@@ -46,7 +42,7 @@ HRESULT RenderDX11::init()
         D3D_DRIVER_TYPE_WARP,
         D3D_DRIVER_TYPE_REFERENCE,
     };
-    UINT numDriverTypes = ARRAYSIZE( driverTypes );
+    UINT numDriverTypes = ARRAYSIZE(driverTypes);
 
     D3D_FEATURE_LEVEL featureLevels[] =
     {
@@ -124,59 +120,6 @@ HRESULT RenderDX11::init()
         return hr;
 	}
 
-	// Create render target for texture (used by the editor)
-	D3D11_TEXTURE2D_DESC textureDesc;
-	ZeroMemory(&textureDesc, sizeof(textureDesc));
-	textureDesc.Width = width;
-	textureDesc.Height = height;
-	textureDesc.MipLevels = 1;
-	textureDesc.ArraySize = 1;
-	textureDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
-	textureDesc.SampleDesc.Count = 1;
-	textureDesc.Usage = D3D11_USAGE_DEFAULT;
-	textureDesc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
-	textureDesc.CPUAccessFlags = 0;
-	textureDesc.MiscFlags = 0;
-
-	ID3D11Texture2D *renderTargetTexture = nullptr;
-	hr = g_device->CreateTexture2D(&textureDesc, NULL, &renderTargetTexture);
-    if(FAILED(hr))
-	{
-		MessageBox(this->hWnd, "rendertargettexture made fail, lol", "fail, yo", 0);
-        return hr;
-	}
-
-	// Setup the description of the render target view
-	D3D11_RENDER_TARGET_VIEW_DESC rtDesc;
-	rtDesc.Format = textureDesc.Format;
-	rtDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
-	rtDesc.Texture2D.MipSlice = 0;
-
-	// Create the render target view.
-	hr = g_device->CreateRenderTargetView(renderTargetTexture, &rtDesc, &g_renderTargetView);
-    if(FAILED(hr))
-	{
-		MessageBox(this->hWnd, "rendertargetview made fail, lol", "fail, yo", 0);
-        return hr;
-	}
-
-	// Setup the description of the shader resource view
-	D3D11_SHADER_RESOURCE_VIEW_DESC srDesc;
-	srDesc.Format = textureDesc.Format;	
-	srDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
-	srDesc.Texture2D.MostDetailedMip = 0;
-	srDesc.Texture2D.MipLevels = 1;
-
-	// Create the shader resource view.
-	hr = g_device->CreateShaderResourceView(renderTargetTexture, &srDesc, &g_shaderView);
-    if(FAILED(hr))
-	{
-		MessageBox(this->hWnd, "shaderview made fail, lol", "fail, yo", 0);
-        return hr;
-	}
-
-	SAFE_RELEASE(renderTargetTexture);
-
     // Create the depth stencil view
     D3D11_DEPTH_STENCIL_VIEW_DESC descDSV;
     ZeroMemory( &descDSV, sizeof(descDSV) );
@@ -202,7 +145,7 @@ HRESULT RenderDX11::init()
 	rasterDesc.DepthBiasClamp = 0.f;
 	rasterDesc.DepthClipEnable = true;
 	rasterDesc.FillMode = D3D11_FILL_SOLID;
-	rasterDesc.FrontCounterClockwise = false;
+	rasterDesc.FrontCounterClockwise = true;
 	rasterDesc.MultisampleEnable = false;
 	rasterDesc.ScissorEnable = false;
 	rasterDesc.SlopeScaledDepthBias = 0.0f;
@@ -312,6 +255,7 @@ HRESULT RenderDX11::init()
 	cbOnceID = g_buffers.size();
 	g_buffers.push_back(b);
 
+	bd.ByteWidth = sizeof(CBOnChange);
 	b = nullptr;
 	hr = g_device->CreateBuffer(&bd, NULL, &b);
 	if(FAILED(hr))
@@ -322,22 +266,35 @@ HRESULT RenderDX11::init()
 
 	D3D11_INPUT_ELEMENT_DESC standardLayout[] =
 	{
-		{ "POSITION",	0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 }
+		{ "POSITION",	0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "NORMAL",		0, DXGI_FORMAT_R32G32B32_FLOAT, 0, sizeof(float) * 3, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{ "TEXCOORD",	0, DXGI_FORMAT_R32G32_FLOAT,	0, sizeof(float) * 6, D3D11_INPUT_PER_VERTEX_DATA, 0}
 	};
 
 	/* Create shaders */
 	ID3DBlob *terrainBlob;
-	compileShader("Shaders\\defaultVS.hlsl", "vs_4_0", &terrainBlob);
+	compileShader("..\\Shaders\\defaultVS.hlsl", "vs_4_0", &terrainBlob);
 	g_device->CreateVertexShader(terrainBlob->GetBufferPointer(), terrainBlob->GetBufferSize(), NULL, &g_terrainVS);
 	g_device->CreateInputLayout(standardLayout, ARRAYSIZE(standardLayout), terrainBlob->GetBufferPointer(), terrainBlob->GetBufferSize(), &g_layout);
 	terrainBlob->Release();
 
-	compileShader("Shaders\\defaultPS.hlsl", "ps_4_0", &terrainBlob);
+	compileShader("..\\Shaders\\defaultPS.hlsl", "ps_4_0", &terrainBlob);
 	g_device->CreatePixelShader(terrainBlob->GetBufferPointer(), terrainBlob->GetBufferSize(), NULL, &g_terrainPS);
 
 	terrainBlob->Release();
+
+	ID3D11ShaderResourceView *tex;
+	hr = D3DX11CreateShaderResourceViewFromFile(g_device, "..\\Textures\\grass.png", NULL, NULL, &tex, NULL);
+	if(FAILED(hr))
+	{
+		MessageBox(this->hWnd, "Image load made fail, lol", "fail, yo", 0);
+		return hr;
+	}
+	g_textures.push_back(tex);
+	createSampleStates();
     return S_OK;
 }
+
 HRESULT RenderDX11::compileShader(LPCSTR filePath, LPCSTR shaderType, ID3DBlob **shaderBlob)
 {
 	UINT flags = D3DCOMPILE_ENABLE_STRICTNESS;
@@ -357,31 +314,58 @@ HRESULT RenderDX11::compileShader(LPCSTR filePath, LPCSTR shaderType, ID3DBlob *
         return hr;
     }
     SAFE_RELEASE(errorBlob);
-	//D3DReadFileToBlob(filePath,&blob);
-    //HRESULT hr = D3DCompileFromFile( filePath, NULL, D3D_COMPILE_STANDARD_FILE_INCLUDE,
-    //                                 "main", shaderType,
-    //                                 flags, 0, &shaderBlob, &errorBlob );
+
+	return hr;
+}
+
+HRESULT RenderDX11::createSampleStates()
+{
+	D3D11_SAMPLER_DESC sampDesc;
+	ZeroMemory( &sampDesc, sizeof(sampDesc));
+	sampDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+	sampDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+	sampDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+	sampDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+	sampDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
+	sampDesc.MinLOD = 0;
+	sampDesc.MaxLOD = D3D11_FLOAT32_MAX;
+
+	HRESULT hr;
+	hr = g_device->CreateSamplerState(&sampDesc, &g_wrap);
+	if(FAILED(hr))
+		MessageBox(hWnd, "Error creating sampler state", "ERROR", MB_OK);
+
+	sampDesc.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP;
+	sampDesc.AddressV = D3D11_TEXTURE_ADDRESS_CLAMP;
+	sampDesc.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP;
+
+	hr = g_device->CreateSamplerState(&sampDesc, &g_clamp);
+	if(FAILED(hr))
+		MessageBox(hWnd, "Error creating sampler state", "ERROR", MB_OK);
+
 	return hr;
 }
 
 HRESULT RenderDX11::createTerrain(int width, int height, float pointStep, bool fromPerlinMap)
 {
-	std::vector<elm::vec3> points = *terrain->createTerrain(width, height, pointStep, fromPerlinMap);
+	std::vector<unsigned int> indexBuffer;
+	std::vector<Vertex> vertexBuffer;
+	terrain->createTerrain(width, height, pointStep, fromPerlinMap, vertexBuffer, indexBuffer);
 
 	D3D11_SUBRESOURCE_DATA initData;
-	initData.pSysMem = &points.at(0);
+	initData.pSysMem = &vertexBuffer.at(0);
 	initData.SysMemPitch = 0;
 	initData.SysMemSlicePitch = 0;
 
 	D3D11_BUFFER_DESC bd;
 	ZeroMemory(&bd, sizeof(bd));
 	bd.Usage = D3D11_USAGE_DYNAMIC;
-    bd.ByteWidth = sizeof(elm::vec3) * points.size();
+    bd.ByteWidth = sizeof(Vertex) * vertexBuffer.size();
     bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
     bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 	bd.MiscFlags      = 0;
 
-	ID3D11Buffer *buffer;
+	ID3D11Buffer *buffer = nullptr;
 	HRESULT hr = g_device->CreateBuffer(&bd, &initData, &buffer);
     if(FAILED(hr))
 	{
@@ -389,17 +373,38 @@ HRESULT RenderDX11::createTerrain(int width, int height, float pointStep, bool f
 		return hr;
 	}
 
+	terrainVertexBufferID = g_buffers.size();
 	g_buffers.push_back(buffer);
-	terrainID = g_buffers.size() - 1;
+
+	initData.pSysMem = &indexBuffer.at(0);
+
+	bd.Usage = D3D11_USAGE_IMMUTABLE;
+	bd.BindFlags = D3D11_BIND_INDEX_BUFFER;
+	bd.ByteWidth = sizeof(unsigned int) * indexBuffer.size();
+	bd.CPUAccessFlags = 0;
+
+	buffer = nullptr;
+	hr = g_device->CreateBuffer(&bd, &initData, &buffer);
+	if (FAILED(hr))
+	{
+		MessageBox(NULL,"could not create terrain indexbuffer", "ERROR", S_OK);
+		return hr;
+	}
+
+	terrainIndexBufferID = g_buffers.size();
+	g_buffers.push_back(buffer);
 
 	return S_OK;
 }
 
-const float color[4] = {1.f, 1.f, 1.f, 0.5f};
+const float color[4] = {0.f, 1.f, 1.f, 1.f};
 void RenderDX11::renderScene()
 {
+	g_deviceContext->ClearRenderTargetView(g_renderTargetView, color);
+	g_deviceContext->ClearDepthStencilView(g_depthStencilView, D3D11_CLEAR_DEPTH, 1.f, 0);
+
 	CBOnChange cb;
-	cb.view = camera->getView();
+	cb.viewProj = camera->getView() * camera->getProj();
 	cb.position = elm::vec4(camera->getEye(), 1.f);
 	cb.world = elm::mat4();
 	g_deviceContext->UpdateSubresource(g_buffers.at(cbOnChangeID), 0, NULL, &cb, 0, 0);
@@ -409,34 +414,31 @@ void RenderDX11::renderScene()
 	g_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	g_deviceContext->IASetInputLayout(g_layout);
 	
-	g_deviceContext->VSSetConstantBuffers(0, 1, &g_buffers.at(cbOnceID));
-	g_deviceContext->VSSetConstantBuffers(1, 1, &g_buffers.at(cbOnChangeID));
+	g_deviceContext->PSSetSamplers(0, 1, &g_wrap);
+	g_deviceContext->PSSetShaderResources(0, 1, &g_textures.at(0));
+	g_deviceContext->VSSetConstantBuffers(0, 1, &g_buffers.at(cbOnChangeID));
 
 	float blendFactor[4] = {0.f, 0.f, 0.f, 0.f};
 	g_deviceContext->OMSetBlendState(g_blendDisable, blendFactor, 0xffffffff);
 
 	// Set vertex buffer
-	UINT stride = sizeof(elm::vec3);
+	UINT stride = sizeof(Vertex);
 	UINT offset = 0;
-	g_deviceContext->IASetVertexBuffers(0, 1, &g_buffers.at(terrainID), &stride, &offset);
+	g_deviceContext->IASetVertexBuffers(0, 1, &g_buffers.at(terrainVertexBufferID), &stride, &offset);
+	g_deviceContext->IASetIndexBuffer(g_buffers.at(terrainIndexBufferID), DXGI_FORMAT_R32_UINT, offset);
 
 	g_deviceContext->VSSetShader(g_terrainVS, NULL, 0);
 	g_deviceContext->PSSetShader(g_terrainPS, NULL, 0);
-	
-	//g_deviceContext->PSSetSamplers(0, 1, &techs.at(shaderID).sampler);
 
-	g_deviceContext->Draw(terrain->getSize(), 0);
+	g_deviceContext->DrawIndexed(terrain->getIndexCount(), 0, 0);
 	
 	g_swapChain->Present(0, 0);
-	g_deviceContext->ClearRenderTargetView(g_renderTargetView, color);
-	g_deviceContext->ClearDepthStencilView(g_depthStencilView, D3D11_CLEAR_DEPTH, 1.f, 0);
-
-	SetWindowTextA(hWnd, "This is now a draw application");
 }
 
 RenderDX11::~RenderDX11()
 {
 	SAFE_DELETE(terrain);
+	SAFE_DELETE(camera);
 
 	g_deviceContext->Flush();
     g_deviceContext->ClearState();

@@ -11,25 +11,19 @@
 
 struct CBOnce
 {
-	elm::mat4 projection;
+	elm::mat4 crap;
 };
 
 struct CBOnChange
 {
-	elm::mat4 view, world;
+	elm::mat4 viewProj, world;
 	elm::vec4 position;
-};
-
-struct Vertex
-{
-	elm::vec3 position, normal;
-	elm::vec2 texCoord;
 };
 
 class RenderDX11 : public EngineInterface
 {
 private:
-	int terrainID, modelID, cbOnceID, cbOnChangeID;
+	int terrainVertexBufferID, terrainIndexBufferID, modelID, cbOnceID, cbOnChangeID;
 
 	elm::vec3 terrainPos;
 	
@@ -53,6 +47,9 @@ private:
 	ID3D11BlendState			*g_blendEnable,
 								*g_blendDisable,
 								*g_blendAlpha;
+
+	ID3D11SamplerState			*g_wrap,
+								*g_clamp;
 								
 	ID3D11DepthStencilState		*g_depthStencilStateEnable;
 	ID3D11DepthStencilState		*g_depthStencilStateDisable;
@@ -63,8 +60,10 @@ private:
 	ID3D11PixelShader			*g_terrainPS;
 
 	std::vector<ID3D11Buffer*>	g_buffers;
+	std::vector<ID3D11ShaderResourceView*> g_textures;
 
 	HRESULT init();
+	HRESULT createSampleStates();
 	HRESULT compileShader(LPCSTR filePath, LPCSTR shaderType, ID3DBlob **shaderBlob);
 
 public:

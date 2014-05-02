@@ -2,7 +2,7 @@
 
 Camera::Camera(int width, int height, elm::vec3 terrainPosition, float dimX, float dimY)
 {
-	vEye		= elm::vec3(100, 500, 100);
+	vEye		= elm::vec3(100, 40, 100);
 	vRight		= elm::vec3(1, 0, 0);
 	vUp			= elm::vec3(0, 1, 0);
 	vLook		= elm::vec3(0, 0, 1);

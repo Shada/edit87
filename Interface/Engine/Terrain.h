@@ -3,6 +3,13 @@
 #include <vector>
 #include "../elm/elm.hpp"
 
+struct Vertex
+{
+	elm::vec3 pos;
+	elm::vec3 normal;
+	elm::vec2 texCoord;
+};
+
 class Terrain
 {
 private:
@@ -11,6 +18,8 @@ private:
 	std::vector<elm::vec3> points;
 
 	elm::vec3 position;
+
+	void createTerrainNormals(std::vector<Vertex> &vBuffer);
 public:
 	Terrain();
 	~Terrain();
@@ -19,6 +28,7 @@ public:
 	float getWidth()				{ return width * step; }
 	float getHeight()				{ return height * step; }
 	const unsigned int getSize()	{ return points.size(); }
+	const unsigned int getIndexCount() { return (width - 1) * (height - 1) * 6; }
 
-	std::vector<elm::vec3> *createTerrain(int w, int h, float pointStep, bool fromPerlinMap = false);
+	void createTerrain(int w, int h, float pointStep, bool fromPerlinMap, std::vector<Vertex> &vBuffer, std::vector<unsigned int> &iBuffer);
 };
