@@ -21,7 +21,7 @@ void Terrain::createTerrain(int w, int h, float pointStep, bool fromPerlinMap, s
 	{
 		for(int x = 0; x < width; x++)
 		{
-			vBuffer.at(y * width + x).pos = points.at(y * width + x) = elm::vec3(x * step, 0, y * step);
+			vBuffer.at(y * width + x).pos = points.at(y * width + x) = elm::vec3(x * step, (float)(rand() % 15), y * step);
 			vBuffer.at(y * width + x).texCoord.x = (vBuffer.at(y * width + x).pos.x + (0.5f * width)) / width;
 			vBuffer.at(y * width + x).texCoord.y = (vBuffer.at(y * width + x).pos.z - (0.5f * height)) / -height;
 

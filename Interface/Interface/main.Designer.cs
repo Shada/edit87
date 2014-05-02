@@ -88,6 +88,7 @@
             this.pb_scene = new System.Windows.Forms.PictureBox();
             this.bindingSource1 = new System.Windows.Forms.BindingSource(this.components);
             this.panel_Left = new System.Windows.Forms.Panel();
+            this.timer1 = new System.Windows.Forms.Timer(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.nud_brushIntensity)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nud_BrushSize)).BeginInit();
             this.menuStrip.SuspendLayout();
@@ -557,6 +558,11 @@
             this.panel_Left.Size = new System.Drawing.Size(221, 612);
             this.panel_Left.TabIndex = 32;
             // 
+            // timer1
+            // 
+            this.timer1.Interval = 33;
+            this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
+            // 
             // MapEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -576,6 +582,8 @@
             this.MinimumSize = new System.Drawing.Size(1280, 720);
             this.Name = "MapEditor";
             this.Text = "Map Editor";
+            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.MapEditor_KeyDown);
+            this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.MapEditor_KeyUp);
             this.Resize += new System.EventHandler(this.MapEditor_Resize);
             ((System.ComponentModel.ISupportInitialize)(this.nud_brushIntensity)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nud_BrushSize)).EndInit();
@@ -641,6 +649,7 @@
         private System.Windows.Forms.BindingSource bindingSource1;
 		private System.Windows.Forms.ToolStripMenuItem newProjectToolStripMenuItem;
 		private System.Windows.Forms.Panel panel_Left;
+        private System.Windows.Forms.Timer timer1;
 
 	}
 }

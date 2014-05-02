@@ -74,4 +74,6 @@ public:
 	void setRect(RECT t);
 
 	HRESULT createTerrain(int width, int height, float pointStep, bool fromPerlinMap);
+
+	void move(float alongX, float alongZ) { camera->move(elm::vec2(alongX, alongZ)); }
 };

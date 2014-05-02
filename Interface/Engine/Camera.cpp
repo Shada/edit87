@@ -7,9 +7,9 @@ Camera::Camera(int width, int height, elm::vec3 terrainPosition, float dimX, flo
 	vUp			= elm::vec3(0, 1, 0);
 	vLook		= elm::vec3(0, 0, 1);
 
-	//elm::rotationAxis(mRot, elm::vec3(1, 0, 0), PI / 6);
-	//vLook = mRot * vLook;
-	//vUp = mRot * vUp;
+	elm::rotationAxis(mRot, elm::vec3(1, 0, 0), -PI / 6);
+	vLook = mRot * vLook;
+	vUp = mRot * vUp;
 
 	elm::perspectiveFovLH(mProj, PI / 2, (float)width / height, 1.f, 20000.f);
 	elm::lookAtLH(mView, vLook, vUp, vEye);
@@ -17,7 +17,7 @@ Camera::Camera(int width, int height, elm::vec3 terrainPosition, float dimX, flo
 
 void Camera::move(elm::vec2 direction)
 {
-	vEye.xz += direction;
+	vEye.xz += elm::normalize((direction.x == 0 ? -direction.y * vRight.xz : direction.x * vLook.xz)) * 5;
 	elm::lookAtLH(mView, vLook, vUp, vEye);
 }
 

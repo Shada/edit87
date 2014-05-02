@@ -18,11 +18,17 @@ namespace LevelEditor
 	{
         private wrap.GraphicsCommunicator graphics;
         int windowWidth, windowHeight;
+        private bool forwardKey, backwardKey, leftKey, rightKey;
 
 		public MapEditor()
 		{
+            this.KeyPreview = true;
             graphics = new GraphicsCommunicator(this.Handle);
 			InitializeComponent();
+
+            timer1.Interval = 33;
+            timer1.Start();
+
             windowWidth = Size.Width;
             windowHeight = Size.Height;
             graphics.createTerrain(256, 256, 5, false);
@@ -238,5 +244,35 @@ namespace LevelEditor
 				cb_history.Visible = true;
 			}
 		}
+
+        private void MapEditor_KeyDown(object sender, KeyEventArgs e)
+        {
+            switch (e.KeyCode)
+            {
+                case Keys.W:    forwardKey = true;      break;
+                case Keys.S:    backwardKey = true;     break;
+                case Keys.A:    leftKey = true;         break;
+                case Keys.D:    rightKey = true;        break;
+            }
+        }
+
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            if (forwardKey) graphics.moveCamera((sbyte)'W');
+            else if (backwardKey) graphics.moveCamera((sbyte)'S');
+            if (leftKey) graphics.moveCamera((sbyte)'A');
+            else if (rightKey) graphics.moveCamera((sbyte)'D');
+        }
+
+        private void MapEditor_KeyUp(object sender, KeyEventArgs e)
+        {
+            switch (e.KeyCode)
+            {
+                case Keys.W:    forwardKey = false;     break;
+                case Keys.S:    backwardKey = false;    break;
+                case Keys.A:    leftKey = false;        break;
+                case Keys.D:    rightKey = false;       break;
+            }
+        }
 	}
 }

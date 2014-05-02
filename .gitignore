@@ -3,11 +3,13 @@
 *.lo
 *.o
 *.obj
+*.ilk
+*.idb
 
 # Compiled Dynamic libraries
 *.so
 *.dylib
-*.dll
+*.dll*
 
 # Compiled Static libraries
 *.lai
@@ -25,8 +27,12 @@
 
 *.pdb
 *.FileListAbsolute.txt
+Interface.csproj*
+LevelEditor.MapEditor*
 *.Cashe
 *.cashe
+*.cache
+*.Cache
 *.suo
 TemporaryGeneratedFile*
 *.tlog
@@ -36,7 +42,5 @@ TemporaryGeneratedFile*
 *htm
 *.bi
 *.resources
-*.cache
-*.Cache
 *.exe.config
 *.manifest
