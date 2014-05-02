@@ -15,10 +15,13 @@ namespace LevelEditor
 {
 	public partial class MapEditor : Form
 	{
-        private wrap.GraphicsCommunicator graphics;
+        bool saveLayout = true;
+        wrap.GraphicsCommunicator graphics;
         int windowWidth, windowHeight;
+        DeserializeDockContent deserializeDockContent;
 
-        DockContent[] panels = new DockContent[10];
+        DockContent[] panels    = new DockContent[10];
+        string[] panelStrings   = new string[10];       //the string names of the panel class types
 
 		public MapEditor()
 		{
@@ -28,22 +31,35 @@ namespace LevelEditor
             windowHeight = Size.Height;
             mainDockPanel.DockRightPortion = 200;
             mainDockPanel.DockLeftPortion = 215;
+
             panels[0] = new PanBrushes();
             panels[0].Show(mainDockPanel, DockState.DockRight);
+            panelStrings[0] = typeof(PanBrushes).ToString();
+
             panels[1] = new PanTextures();
             panels[1].Show(mainDockPanel, DockState.Float);
             panels[1].DockHandler.FloatPane.DockTo(mainDockPanel.DockWindows[DockState.DockRight]);
+            panelStrings[1] = typeof(PanTextures).ToString();
+
             panels[2] = new PanResources();
             panels[2].Show(mainDockPanel, DockState.Float);
             panels[2].DockHandler.FloatPane.DockTo(mainDockPanel.DockWindows[DockState.DockRight]);
+            panelStrings[2] = typeof(PanResources).ToString();
+
             panels[3] = new PanRender();
             panels[3].Show(mainDockPanel, DockState.Document);
+            panelStrings[3] = typeof(PanRender).ToString();
+
             panels[4] = new PanLibrary();
             panels[4].Show(mainDockPanel, DockState.Float);
             panels[4].DockHandler.FloatPane.DockTo(mainDockPanel.DockWindows[DockState.DockLeft]);
+            panelStrings[4] = typeof(PanLibrary).ToString();
+
             panels[5] = new PanProperties();
             panels[5].Show(mainDockPanel, DockState.Float);
             panels[5].DockHandler.FloatPane.DockTo(mainDockPanel.DockWindows[DockState.DockLeft]);
+            panelStrings[5] = typeof(PanProperties).ToString();
+            deserializeDockContent = new DeserializeDockContent(GetContentFromPersistString);
 		}
 
 		private void btn_TerrainBrush_Click(object sender, EventArgs e)
@@ -240,7 +256,9 @@ namespace LevelEditor
 
         private void MapEditor_Load(object sender, EventArgs e)
         {
-
+            string xmlFile = "PanelLayout.xml";
+            DeserializeDockContent ddc = new DeserializeDockContent(GetContentFromPersistString);
+            mainDockPanel.LoadFromXml(xmlFile, ddc);
         }
 
         private void menuStrip_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
@@ -250,12 +268,23 @@ namespace LevelEditor
 
         private void exportPreferencesToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            mainDockPanel.SaveAsXml("test");
+            string xmlFile = "PanelLayout.xml";
+            mainDockPanel.SaveAsXml(xmlFile);
         }
 
         private void importPreferencesToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            throw new NotImplementedException("yet to be implemented");
+            //throw new NotImplementedException("yet to be implemented");
+            string xmlFile = "PanelLayout.xml";
+            mainDockPanel.LoadFromXml(xmlFile, deserializeDockContent);
+        }
+
+        private IDockContent GetContentFromPersistString(string persistString)
+        {
+            for (uint i = 0; i < panels.Length-1; i++)
+                if (persistString == panelStrings[i])
+                    return panels[i];
+            return panels[panels.Length-1];
         }
 
         private void mainDockPanel_ActiveContentChanged(object sender, EventArgs e)
