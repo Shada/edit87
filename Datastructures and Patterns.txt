@@ -1,0 +1,84 @@
+------------------------------------------
+*** INTERFACES
+------------------------------------------
+
+* IIDENTIFIER
+Type		: type_info	(typeid)
+Id		: string (?)
+
+Template<T>
+* IRESOURCE	: IIDENTIFIER
+Data		: T
+Path		: string
+
+
+
+------------------------------------------
+*** DATA RESOURCES
+------------------------------------------
+
+* Texture 	: IRESOURCE
+<D3DTexture>
+
+* Texture	: IRESOURCE
+<D3DTextureArray>
+
+* Buffer 	: IRESOURCE
+<D3DBuffer>
+
+
+
+---------------------------------------------
+*** EXPLICIT COMPOSITES
+---------------------------------------------
+
+* Position	: IIDENTIFIER
+position	: float2
+rotation	: float3
+scale		: float3
+
+* TMesh		: IIDENTIFIER
+texture		: Texture*
+vbuffer		: Buffer*
+ibuffer		: Buffer*
+textureCoords	: vector<float2>
+
+* TerrainMesh	: IIDENTIFIER		// if texture is implicit ref instead, the terrain can be created as a generic object
+texture		: TextureArray*
+vbuffer		: Buffer*
+ibuffer		: Buffer*
+textureCoords	: vector<float2>
+
+
+
+-----------------------------------------------
+*** GENERIC OBJECT
+-----------------------------------------------
+
+* GObject	: IIDENTIFIER
+composites	: vector<IIDENTIFIER*>
+
+
+
+-------------------------------------------------
+*** MVC
+-------------------------------------------------
+							Aware of:						Notes:
+VIEW:						IIDENTIFIER
+	RenderDX												Render by request
+	GUI													Input, Mediate Controller Events
+
+CONTROLLER:					IIDENTIFIER, IRESOURCE			
+	Manipulate
+		Create<T>(...)
+		Change<T>(...)
+	Import/Export
+	Do/Undo/State
+	
+MODEL:						IIDENTIFIER, IRESOURCE
+	Resources
+		Create<T>(...)
+		get<T>(IIDENTIFIER*)
+		
+
+
