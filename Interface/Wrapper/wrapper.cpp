@@ -48,7 +48,7 @@ namespace wrap
 
 	void GraphicsCommunicator::rightMouseUp()
 	{
-
+		
 	}
 
 	void GraphicsCommunicator::leftMouseUp()

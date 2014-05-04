@@ -29,17 +29,17 @@
 		private void InitializeComponent()
 		{
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.ListViewItem listViewItem1 = new System.Windows.Forms.ListViewItem(new string[] {
+            System.Windows.Forms.ListViewItem listViewItem7 = new System.Windows.Forms.ListViewItem(new string[] {
             "Dirt",
             "Test"}, 0);
-            System.Windows.Forms.ListViewItem listViewItem2 = new System.Windows.Forms.ListViewItem("Grass", 1);
-            System.Windows.Forms.ListViewItem listViewItem3 = new System.Windows.Forms.ListViewItem("Rock", 2);
+            System.Windows.Forms.ListViewItem listViewItem8 = new System.Windows.Forms.ListViewItem("Grass", 1);
+            System.Windows.Forms.ListViewItem listViewItem9 = new System.Windows.Forms.ListViewItem("Rock", 2);
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MapEditor));
-            System.Windows.Forms.ListViewItem listViewItem4 = new System.Windows.Forms.ListViewItem(new string[] {
+            System.Windows.Forms.ListViewItem listViewItem1 = new System.Windows.Forms.ListViewItem(new string[] {
             "B1",
             "Test"}, 0);
-            System.Windows.Forms.ListViewItem listViewItem5 = new System.Windows.Forms.ListViewItem("B2", 1);
-            System.Windows.Forms.ListViewItem listViewItem6 = new System.Windows.Forms.ListViewItem("B3", 2);
+            System.Windows.Forms.ListViewItem listViewItem2 = new System.Windows.Forms.ListViewItem("B2", 1);
+            System.Windows.Forms.ListViewItem listViewItem3 = new System.Windows.Forms.ListViewItem("B3", 2);
             this.btn_importTexture = new System.Windows.Forms.Button();
             this.btn_importBrush = new System.Windows.Forms.Button();
             this.label5 = new System.Windows.Forms.Label();
@@ -85,7 +85,6 @@
             this.btn_save = new System.Windows.Forms.Button();
             this.btn_redo = new System.Windows.Forms.Button();
             this.btn_undo = new System.Windows.Forms.Button();
-            this.pb_scene = new System.Windows.Forms.PictureBox();
             this.bindingSource1 = new System.Windows.Forms.BindingSource(this.components);
             this.panel_Left = new System.Windows.Forms.Panel();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
@@ -93,7 +92,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.nud_BrushSize)).BeginInit();
             this.menuStrip.SuspendLayout();
             this.panel_Right.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pb_scene)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).BeginInit();
             this.panel_Left.SuspendLayout();
             this.SuspendLayout();
@@ -174,9 +172,9 @@
             // lv_Textures
             // 
             this.lv_Textures.Items.AddRange(new System.Windows.Forms.ListViewItem[] {
-            listViewItem1,
-            listViewItem2,
-            listViewItem3});
+            listViewItem7,
+            listViewItem8,
+            listViewItem9});
             this.lv_Textures.LargeImageList = this.il_textures;
             this.lv_Textures.Location = new System.Drawing.Point(8, 334);
             this.lv_Textures.Name = "lv_Textures";
@@ -214,9 +212,9 @@
             // lw_Brush
             // 
             this.lw_Brush.Items.AddRange(new System.Windows.Forms.ListViewItem[] {
-            listViewItem4,
-            listViewItem5,
-            listViewItem6});
+            listViewItem1,
+            listViewItem2,
+            listViewItem3});
             this.lw_Brush.LargeImageList = this.il_terrainBrushes;
             this.lw_Brush.Location = new System.Drawing.Point(8, 158);
             this.lw_Brush.Name = "lw_Brush";
@@ -540,16 +538,6 @@
             this.btn_undo.UseVisualStyleBackColor = true;
             this.btn_undo.Click += new System.EventHandler(this.btn_undo_Click);
             // 
-            // pb_scene
-            // 
-            this.pb_scene.BackgroundImage = global::Interface.Properties.Resources.map_placeholder;
-            this.pb_scene.Location = new System.Drawing.Point(232, 58);
-            this.pb_scene.Name = "pb_scene";
-            this.pb_scene.Size = new System.Drawing.Size(816, 612);
-            this.pb_scene.TabIndex = 4;
-            this.pb_scene.TabStop = false;
-            this.pb_scene.Visible = false;
-            // 
             // panel_Left
             // 
             this.panel_Left.AutoScroll = true;
@@ -577,7 +565,6 @@
             this.Controls.Add(this.btn_save);
             this.Controls.Add(this.btn_redo);
             this.Controls.Add(this.btn_undo);
-            this.Controls.Add(this.pb_scene);
             this.Controls.Add(this.menuStrip);
             this.MainMenuStrip = this.menuStrip;
             this.MinimumSize = new System.Drawing.Size(1280, 720);
@@ -595,7 +582,6 @@
             this.menuStrip.PerformLayout();
             this.panel_Right.ResumeLayout(false);
             this.panel_Right.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pb_scene)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).EndInit();
             this.panel_Left.ResumeLayout(false);
             this.ResumeLayout(false);
@@ -608,8 +594,7 @@
         private System.Windows.Forms.MenuStrip menuStrip;
 		private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem editToolStripMenuItem;
-		private System.Windows.Forms.ToolStripMenuItem helpToolStripMenuItem;
-		private System.Windows.Forms.PictureBox pb_scene;
+        private System.Windows.Forms.ToolStripMenuItem helpToolStripMenuItem;
 		private System.Windows.Forms.TreeView tw_objects;
 		private System.Windows.Forms.Button btn_TerrainBrush;
 		private System.Windows.Forms.Button btn_TextureBrush;

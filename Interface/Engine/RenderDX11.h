@@ -104,11 +104,11 @@ public:
 
 	void renderScene();
 	void setRect(RECT t);
+	void setMouse(POINT pos);
 
 	void setTerrainIndexCount(int count)	{ terrainIndexCount = count; }
 	void setCamera(Camera *cam)				{ camera = cam; }
 
 	void updateTerrainBuffer(std::vector<Vertex> *vBuffer, uint startID, uint amount);
 	void createAndSetTerrainBuffers(std::vector<Vertex> *vBuffer, std::vector<uint> *iBuffer);
-
 };
