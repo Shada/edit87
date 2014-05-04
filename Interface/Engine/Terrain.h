@@ -10,25 +10,33 @@ struct Vertex
 	elm::vec2 texCoord;
 };
 
+typedef unsigned int uint;
+
 class Terrain
 {
 private:
-	int width, height;
+	uint width, height;
 	float step;
 	std::vector<elm::vec3> points;
 
 	elm::vec3 position;
 
+	void normalizeTerrain();
+
 	void createTerrainNormals(std::vector<Vertex> &vBuffer);
+
+	void perlinNoise(uint startFrequency, uint frequency, float amplitude, float persistence = 0.5f);
 public:
 	Terrain();
 	~Terrain();
 
-	elm::vec3 getPosition()			{ return position; }
-	float getWidth()				{ return width * step; }
-	float getHeight()				{ return height * step; }
-	const unsigned int getSize()	{ return points.size(); }
-	const unsigned int getIndexCount() { return (width - 1) * (height - 1) * 6; }
+	const float getWidth() const				{ return width * step; }
+	const float getHeight() const				{ return height * step; }
+	const elm::vec3 getPosition() const			{ return position; }
+	const unsigned int getSize() const			{ return points.size(); }
+	const unsigned int getIndexCount() const	{ return (width - 1) * (height - 1) * 6; }
 
-	void createTerrain(int w, int h, float pointStep, bool fromPerlinMap, std::vector<Vertex> &vBuffer, std::vector<unsigned int> &iBuffer);
+	const float getHeightAt(elm::vec2 pos) const;
+
+	void createTerrain(int w, int h, float pointStep, bool fromPerlinMap, std::vector<Vertex> &vBuffer, std::vector<uint> &iBuffer);
 };

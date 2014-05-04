@@ -19,6 +19,8 @@
 
 */Debug/*
 */Release/*
+*/*/Debug/*
+*/*/Release/*
 
 # Executables
 *.exe

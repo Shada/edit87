@@ -8,12 +8,12 @@
 	Matrix operations; transpose, inverse, perspective and such
 */
 
-#include "type_vec2.hpp"
-#include "type_vec3.hpp"
-#include "type_vec4.hpp"
-#include "type_mat2x2.hpp"
-#include "type_mat3x3.hpp"
-#include "type_mat4x4.hpp"
+#include "types/type_vec2.hpp"
+#include "types/type_vec3.hpp"
+#include "types/type_vec4.hpp"
+#include "types/type_mat2x2.hpp"
+#include "types/type_mat3x3.hpp"
+#include "types/type_mat4x4.hpp"
 
 namespace elm
 {
@@ -79,6 +79,8 @@ namespace elm
 	template<typename T>
 	inline void yawPitchRoll(T &mOut, const vec3 &rotationAxis)
 	{
+		mOut = T();
+
 		float sinx = sin(rotationAxis.x), siny = sin(rotationAxis.y), sinz = sin(rotationAxis.z);
 		float cosx = cos(rotationAxis.x), cosy = cos(rotationAxis.y), cosz = cos(rotationAxis.z);
 
@@ -233,7 +235,7 @@ namespace elm
 		return out;
 	}
 
-	/* Creates the inverse matrix for the basic matrix type (4 by 4) */
+	/* Creates the inverse matrix for a 4 by 4 matrix */
 	inline mat4 inverse(const mat4 &m)
 	{
 		mat4 out;
@@ -259,6 +261,52 @@ namespace elm
 
 		// Allow it to crash if matrix is not invertable (i.e if determinant is 0)
 		out *= 1 / determinant(m);
+
+		return out;
+	}
+
+	/* Returns the adjoint matrix for a 3 by 3 matrix */
+	inline mat3 adjoint(const mat3 &m)
+	{
+		mat3 out;
+		out.r[0].x =  determinant(mat2(m.r[1].y, m.r[1].z, m.r[2].y, m.r[2].z));
+		out.r[0].y = -determinant(mat2(m.r[1].x, m.r[1].z, m.r[2].x, m.r[2].z));
+		out.r[0].z =  determinant(mat2(m.r[1].x, m.r[1].y, m.r[2].x, m.r[2].y));
+		
+		out.r[1].x = -determinant(mat2(m.r[0].y, m.r[0].z, m.r[2].y, m.r[2].z));
+		out.r[1].y =  determinant(mat2(m.r[0].x, m.r[0].z, m.r[2].x, m.r[2].z));
+		out.r[1].z = -determinant(mat2(m.r[0].x, m.r[0].y, m.r[2].x, m.r[2].y));
+		
+		out.r[2].x =  determinant(mat2(m.r[0].y, m.r[0].z, m.r[1].y, m.r[1].z));
+		out.r[2].y = -determinant(mat2(m.r[0].x, m.r[0].z, m.r[1].x, m.r[1].z));
+		out.r[2].z =  determinant(mat2(m.r[0].x, m.r[0].y, m.r[1].x, m.r[1].y));
+
+		return out;
+	}
+
+	/* Returns the adjoint matrix for a 4 by 4 matrix */
+	inline mat4 adjoint(const mat4 &m)
+	{
+		mat4 out;
+		out.r[0].x =  determinant(mat3(m.r[1].y, m.r[1].z, m.r[1].w, m.r[2].y, m.r[2].z, m.r[2].w, m.r[3].y, m.r[3].z, m.r[3].w));
+		out.r[0].y = -determinant(mat3(m.r[1].x, m.r[1].z, m.r[1].w, m.r[2].x, m.r[2].z, m.r[2].w, m.r[3].x, m.r[3].z, m.r[3].w));
+		out.r[0].z =  determinant(mat3(m.r[1].x, m.r[1].y, m.r[1].w, m.r[2].x, m.r[2].y, m.r[2].w, m.r[3].x, m.r[3].y, m.r[3].w));
+		out.r[0].w = -determinant(mat3(m.r[1].x, m.r[1].y, m.r[1].z, m.r[2].x, m.r[2].y, m.r[2].z, m.r[3].x, m.r[3].y, m.r[3].z));
+		
+		out.r[1].x = -determinant(mat3(m.r[0].y, m.r[0].z, m.r[0].w, m.r[2].y, m.r[2].z, m.r[2].w, m.r[3].y, m.r[3].z, m.r[3].w));
+		out.r[1].y =  determinant(mat3(m.r[0].x, m.r[0].z, m.r[0].w, m.r[2].x, m.r[2].z, m.r[2].w, m.r[3].x, m.r[3].z, m.r[3].w));
+		out.r[1].z = -determinant(mat3(m.r[0].x, m.r[0].y, m.r[0].w, m.r[2].x, m.r[2].y, m.r[2].w, m.r[3].x, m.r[3].y, m.r[3].w));
+		out.r[1].w =  determinant(mat3(m.r[0].x, m.r[0].y, m.r[0].z, m.r[2].x, m.r[2].y, m.r[2].z, m.r[3].x, m.r[3].y, m.r[3].z));
+		
+		out.r[2].x =  determinant(mat3(m.r[0].y, m.r[0].z, m.r[0].w, m.r[1].y, m.r[1].z, m.r[1].w, m.r[3].y, m.r[3].z, m.r[3].w));
+		out.r[2].y = -determinant(mat3(m.r[0].x, m.r[0].z, m.r[0].w, m.r[1].x, m.r[1].z, m.r[1].w, m.r[3].x, m.r[3].z, m.r[3].w));
+		out.r[2].z =  determinant(mat3(m.r[0].x, m.r[0].y, m.r[0].w, m.r[1].x, m.r[1].y, m.r[1].w, m.r[3].x, m.r[3].y, m.r[3].w));
+		out.r[2].w = -determinant(mat3(m.r[0].x, m.r[0].y, m.r[0].z, m.r[1].x, m.r[1].y, m.r[1].z, m.r[3].x, m.r[3].y, m.r[3].z));
+		
+		out.r[3].x = -determinant(mat3(m.r[0].y, m.r[0].z, m.r[0].w, m.r[1].y, m.r[1].z, m.r[1].w, m.r[2].y, m.r[2].z, m.r[2].w));
+		out.r[3].y =  determinant(mat3(m.r[0].x, m.r[0].z, m.r[0].w, m.r[1].x, m.r[1].z, m.r[1].w, m.r[2].x, m.r[2].z, m.r[2].w));
+		out.r[3].z = -determinant(mat3(m.r[0].x, m.r[0].y, m.r[0].w, m.r[1].x, m.r[1].y, m.r[1].w, m.r[2].x, m.r[2].y, m.r[2].w));
+		out.r[3].w =  determinant(mat3(m.r[0].x, m.r[0].y, m.r[0].z, m.r[1].x, m.r[1].y, m.r[1].z, m.r[2].x, m.r[2].y, m.r[2].z));
 
 		return out;
 	}

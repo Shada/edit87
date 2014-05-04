@@ -16,12 +16,6 @@ RenderDX11::RenderDX11(HWND hWnd) : EngineInterface()
 void RenderDX11::setRect(RECT t)
 {
 	r = t;
-	int w = abs(r.right - r.left);
-	int h = abs(r.bottom - r.top);
-	if(!camera)
-		camera = new Camera(w, h, terrainPos, terrain->getWidth(), terrain->getHeight());
-	else
-		camera->resizeWindow(w, h);
 
 	if(!g_swapChain)
 		init();
@@ -351,6 +345,13 @@ HRESULT RenderDX11::createTerrain(int width, int height, float pointStep, bool f
 	std::vector<unsigned int> indexBuffer;
 	std::vector<Vertex> vertexBuffer;
 	terrain->createTerrain(width, height, pointStep, fromPerlinMap, vertexBuffer, indexBuffer);
+
+	int w = abs(r.right - r.left);
+	int h = abs(r.bottom - r.top);
+	if(!camera)
+		camera = new Camera(w, h, terrain);
+	else
+		camera->resizeWindow(w, h);
 
 	D3D11_SUBRESOURCE_DATA initData;
 	initData.pSysMem = &vertexBuffer.at(0);

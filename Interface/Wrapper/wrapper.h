@@ -22,6 +22,6 @@ namespace wrap
 		void mousePressed(MouseKeyType mType);
 		void sendMousePos(int x, int y);
 
-		void moveCamera(char c);
+		void moveCamera(int xDir, int zDir);
 	};
 }

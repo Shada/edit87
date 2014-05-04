@@ -26,7 +26,7 @@ namespace LevelEditor
             graphics = new GraphicsCommunicator(this.Handle);
 			InitializeComponent();
 
-            timer1.Interval = 33;
+            timer1.Interval = 20;
             timer1.Start();
 
             windowWidth = Size.Width;
@@ -43,6 +43,7 @@ namespace LevelEditor
 		private void btn_TerrainBrush_Click(object sender, EventArgs e)
 		{
             //MessageBox.Show("this is fuckface");
+            graphics.createTerrain(256, 256, 5, true);
             graphics.renderScene();
 		}
 
@@ -258,10 +259,12 @@ namespace LevelEditor
 
         private void timer1_Tick(object sender, EventArgs e)
         {
-            if (forwardKey) graphics.moveCamera((sbyte)'W');
-            else if (backwardKey) graphics.moveCamera((sbyte)'S');
-            if (leftKey) graphics.moveCamera((sbyte)'A');
-            else if (rightKey) graphics.moveCamera((sbyte)'D');
+            int xDir = forwardKey ? 1 : backwardKey ? -1 : 0;
+            int zDir = rightKey ? 1 : leftKey ? -1 : 0;
+            if(xDir != 0 || zDir != 0)
+                graphics.moveCamera(xDir, zDir);
+            //if (xDir != 0 && zDir != 0)
+            //    graphics.moveCamera(xDir, zDir);
         }
 
         private void MapEditor_KeyUp(object sender, KeyEventArgs e)

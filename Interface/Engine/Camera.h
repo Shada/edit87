@@ -1,20 +1,25 @@
 #pragma once
-#include "../elm/elm.hpp"
+#include "Terrain.h"
 
 class Camera
 {
 private:
+	const Terrain *terrain;
+
+	float minX, maxX, minZ, maxZ;
+
 	elm::mat4 mProj, mView, mRot;
 	
+	elm::vec3 terrainPos;
 	elm::vec3 vEye, vLook, vUp, vRight;
 public:
-	Camera(int width, int height, elm::vec3 terrainPosition, float dimX, float dimY);
+	Camera(int width, int height, const Terrain *terrain);
 	~Camera();
 
 	void move(elm::vec2 direction);
 	void rotate(float angle);
 
-	void resizeWindow(int width, int height) { elm::perspectiveFovLH(mProj, PI / 2, (float)width / height, 1.f, 20000.f); }
+	void resizeWindow(int width, int height) { elm::perspectiveFovLH(mProj, ELM_PI / 2, (float)width / height, 1.f, 20000.f); }
 
 	elm::vec3 getEye()	{ return vEye; }
 	elm::mat4 getProj() { return mProj; }

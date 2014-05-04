@@ -10,15 +10,15 @@
 
 #include <vector>
 
-#include "type_vec2.hpp"
-#include "type_vec3.hpp"
-#include "type_vec4.hpp"
-#include "type_mat2x2.hpp"
-#include "type_mat3x3.hpp"
-#include "type_mat4x4.hpp"
+#include "types/type_vec2.hpp"
+#include "types/type_vec3.hpp"
+#include "types/type_vec4.hpp"
+#include "types/type_mat2x2.hpp"
+#include "types/type_mat3x3.hpp"
+#include "types/type_mat4x4.hpp"
 
-#define _min(a, b) (a < b ? a : b)
 #define _max(a, b) (a > b ? a : b)
+#define _min(a, b) (a < b ? a : b)
 
 namespace elm
 {
