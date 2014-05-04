@@ -19,7 +19,6 @@ namespace wrap
 		r.bottom = y + height;
 		r.right = x + width;
 		gfx->setRect(r);
-		//gfx->createTerrain(256, 256, 5.f, false);
 	}
 
 	void GraphicsCommunicator::createTerrain(int width, int height, float pointStep, bool fromPerlinMap)
@@ -32,28 +31,53 @@ namespace wrap
 		gfx->renderScene();
 	}
 
-	void GraphicsCommunicator::mouseReleased(MouseKeyType mType)
+	void GraphicsCommunicator::mouseDown(int x, int y)
 	{
 
 	}
 
-	void GraphicsCommunicator::mousePressed(MouseKeyType mType)
+	void GraphicsCommunicator::mouseUp()
 	{
-
+		
 	}
 
-	void GraphicsCommunicator::sendMousePos(int x, int y)
+	void GraphicsCommunicator::mouseMoved(int x, int y)
 	{
 		POINT p;
 		p.x = x;
 		p.y = y;
-		//gfx->setMousePos(p);
+		gfx->setMouse(p);
 	}
 
 	void GraphicsCommunicator::moveCamera(int xDir, int zDir)
 	{
 		gfx->move((float)xDir, (float)zDir);
 		gfx->renderScene();
+	}
+
+	void GraphicsCommunicator::setElevationTool()
+	{
+		
+	}
+
+	void GraphicsCommunicator::setTextureTool()
+	{
+
+	}
+
+	void GraphicsCommunicator::setObjectPlacerTool()
+	{
+
+	}
+
+	void GraphicsCommunicator::setSelectorTool()
+	{
+
+	}
+
+	void GraphicsCommunicator::useTool()
+	{
+
 	}
 	
 	GraphicsCommunicator::~GraphicsCommunicator()

@@ -13,6 +13,11 @@ RenderDX11::RenderDX11(HWND hWnd) : EngineInterface()
 	g_swapChain = nullptr;
 }
 
+void RenderDX11::setMouse(POINT pos)
+{
+
+}
+
 void RenderDX11::setRect(RECT t)
 {
 	r = t;

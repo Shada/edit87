@@ -4,6 +4,7 @@
 
 Terrain::Terrain()
 {
+	position = elm::vec3(0);
 }
 
 void Terrain::createTerrain(int w, int h, float pointStep, bool fromPerlinMap, std::vector<Vertex> &vBuffer, std::vector<uint> &iBuffer)
@@ -11,8 +12,6 @@ void Terrain::createTerrain(int w, int h, float pointStep, bool fromPerlinMap, s
 	width = w;
 	height = h;
 	step = pointStep;
-
-	position = elm::vec3(0);
 
 	points = std::vector<elm::vec3>(width * height, elm::vec3());
 	vBuffer = std::vector<Vertex>(width * height);
@@ -61,16 +60,8 @@ void Terrain::perlinNoise(uint startFrequency, uint frequency, float amplitude, 
 
 	std::vector<float> randomMap((width + 1) * (height + 1));
 	for(uint x = 0; x < width + 1; x++)
-	{
 		for(uint y = 0; y < height + 1; y++)
-		{
 			randomMap[x + y * (height + 1)] = range(numberGenerator);
-			//for(int i(0); i < _terrain.level - 1; i++)
-			//	range(numberGenerator);
-		}
-		//for(uint i(0); i < (_terrain.level - 1) * (Y + 1); i++)
-		//	range(numberGenerator);
-	}
 
 	auto value = [&](uint x, uint y)->float&{ return randomMap[(y + 1) * width + (x + 1)]; };
 	auto interpolate = [](float a, float b, float x)->float
@@ -175,8 +166,8 @@ void Terrain::normalizeTerrain()
 
 const float Terrain::getHeightAt(elm::vec2 pos) const
 {
-	int index1 = (int)((pos.y - position.z + step / 2) / step) * width;
-	int index2 = (int)((pos.x - position.x + step / 2) / step);
+	uint index1 = (int)((pos.y - position.z + step / 2) / step) * width;
+	uint index2 = (int)((pos.x - position.x + step / 2) / step);
 
 	if(index1 < 0) index1 = 0;
 	if(index1 > (width - 1) * height) index1 = (width - 1) * height;

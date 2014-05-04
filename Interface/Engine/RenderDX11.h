@@ -72,8 +72,17 @@ public:
 
 	void renderScene();
 	void setRect(RECT t);
+	void setMouse(POINT pos);
 
 	HRESULT createTerrain(int width, int height, float pointStep, bool fromPerlinMap);
 
 	void move(float alongX, float alongZ) { camera->move(elm::vec2(alongX, alongZ)); }
+
+	/* Tool calls */
+	void setTextureTool()		{}
+	void setSelectorTool()		{}
+	void setElevationTool()		{}
+	void setObjectPlacerTool()	{}
+
+	void useTool()				{}
 };
