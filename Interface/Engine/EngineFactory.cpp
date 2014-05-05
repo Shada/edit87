@@ -1,16 +1,16 @@
 #include "EngineFactory.h"
-#include "RenderDX11.h"
+#include "Engine.h"
 
-EngineInterface *EngineFactory::createGraphics(HWND hWnd)
+EngineInterface *EngineFactory::createEngine(HWND hWnd)
 {
 	EngineInterface *gfx;
-	gfx = new RenderDX11(hWnd);
+	gfx = new Engine(hWnd);
 	return gfx;
 }
 
-void EngineFactory::deleteGraphics(EngineInterface *gfx)
+void EngineFactory::deleteEngine(EngineInterface *gfx)
 {
 	if(gfx)
 		delete gfx;
-	gfx = NULL;
+	gfx = nullptr;
 }

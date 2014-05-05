@@ -18,7 +18,7 @@ namespace LevelEditor
 	{
         private wrap.GraphicsCommunicator graphics;
         int windowWidth, windowHeight;
-        private bool forwardKey, backwardKey, leftKey, rightKey;
+        private bool forwardKey, backwardKey, leftKey, rightKey, mouseDown;
 
 		public MapEditor()
 		{
@@ -31,7 +31,7 @@ namespace LevelEditor
 
             windowWidth = Size.Width;
             windowHeight = Size.Height;
-            graphics.createTerrain(256, 256, 5, false);
+            graphics.createTerrain(256, 256, 5, false, 0);
 		}
 
 		private void button1_Click(object sender, EventArgs e)
@@ -42,8 +42,8 @@ namespace LevelEditor
 
 		private void btn_TerrainBrush_Click(object sender, EventArgs e)
 		{
-            //MessageBox.Show("this is fuckface");
-            graphics.createTerrain(256, 256, 5, true);
+            int seed = Environment.TickCount & Int32.MaxValue;
+            graphics.createTerrain(256, 256, 5, true, seed);
             graphics.renderScene();
 		}
 
@@ -198,7 +198,6 @@ namespace LevelEditor
 			int sizeDifWidth = Size.Width - windowWidth;
 			int sizeDifHeight = Size.Height - windowHeight;
 
-			pb_scene.Size = new Size(pb_scene.Size.Width + sizeDifWidth, pb_scene.Size.Height + sizeDifHeight);
 			windowWidth = Size.Width;
 			windowHeight = Size.Height;
 			panel_Right.Location = new Point(panel_Right.Location.X + sizeDifWidth, panel_Right.Location.Y);
@@ -222,20 +221,16 @@ namespace LevelEditor
 				cb_history.Visible = false;
 
 				tw_objects.Location = new Point(tw_objects.Location.X, tw_objects.Location.Y - 34);
-				pb_scene.Location = new Point(pb_scene.Location.X, pb_scene.Location.Y - 34);
 
 				tw_objects.Size = new Size(tw_objects.Size.Width, tw_objects.Size.Height + 34);
-				pb_scene.Size = new Size(pb_scene.Size.Width, pb_scene.Size.Height + 34);
 			}
 			else
 			{
 				item.CheckState = CheckState.Checked;
 
 				tw_objects.Size = new Size(tw_objects.Size.Width, tw_objects.Size.Height - 34);
-				pb_scene.Size = new Size(pb_scene.Size.Width, pb_scene.Size.Height - 34);
 
 				tw_objects.Location = new Point(tw_objects.Location.X, tw_objects.Location.Y + 34);
-				pb_scene.Location = new Point(pb_scene.Location.X, pb_scene.Location.Y + 34);
 
 				btn_save.Visible = true;
 				btn_load.Visible = true;
@@ -276,6 +271,32 @@ namespace LevelEditor
                 case Keys.A:    leftKey = false;        break;
                 case Keys.D:    rightKey = false;       break;
             }
+        }
+
+        private void MapEditor_MouseDown(object sender, MouseEventArgs e)
+        {
+            if(!mouseDown)
+            {
+                if(e.Button == System.Windows.Forms.MouseButtons.Left)
+                    graphics.leftMouseDown(e.X, e.Y);
+                else if(e.Button == System.Windows.Forms.MouseButtons.Right)
+                    graphics.rightMouseDown(e.X, e.Y);
+            }
+
+            //mouseDown = true;
+        }
+
+        private void MapEditor_MouseUp(object sender, MouseEventArgs e)
+        {
+            if(mouseDown)
+            {
+                if (e.Button == System.Windows.Forms.MouseButtons.Left)
+                    graphics.leftMouseUp();
+                else if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                    graphics.rightMouseUp();
+            }
+
+            mouseDown = false;
         }
 	}
 }

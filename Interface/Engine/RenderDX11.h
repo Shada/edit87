@@ -6,8 +6,8 @@
 #include "Terrain.h"
 #include "Camera.h"
 
-#define SAFE_RELEASE(x) if( x ) { (x)->Release(); (x) = NULL; }
-#define SAFE_DELETE(x) if( x ) { delete(x); (x) = NULL; }
+#define SAFE_RELEASE(x) if( x ) { (x)->Release(); (x) = nullptr; }
+#define SAFE_DELETE(x) if( x ) { delete(x); (x) = nullptr; }
 
 struct CBOnce
 {
@@ -20,10 +20,10 @@ struct CBOnChange
 	elm::vec4 position;
 };
 
-class RenderDX11 : public EngineInterface
+class RenderDX11
 {
 private:
-	int terrainVertexBufferID, terrainIndexBufferID, modelID, cbOnceID, cbOnChangeID;
+	int terrainVertexBufferID, terrainIndexBufferID, modelID, cbOnceID, cbOnChangeID, terrainIndexCount;
 
 	elm::vec3 terrainPos;
 	
@@ -31,7 +31,6 @@ private:
 	HWND hWnd;
 
 	Camera *camera;
-	Terrain *terrain;
 
 	D3D_DRIVER_TYPE				g_driverType;
 	D3D_FEATURE_LEVEL			g_featureLevel;
@@ -73,7 +72,11 @@ public:
 	void renderScene();
 	void setRect(RECT t);
 
-	HRESULT createTerrain(int width, int height, float pointStep, bool fromPerlinMap);
+	void setTerrainIndexCount(int count)	{ terrainIndexCount = count; }
+	void setCamera(Camera *cam)				{ camera = cam; }
 
-	void move(float alongX, float alongZ) { camera->move(elm::vec2(alongX, alongZ)); }
+	void createAndSetTerrainBuffers(std::vector<Vertex> *vBuffer, std::vector<uint> *iBuffer);
+	//HRESULT createTerrain(int width, int height, float pointStep, bool fromPerlinMap);
+
+	//void move(float alongX, float alongZ) { camera->move(elm::vec2(alongX, alongZ)); }
 };

@@ -4,15 +4,14 @@
 
 Terrain::Terrain()
 {
+	position = elm::vec3(0);
 }
 
-void Terrain::createTerrain(int w, int h, float pointStep, bool fromPerlinMap, std::vector<Vertex> &vBuffer, std::vector<uint> &iBuffer)
+void Terrain::createTerrain(int w, int h, float pointStep, bool fromPerlinMap, int seed)
 {
 	width = w;
 	height = h;
 	step = pointStep;
-
-	position = elm::vec3(0);
 
 	points = std::vector<elm::vec3>(width * height, elm::vec3());
 	vBuffer = std::vector<Vertex>(width * height);
@@ -20,7 +19,7 @@ void Terrain::createTerrain(int w, int h, float pointStep, bool fromPerlinMap, s
 
 	if(fromPerlinMap)
 	{
-		perlinNoise(32, 64, 128);
+		perlinNoise(32, 64, 128, seed);
 		normalizeTerrain();
 	}
 
@@ -53,24 +52,16 @@ void Terrain::createTerrain(int w, int h, float pointStep, bool fromPerlinMap, s
 }
 
 
-void Terrain::perlinNoise(uint startFrequency, uint frequency, float amplitude, float persistence)
+void Terrain::perlinNoise(uint startFrequency, uint frequency, float amplitude, int seed, float persistence)
 {
 	std::uniform_real_distribution<float> range(0, 1);
 	std::mt19937 numberGenerator;
-	numberGenerator.seed(rand());
+	numberGenerator.seed(seed);
 
 	std::vector<float> randomMap((width + 1) * (height + 1));
 	for(uint x = 0; x < width + 1; x++)
-	{
 		for(uint y = 0; y < height + 1; y++)
-		{
 			randomMap[x + y * (height + 1)] = range(numberGenerator);
-			//for(int i(0); i < _terrain.level - 1; i++)
-			//	range(numberGenerator);
-		}
-		//for(uint i(0); i < (_terrain.level - 1) * (Y + 1); i++)
-		//	range(numberGenerator);
-	}
 
 	auto value = [&](uint x, uint y)->float&{ return randomMap[(y + 1) * width + (x + 1)]; };
 	auto interpolate = [](float a, float b, float x)->float
@@ -175,8 +166,8 @@ void Terrain::normalizeTerrain()
 
 const float Terrain::getHeightAt(elm::vec2 pos) const
 {
-	int index1 = (int)((pos.y - position.z + step / 2) / step) * width;
-	int index2 = (int)((pos.x - position.x + step / 2) / step);
+	uint index1 = (int)((pos.y - position.z + step / 2) / step) * width;
+	uint index2 = (int)((pos.x - position.x + step / 2) / step);
 
 	if(index1 < 0) index1 = 0;
 	if(index1 > (width - 1) * height) index1 = (width - 1) * height;
@@ -185,6 +176,29 @@ const float Terrain::getHeightAt(elm::vec2 pos) const
 	if(index2 > width - 1) index2 = width - 1;
 
 	return points.at(index1 + index2).y;
+}
+
+void Terrain::applyBrush(float radius, float intensity, elm::vec2 origin)
+{
+	int startX = (int)((origin.x - radius) / step + 0.5);
+	int startZ = (int)((origin.y - radius) / step + 0.5);
+
+	int cond = (int)(radius / step + 0.5);
+
+	for(int y = 0; y < cond * 2; y++)
+	{
+		if(y + startZ < 0 || y + startZ >= height)
+			continue;
+		for(int x = 0; x < cond * 2; x++)
+		{
+			if(x + startX < 0 || x + startX >= width)
+				continue;
+
+			// Add logic to do this correctly  (length)
+			vBuffer.at(x + startX + (y + startZ) * width).pos.y = points.at(x + startX + (y + startZ) * width).y += 5.f;
+		}
+	}
+	// update buffer
 }
 
 Terrain::~Terrain()

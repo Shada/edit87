@@ -5,7 +5,7 @@
 class EngineFactory
 {
 public:
-	static __declspec(dllexport) EngineInterface *createGraphics(HWND hWnd);
+	static __declspec(dllexport) EngineInterface *createEngine(HWND hWnd);
 
-	static __declspec(dllexport) void deleteGraphics(EngineInterface *gfx);
+	static __declspec(dllexport) void deleteEngine(EngineInterface *gfx);
 };

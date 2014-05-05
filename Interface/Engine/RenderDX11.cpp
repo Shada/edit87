@@ -3,11 +3,10 @@
 #include <D3DX11async.h>
 #include <d3dcompiler.h>
 
-RenderDX11::RenderDX11(HWND hWnd) : EngineInterface()
+RenderDX11::RenderDX11(HWND hWnd)
 {
 	this->hWnd = hWnd;
-	terrain = new Terrain();
-	terrainPos = terrain->getPosition();
+	terrainVertexBufferID = terrainIndexBufferID = -1;
 
 	camera = nullptr;
 	g_swapChain = nullptr;
@@ -340,28 +339,17 @@ HRESULT RenderDX11::createSampleStates()
 	return hr;
 }
 
-HRESULT RenderDX11::createTerrain(int width, int height, float pointStep, bool fromPerlinMap)
+void RenderDX11::createAndSetTerrainBuffers(std::vector<Vertex> *vBuffer, std::vector<uint> *iBuffer)
 {
-	std::vector<unsigned int> indexBuffer;
-	std::vector<Vertex> vertexBuffer;
-	terrain->createTerrain(width, height, pointStep, fromPerlinMap, vertexBuffer, indexBuffer);
-
-	int w = abs(r.right - r.left);
-	int h = abs(r.bottom - r.top);
-	if(!camera)
-		camera = new Camera(w, h, terrain);
-	else
-		camera->resizeWindow(w, h);
-
 	D3D11_SUBRESOURCE_DATA initData;
-	initData.pSysMem = &vertexBuffer.at(0);
+	initData.pSysMem = &vBuffer->at(0);
 	initData.SysMemPitch = 0;
 	initData.SysMemSlicePitch = 0;
 
 	D3D11_BUFFER_DESC bd;
 	ZeroMemory(&bd, sizeof(bd));
 	bd.Usage = D3D11_USAGE_DYNAMIC;
-    bd.ByteWidth = sizeof(Vertex) * vertexBuffer.size();
+    bd.ByteWidth = sizeof(Vertex) * vBuffer->size();
     bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
     bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 	bd.MiscFlags      = 0;
@@ -369,33 +357,41 @@ HRESULT RenderDX11::createTerrain(int width, int height, float pointStep, bool f
 	ID3D11Buffer *buffer = nullptr;
 	HRESULT hr = g_device->CreateBuffer(&bd, &initData, &buffer);
     if(FAILED(hr))
-	{
         MessageBox(NULL,"could not create terrain vertexbuffer", "ERROR", S_OK);
-		return hr;
+
+	if(terrainVertexBufferID == -1)
+	{
+		terrainVertexBufferID = g_buffers.size();
+		g_buffers.push_back(buffer);
+	}
+	else
+	{
+		SAFE_RELEASE(g_buffers.at(terrainVertexBufferID));
+		g_buffers.at(terrainVertexBufferID) = buffer;
 	}
 
-	terrainVertexBufferID = g_buffers.size();
-	g_buffers.push_back(buffer);
-
-	initData.pSysMem = &indexBuffer.at(0);
+	initData.pSysMem = &iBuffer->at(0);
 
 	bd.Usage = D3D11_USAGE_IMMUTABLE;
 	bd.BindFlags = D3D11_BIND_INDEX_BUFFER;
-	bd.ByteWidth = sizeof(unsigned int) * indexBuffer.size();
+	bd.ByteWidth = sizeof(unsigned int) * iBuffer->size();
 	bd.CPUAccessFlags = 0;
 
 	buffer = nullptr;
 	hr = g_device->CreateBuffer(&bd, &initData, &buffer);
 	if (FAILED(hr))
-	{
 		MessageBox(NULL,"could not create terrain indexbuffer", "ERROR", S_OK);
-		return hr;
+
+	if(terrainIndexBufferID == -1)
+	{
+		terrainIndexBufferID = g_buffers.size();
+		g_buffers.push_back(buffer);
 	}
-
-	terrainIndexBufferID = g_buffers.size();
-	g_buffers.push_back(buffer);
-
-	return S_OK;
+	else
+	{
+		SAFE_RELEASE(g_buffers.at(terrainIndexBufferID));
+		g_buffers.at(terrainIndexBufferID) = buffer;
+	}
 }
 
 const float color[4] = {0.f, 1.f, 1.f, 1.f};
@@ -431,16 +427,13 @@ void RenderDX11::renderScene()
 	g_deviceContext->VSSetShader(g_terrainVS, NULL, 0);
 	g_deviceContext->PSSetShader(g_terrainPS, NULL, 0);
 
-	g_deviceContext->DrawIndexed(terrain->getIndexCount(), 0, 0);
+	g_deviceContext->DrawIndexed(terrainIndexCount, 0, 0);
 	
 	g_swapChain->Present(0, 0);
 }
 
 RenderDX11::~RenderDX11()
 {
-	SAFE_DELETE(terrain);
-	SAFE_DELETE(camera);
-
 	g_deviceContext->Flush();
     g_deviceContext->ClearState();
     SAFE_RELEASE(g_swapChain);

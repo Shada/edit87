@@ -46,3 +46,4 @@ TemporaryGeneratedFile*
 *.resources
 *.exe.config
 *.manifest
+*.exp

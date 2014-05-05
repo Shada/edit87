@@ -19,17 +19,21 @@ private:
 	float step;
 	std::vector<elm::vec3> points;
 
+	std::vector<Vertex> vBuffer;
+	std::vector<uint> iBuffer;
+
 	elm::vec3 position;
 
 	void normalizeTerrain();
 
 	void createTerrainNormals(std::vector<Vertex> &vBuffer);
 
-	void perlinNoise(uint startFrequency, uint frequency, float amplitude, float persistence = 0.5f);
+	void perlinNoise(uint startFrequency, uint frequency, float amplitude, int seed, float persistence = 0.5f);
 public:
 	Terrain();
 	~Terrain();
 
+	/* Camera can only access const functions */
 	const float getWidth() const				{ return width * step; }
 	const float getHeight() const				{ return height * step; }
 	const elm::vec3 getPosition() const			{ return position; }
@@ -38,5 +42,10 @@ public:
 
 	const float getHeightAt(elm::vec2 pos) const;
 
-	void createTerrain(int w, int h, float pointStep, bool fromPerlinMap, std::vector<Vertex> &vBuffer, std::vector<uint> &iBuffer);
+	std::vector<Vertex> *getVBuffer()			{ return &vBuffer; }
+	std::vector<uint>	*getIBuffer()			{ return &iBuffer; }
+
+	void createTerrain(int w, int h, float pointStep, bool fromPerlinMap, int seed);
+
+	void applyBrush(float radius, float intensity, elm::vec2 origin);
 };

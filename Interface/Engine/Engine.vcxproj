@@ -76,6 +76,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="Engine.h" />
     <ClInclude Include="EngineFactory.h" />
     <ClInclude Include="EngineInterface.h" />
     <ClInclude Include="RenderDX11.h" />
@@ -83,6 +84,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="Engine.cpp" />
     <ClCompile Include="EngineFactory.cpp" />
     <ClCompile Include="RenderDX11.cpp" />
     <ClCompile Include="Terrain.cpp" />
