@@ -17,8 +17,10 @@ namespace LevelEditor
 	public partial class MapEditor : Form
 	{
         private wrap.GraphicsCommunicator graphics;
-        int windowWidth, windowHeight;
-        private bool forwardKey, backwardKey, leftKey, rightKey, mouseDown;
+        private int windowWidth, windowHeight;
+        private bool forwardKey, backwardKey, leftKey, rightKey, leftMouseDown, rightMouseDown;
+
+        private int mousePosX, mousePosY;
 
 		public MapEditor()
 		{
@@ -258,8 +260,11 @@ namespace LevelEditor
             int zDir = rightKey ? 1 : leftKey ? -1 : 0;
             if(xDir != 0 || zDir != 0)
                 graphics.moveCamera(xDir, zDir);
-            //if (xDir != 0 && zDir != 0)
-            //    graphics.moveCamera(xDir, zDir);
+
+            if (rightMouseDown)
+                graphics.rightMouseDown();
+            if (leftMouseDown)
+                graphics.leftMouseDown();
         }
 
         private void MapEditor_KeyUp(object sender, KeyEventArgs e)
@@ -275,28 +280,42 @@ namespace LevelEditor
 
         private void MapEditor_MouseDown(object sender, MouseEventArgs e)
         {
-            if(!mouseDown)
+            if(!rightMouseDown || !leftMouseDown)
             {
-                if(e.Button == System.Windows.Forms.MouseButtons.Left)
-                    graphics.leftMouseDown(e.X, e.Y);
-                else if(e.Button == System.Windows.Forms.MouseButtons.Right)
-                    graphics.rightMouseDown(e.X, e.Y);
+                if (!leftMouseDown && e.Button == System.Windows.Forms.MouseButtons.Left)
+                {
+                    graphics.leftMouseDown();
+                    leftMouseDown = true;
+                }
+                else if (!rightMouseDown && e.Button == System.Windows.Forms.MouseButtons.Right)
+                {
+                    graphics.rightMouseDown();
+                    rightMouseDown = true;
+                }
             }
-
-            //mouseDown = true;
         }
 
         private void MapEditor_MouseUp(object sender, MouseEventArgs e)
         {
-            if(mouseDown)
+            if (rightMouseDown || leftMouseDown)
             {
-                if (e.Button == System.Windows.Forms.MouseButtons.Left)
+                if (leftMouseDown && e.Button == System.Windows.Forms.MouseButtons.Left)
+                {
                     graphics.leftMouseUp();
-                else if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                    leftMouseDown = false;
+                }
+                else if (rightMouseDown && e.Button == System.Windows.Forms.MouseButtons.Right)
+                {
                     graphics.rightMouseUp();
+                    rightMouseDown = false;
+                }
             }
+        }
 
-            mouseDown = false;
+        private void MapEditor_MouseMove(object sender, MouseEventArgs e)
+        {
+            mousePosX = e.X;
+            mousePosY = e.Y;
         }
 	}
 }

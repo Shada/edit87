@@ -17,8 +17,8 @@ public:
 	virtual void move(float alongX, float alongZ) = 0;
 
 	/* Mouse calls */
-	virtual void rightMouseDown(POINT mouse) = 0;
-	virtual void leftMouseDown(POINT mouse) = 0;
+	virtual void rightMouseDown() = 0;
+	virtual void leftMouseDown() = 0;
 	virtual void rightMouseUp() = 0;
 	virtual void leftMouseUp() = 0;
 	virtual void updateMouse(POINT mouse) = 0;

@@ -180,25 +180,62 @@ const float Terrain::getHeightAt(elm::vec2 pos) const
 
 void Terrain::applyBrush(float radius, float intensity, elm::vec2 origin)
 {
-	int startX = (int)((origin.x - radius) / step + 0.5);
-	int startZ = (int)((origin.y - radius) / step + 0.5);
+	uint startX = (int)((origin.x - radius) / step + 0.5);
+	uint startZ = (int)((origin.y - radius) / step + 0.5);
 
-	int cond = (int)(radius / step + 0.5);
+	uint cond = (int)(radius / step + 0.5);
 
-	for(int y = 0; y < cond * 2; y++)
+	for(uint y = 0; y < cond * 2; y++)
 	{
 		if(y + startZ < 0 || y + startZ >= height)
 			continue;
-		for(int x = 0; x < cond * 2; x++)
+		for(uint x = 0; x < cond * 2; x++)
 		{
 			if(x + startX < 0 || x + startX >= width)
 				continue;
 
-			// Add logic to do this correctly  (length)
-			vBuffer.at(x + startX + (y + startZ) * width).pos.y = points.at(x + startX + (y + startZ) * width).y += 5.f;
+			int index = x + startX + (y + startZ) * width;
+			float len = elm::vecLength(-origin + points.at(index).xz);
+			if(len < radius)
+			{
+				float val = std::cos(pow(len / radius * 1.75f, 2)) + 1;
+				vBuffer.at(index).pos.y = points.at(index).y += val * intensity;
+			}
 		}
 	}
-	// update buffer
+
+	int index1, index2;
+	std::vector<elm::vec3> norms = std::vector<elm::vec3>(points.size());
+	elm::vec3 norm;
+	for(uint y = 0; y < cond * 2; y++)
+	{
+		if(y + startZ < 0 || y + startZ >= height)
+			continue;
+		for(uint x = 0; x < cond * 2; x++)
+		{
+			if(x + startX < 0 || x + startX >= width)
+				continue;
+
+			index1 = (int)(x + startX + (y + startZ) * width);
+			index2 = (int)(x + startX + (y + 1 + startZ) * width);
+
+			norm = elm::cross(	vBuffer.at(index1).pos - vBuffer.at(index2).pos,
+								vBuffer.at(index1).pos - vBuffer.at(index2 + 1).pos);
+
+			norms.at(index1) += norm;
+			norms.at(index2 + 1) += norm;
+			norms.at(index2) += norm;
+
+			norm = elm::cross(	vBuffer.at(index1).pos - vBuffer.at(index2 + 1).pos,
+								vBuffer.at(index1).pos - vBuffer.at(index1 + 1).pos);
+
+			norms.at(index1) += norm;
+			norms.at(index1 + 1) += norm;
+			norms.at(index2 + 1) += norm;
+
+			vBuffer.at(index1).normal = elm::normalize(norms.at(index1));
+		}
+	}
 }
 
 Terrain::~Terrain()

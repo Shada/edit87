@@ -29,17 +29,17 @@
 		private void InitializeComponent()
 		{
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.ListViewItem listViewItem7 = new System.Windows.Forms.ListViewItem(new string[] {
+            System.Windows.Forms.ListViewItem listViewItem1 = new System.Windows.Forms.ListViewItem(new string[] {
             "Dirt",
             "Test"}, 0);
-            System.Windows.Forms.ListViewItem listViewItem8 = new System.Windows.Forms.ListViewItem("Grass", 1);
-            System.Windows.Forms.ListViewItem listViewItem9 = new System.Windows.Forms.ListViewItem("Rock", 2);
+            System.Windows.Forms.ListViewItem listViewItem2 = new System.Windows.Forms.ListViewItem("Grass", 1);
+            System.Windows.Forms.ListViewItem listViewItem3 = new System.Windows.Forms.ListViewItem("Rock", 2);
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MapEditor));
-            System.Windows.Forms.ListViewItem listViewItem1 = new System.Windows.Forms.ListViewItem(new string[] {
+            System.Windows.Forms.ListViewItem listViewItem4 = new System.Windows.Forms.ListViewItem(new string[] {
             "B1",
             "Test"}, 0);
-            System.Windows.Forms.ListViewItem listViewItem2 = new System.Windows.Forms.ListViewItem("B2", 1);
-            System.Windows.Forms.ListViewItem listViewItem3 = new System.Windows.Forms.ListViewItem("B3", 2);
+            System.Windows.Forms.ListViewItem listViewItem5 = new System.Windows.Forms.ListViewItem("B2", 1);
+            System.Windows.Forms.ListViewItem listViewItem6 = new System.Windows.Forms.ListViewItem("B3", 2);
             this.btn_importTexture = new System.Windows.Forms.Button();
             this.btn_importBrush = new System.Windows.Forms.Button();
             this.label5 = new System.Windows.Forms.Label();
@@ -172,9 +172,9 @@
             // lv_Textures
             // 
             this.lv_Textures.Items.AddRange(new System.Windows.Forms.ListViewItem[] {
-            listViewItem7,
-            listViewItem8,
-            listViewItem9});
+            listViewItem1,
+            listViewItem2,
+            listViewItem3});
             this.lv_Textures.LargeImageList = this.il_textures;
             this.lv_Textures.Location = new System.Drawing.Point(8, 334);
             this.lv_Textures.Name = "lv_Textures";
@@ -212,9 +212,9 @@
             // lw_Brush
             // 
             this.lw_Brush.Items.AddRange(new System.Windows.Forms.ListViewItem[] {
-            listViewItem1,
-            listViewItem2,
-            listViewItem3});
+            listViewItem4,
+            listViewItem5,
+            listViewItem6});
             this.lw_Brush.LargeImageList = this.il_terrainBrushes;
             this.lw_Brush.Location = new System.Drawing.Point(8, 158);
             this.lw_Brush.Name = "lw_Brush";
@@ -572,6 +572,7 @@
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.MapEditor_KeyDown);
             this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.MapEditor_KeyUp);
             this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.MapEditor_MouseDown);
+            this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.MapEditor_MouseMove);
             this.MouseUp += new System.Windows.Forms.MouseEventHandler(this.MapEditor_MouseUp);
             this.Resize += new System.EventHandler(this.MapEditor_Resize);
             ((System.ComponentModel.ISupportInitialize)(this.nud_brushIntensity)).EndInit();

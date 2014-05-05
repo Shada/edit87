@@ -19,6 +19,8 @@ private:
 	Terrain		*terrain;
 	Camera		*camera;
 
+	elm::vec2 mouseWorldPos;
+
 	Tools selectedTool;
 
 	HWND hWnd;
@@ -34,11 +36,11 @@ public:
 	void move(float alongX, float alongZ)	{ camera->move(elm::vec2(alongX, alongZ)); }
 
 	/* Mouse calls */ // Maybe we want to handle mouse up and down entirely in c#. Discuss this with other ppl
-	void rightMouseDown(POINT mouse)		{ mousePos = mouse; }
-	void leftMouseDown(POINT mouse)			{ mousePos = mouse; terrain->applyBrush(100,1,elm::vec2(200,1000)); dx->createAndSetTerrainBuffers(terrain->getVBuffer(), terrain->getIBuffer());}
+	void rightMouseDown();
+	void leftMouseDown();
 	void rightMouseUp()						{}
 	void leftMouseUp()						{}
-	void updateMouse(POINT mouse)			{ mousePos = mouse; }
+	void updateMouse(POINT mouse);
 
 	/* Tool calls */
 	void setElevationTool()					{ selectedTool = Tools::ELEVATION; }

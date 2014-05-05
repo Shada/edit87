@@ -20,8 +20,8 @@ namespace wrap
 		void moveCamera(int xDir, int zDir);
 
 		/* Mouse calls */
-		void rightMouseDown(int x, int y);
-		void leftMouseDown(int x, int y);
+		void rightMouseDown();
+		void leftMouseDown();
 		void rightMouseUp();
 		void leftMouseUp();
 		void updateMouse(int x, int y);

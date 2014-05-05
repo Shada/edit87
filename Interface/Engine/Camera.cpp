@@ -2,7 +2,7 @@
 
 Camera::Camera(int width, int height, const Terrain *terrain)
 {
-	vEye		= elm::vec3(100, 150, 100);
+	vEye		= elm::vec3(100, 300, 100);
 	vRight		= elm::vec3(1, 0, 0);
 	vUp			= elm::vec3(0, 1, 0);
 	vLook		= elm::vec3(0, 0, 1);
@@ -15,7 +15,7 @@ Camera::Camera(int width, int height, const Terrain *terrain)
 	minZ = terrainPos.z;
 	maxZ = terrainPos.z + terrain->getHeight();
 
-	elm::rotationAxis(mRot, elm::vec3(1, 0, 0), -ELM_PI / 6);
+	elm::rotationAxis(mRot, elm::vec3(1, 0, 0), -ELM_PI / 4);
 	vLook = mRot * vLook;
 	vUp = mRot * vUp;
 
@@ -25,7 +25,8 @@ Camera::Camera(int width, int height, const Terrain *terrain)
 
 void Camera::move(elm::vec2 direction)
 {
-	vEye.xz += elm::normalize(direction.y * vRight.xz + direction.x * vLook.xz) * 5;
+	if(direction != 0)
+		vEye.xz += elm::normalize(direction.y * vRight.xz + direction.x * vLook.xz) * 5;
 
 	if(vEye.x > maxX)	vEye.x = maxX;
 	if(vEye.x < minX)	vEye.x = minX;
@@ -46,6 +47,16 @@ void Camera::rotate(float angle)
 	elm::rotationAxis(mRot, elm::vec3(0, 1, 0), angle);
 	vLook = mRot * vLook;
 	elm::lookAtLH(mView, vLook, vUp, vEye);
+}
+
+elm::vec2 Camera::getWorldPos(int mousePosX, int mousePosY)
+{
+	// Copy ray vs triangle from raytracer project
+	//while(true)
+	//{
+	//
+	//}
+	return elm::vec2(0);
 }
 
 Camera::~Camera()

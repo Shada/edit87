@@ -38,17 +38,14 @@ namespace wrap
 		gfx->renderScene();
 	}
 
-	void GraphicsCommunicator::rightMouseDown(int x, int y)
+	void GraphicsCommunicator::rightMouseDown()
 	{
-
+		gfx->rightMouseDown();
 	}
 
-	void GraphicsCommunicator::leftMouseDown(int x, int y)
+	void GraphicsCommunicator::leftMouseDown()
 	{
-		POINT p;
-		p.x = x;
-		p.y = y;
-		gfx->leftMouseDown(p);
+		gfx->leftMouseDown();
 	}
 
 	void GraphicsCommunicator::rightMouseUp()

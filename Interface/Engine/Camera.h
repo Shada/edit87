@@ -24,4 +24,6 @@ public:
 	elm::vec3 getEye()	{ return vEye; }
 	elm::mat4 getProj() { return mProj; }
 	elm::mat4 getView() { return mView; }
+
+	elm::vec2 getWorldPos(int mousePosX, int mousePosY);
 };
