@@ -53,7 +53,6 @@ namespace wrap
 
 	void GraphicsCommunicator::leftMouseUp()
 	{
-		
 	}
 
 	void GraphicsCommunicator::updateMouse(int x, int y)

@@ -8,7 +8,6 @@ Engine::Engine(HWND hwnd)
 	selectedTool = Tools::SELECTOR;
 
 	minmaxCalcDone = true;
-
 	camera = nullptr;
 	terrain = nullptr;
 
