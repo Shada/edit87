@@ -28,9 +28,12 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PanResources));
             this.label9 = new System.Windows.Forms.Label();
             this.tw_resources = new System.Windows.Forms.TreeView();
             this.btn_importResource = new System.Windows.Forms.Button();
+            this.imageList = new System.Windows.Forms.ImageList(this.components);
             this.SuspendLayout();
             // 
             // label9
@@ -44,8 +47,11 @@
             // 
             // tw_resources
             // 
+            this.tw_resources.ImageIndex = 0;
+            this.tw_resources.ImageList = this.imageList;
             this.tw_resources.Location = new System.Drawing.Point(3, 45);
             this.tw_resources.Name = "tw_resources";
+            this.tw_resources.SelectedImageIndex = 0;
             this.tw_resources.Size = new System.Drawing.Size(190, 200);
             this.tw_resources.TabIndex = 4;
             // 
@@ -57,6 +63,14 @@
             this.btn_importResource.TabIndex = 3;
             this.btn_importResource.Text = "Import resource";
             this.btn_importResource.UseVisualStyleBackColor = true;
+            this.btn_importResource.Click += new System.EventHandler(this.btn_importResource_Click);
+            // 
+            // imageList
+            // 
+            this.imageList.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList.ImageStream")));
+            this.imageList.TransparentColor = System.Drawing.Color.Transparent;
+            this.imageList.Images.SetKeyName(0, "folder");
+            this.imageList.Images.SetKeyName(1, "img");
             // 
             // PanResources
             // 
@@ -82,5 +96,6 @@
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.TreeView tw_resources;
         private System.Windows.Forms.Button btn_importResource;
+        private System.Windows.Forms.ImageList imageList;
     }
 }

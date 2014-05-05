@@ -103,11 +103,23 @@
     <Compile Include="Forms\PanTextures.Designer.cs">
       <DependentUpon>PanTextures.cs</DependentUpon>
     </Compile>
+    <Compile Include="ImportResource.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ImportResource.Designer.cs">
+      <DependentUpon>ImportResource.cs</DependentUpon>
+    </Compile>
     <Compile Include="main.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="main.Designer.cs">
       <DependentUpon>main.cs</DependentUpon>
+    </Compile>
+    <Compile Include="NameFolder.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="NameFolder.Designer.cs">
+      <DependentUpon>NameFolder.cs</DependentUpon>
     </Compile>
     <Compile Include="NewProject.cs">
       <SubType>Form</SubType>
@@ -123,6 +135,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="Utils.cs" />
     <EmbeddedResource Include="Forms\PanBrushes.resx">
       <DependentUpon>PanBrushes.cs</DependentUpon>
     </EmbeddedResource>
@@ -141,8 +154,14 @@
     <EmbeddedResource Include="Forms\PanTextures.resx">
       <DependentUpon>PanTextures.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="ImportResource.resx">
+      <DependentUpon>ImportResource.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="main.resx">
       <DependentUpon>main.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="NameFolder.resx">
+      <DependentUpon>NameFolder.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="NewProject.resx">
       <DependentUpon>NewProject.cs</DependentUpon>
@@ -180,7 +199,45 @@
       <Name>Wrapper</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="Images\Editor\brush.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Images\Editor\dirt.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Images\Editor\export.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Images\Editor\folder.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Images\Editor\grass.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Images\Editor\image.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Images\Editor\load.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Images\Editor\map_placeholder.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Images\Editor\noPreview.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Images\Editor\redo.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Images\Editor\rock.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Images\Editor\save.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Images\Editor\undo.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

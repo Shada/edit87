@@ -55,6 +55,7 @@
             this.layoutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.importPreferencesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exportPreferencesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.resetToDefaultToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.importBrushesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.undoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -109,40 +110,42 @@
             // newProjectToolStripMenuItem
             // 
             this.newProjectToolStripMenuItem.Name = "newProjectToolStripMenuItem";
-            this.newProjectToolStripMenuItem.Size = new System.Drawing.Size(138, 22);
+            this.newProjectToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.newProjectToolStripMenuItem.Text = "New Project";
+            this.newProjectToolStripMenuItem.Click += new System.EventHandler(this.newProjectToolStripMenuItem_Click);
             // 
             // saveToolStripMenuItem
             // 
             this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            this.saveToolStripMenuItem.Size = new System.Drawing.Size(138, 22);
+            this.saveToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.saveToolStripMenuItem.Text = "Save";
             // 
             // saveAsToolStripMenuItem
             // 
             this.saveAsToolStripMenuItem.Name = "saveAsToolStripMenuItem";
-            this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(138, 22);
+            this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.saveAsToolStripMenuItem.Text = "Save as";
             // 
             // loadToolStripMenuItem
             // 
             this.loadToolStripMenuItem.Name = "loadToolStripMenuItem";
-            this.loadToolStripMenuItem.Size = new System.Drawing.Size(138, 22);
+            this.loadToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.loadToolStripMenuItem.Text = "Load";
             // 
             // exportToolStripMenuItem
             // 
             this.exportToolStripMenuItem.Name = "exportToolStripMenuItem";
-            this.exportToolStripMenuItem.Size = new System.Drawing.Size(138, 22);
+            this.exportToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.exportToolStripMenuItem.Text = "Export";
             // 
             // layoutToolStripMenuItem
             // 
             this.layoutToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.importPreferencesToolStripMenuItem,
-            this.exportPreferencesToolStripMenuItem});
+            this.exportPreferencesToolStripMenuItem,
+            this.resetToDefaultToolStripMenuItem});
             this.layoutToolStripMenuItem.Name = "layoutToolStripMenuItem";
-            this.layoutToolStripMenuItem.Size = new System.Drawing.Size(138, 22);
+            this.layoutToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.layoutToolStripMenuItem.Text = "Layout";
             // 
             // importPreferencesToolStripMenuItem
@@ -158,6 +161,13 @@
             this.exportPreferencesToolStripMenuItem.Size = new System.Drawing.Size(174, 22);
             this.exportPreferencesToolStripMenuItem.Text = "export preferences";
             this.exportPreferencesToolStripMenuItem.Click += new System.EventHandler(this.exportPreferencesToolStripMenuItem_Click);
+            // 
+            // resetToDefaultToolStripMenuItem
+            // 
+            this.resetToDefaultToolStripMenuItem.Name = "resetToDefaultToolStripMenuItem";
+            this.resetToDefaultToolStripMenuItem.Size = new System.Drawing.Size(174, 22);
+            this.resetToDefaultToolStripMenuItem.Text = "Reset to default";
+            this.resetToDefaultToolStripMenuItem.Click += new System.EventHandler(this.resetToDefaultToolStripMenuItem_Click);
             // 
             // editToolStripMenuItem
             // 
@@ -398,6 +408,7 @@
             this.IsMdiContainer = true;
             this.Name = "MapEditor";
             this.Text = "Map Editor";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MapEditor_FormClosing);
             this.Load += new System.EventHandler(this.MapEditor_Load);
             this.Resize += new System.EventHandler(this.MapEditor_Resize);
             this.menuStrip.ResumeLayout(false);
@@ -440,6 +451,7 @@
         private System.Windows.Forms.Button btn_undo;
         private System.Windows.Forms.ImageList imageList1;
         private WeifenLuo.WinFormsUI.Docking.DockPanel mainDockPanel;
+        private System.Windows.Forms.ToolStripMenuItem resetToDefaultToolStripMenuItem;
 
 
 
