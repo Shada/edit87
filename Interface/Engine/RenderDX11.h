@@ -5,6 +5,7 @@
 #include "EngineInterface.h"
 #include "Terrain.h"
 #include "Camera.h"
+#include "Mesh3D.h"
 
 #define SAFE_RELEASE(x) if( x ) { (x)->Release(); (x) = NULL; }
 #define SAFE_DELETE(x) if( x ) { delete(x); (x) = NULL; }
@@ -55,16 +56,25 @@ private:
 	ID3D11DepthStencilState		*g_depthStencilStateDisable;
 
 	ID3D11InputLayout			*g_layout;
+	ID3D11InputLayout			*g_otherlayout;
 
 	ID3D11VertexShader			*g_terrainVS;
 	ID3D11PixelShader			*g_terrainPS;
 
+	ID3D11VertexShader			*g_modelVS;
+	ID3D11PixelShader			*g_modelPS;
+
 	std::vector<ID3D11Buffer*>	g_buffers;
 	std::vector<ID3D11ShaderResourceView*> g_textures;
+
+	Mesh3D						*mesh;
 
 	HRESULT init();
 	HRESULT createSampleStates();
 	HRESULT compileShader(LPCSTR filePath, LPCSTR shaderType, ID3DBlob **shaderBlob);
+
+	HRESULT createBuffer(void* data, int numElements, int bytesPerElement, int &bufferID);
+	HRESULT createIndexBuffer(void* data, int numElements, int &bufferID);
 
 public:
 	RenderDX11(HWND hWnd);

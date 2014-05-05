@@ -58,5 +58,6 @@ namespace wrap
 	
 	GraphicsCommunicator::~GraphicsCommunicator()
 	{
+		EngineFactory::deleteGraphics(gfx);
 	}
 }

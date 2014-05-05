@@ -5,6 +5,7 @@
 *.obj
 *.ilk
 *.idb
+*.exp
 
 # Compiled Dynamic libraries
 *.so

@@ -11,6 +11,12 @@ RenderDX11::RenderDX11(HWND hWnd) : EngineInterface()
 
 	camera = nullptr;
 	g_swapChain = nullptr;
+
+	mesh = new Mesh3D();
+	if(!mesh->loadMesh("..\\Models\\duck\\duck.dae"))
+	{
+		MessageBoxA(hWnd, "Model load fail", "FAIL", 0);
+	}
 }
 
 void RenderDX11::setRect(RECT t)
@@ -260,22 +266,39 @@ HRESULT RenderDX11::init()
 
 	D3D11_INPUT_ELEMENT_DESC standardLayout[] =
 	{
-		{ "POSITION",	0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "POSITION",	0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
 		{ "NORMAL",		0, DXGI_FORMAT_R32G32B32_FLOAT, 0, sizeof(float) * 3, D3D11_INPUT_PER_VERTEX_DATA, 0},
 		{ "TEXCOORD",	0, DXGI_FORMAT_R32G32_FLOAT,	0, sizeof(float) * 6, D3D11_INPUT_PER_VERTEX_DATA, 0}
 	};
 
+	D3D11_INPUT_ELEMENT_DESC aLittleLessStandardLayout[] =
+	{
+		{ "POSITION",	0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{ "NORMAL",		0, DXGI_FORMAT_R32G32B32_FLOAT, 1, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{ "TEXCOORD",	0, DXGI_FORMAT_R32G32_FLOAT,	2, 0, D3D11_INPUT_PER_VERTEX_DATA, 0}
+	};
+
 	/* Create shaders */
-	ID3DBlob *terrainBlob;
-	compileShader("..\\Shaders\\defaultVS.hlsl", "vs_4_0", &terrainBlob);
-	g_device->CreateVertexShader(terrainBlob->GetBufferPointer(), terrainBlob->GetBufferSize(), NULL, &g_terrainVS);
-	g_device->CreateInputLayout(standardLayout, ARRAYSIZE(standardLayout), terrainBlob->GetBufferPointer(), terrainBlob->GetBufferSize(), &g_layout);
-	terrainBlob->Release();
+	ID3DBlob *shaderBlob;
+	compileShader("..\\Shaders\\defaultVS.hlsl", "vs_4_0", &shaderBlob);
+	g_device->CreateVertexShader(shaderBlob->GetBufferPointer(), shaderBlob->GetBufferSize(), NULL, &g_terrainVS);
+	g_device->CreateInputLayout(standardLayout, ARRAYSIZE(standardLayout), shaderBlob->GetBufferPointer(), shaderBlob->GetBufferSize(), &g_layout);
+	shaderBlob->Release();
 
-	compileShader("..\\Shaders\\defaultPS.hlsl", "ps_4_0", &terrainBlob);
-	g_device->CreatePixelShader(terrainBlob->GetBufferPointer(), terrainBlob->GetBufferSize(), NULL, &g_terrainPS);
+	compileShader("..\\Shaders\\defaultPS.hlsl", "ps_4_0", &shaderBlob);
+	g_device->CreatePixelShader(shaderBlob->GetBufferPointer(), shaderBlob->GetBufferSize(), NULL, &g_terrainPS);
 
-	terrainBlob->Release();
+	shaderBlob->Release();
+
+	hr = compileShader("..\\Shaders\\modelVS.hlsl", "vs_4_0", &shaderBlob);
+	hr = g_device->CreateVertexShader(shaderBlob->GetBufferPointer(), shaderBlob->GetBufferSize(), NULL, &g_modelVS);
+	hr = g_device->CreateInputLayout(aLittleLessStandardLayout, ARRAYSIZE(aLittleLessStandardLayout), shaderBlob->GetBufferPointer(), shaderBlob->GetBufferSize(), &g_otherlayout);
+	shaderBlob->Release();
+
+	hr = compileShader("..\\Shaders\\modelPS.hlsl", "ps_4_0", &shaderBlob);
+	g_device->CreatePixelShader(shaderBlob->GetBufferPointer(), shaderBlob->GetBufferSize(), NULL, &g_modelPS);
+
+	shaderBlob->Release();
 
 	ID3D11ShaderResourceView *tex;
 	hr = D3DX11CreateShaderResourceViewFromFile(g_device, "..\\Textures\\grass.png", NULL, NULL, &tex, NULL);
@@ -286,6 +309,34 @@ HRESULT RenderDX11::init()
 	}
 	g_textures.push_back(tex);
 	createSampleStates();
+
+	
+	int id;
+	if(FAILED(createBuffer((void*)mesh->getVertices().data(), mesh->getNumVertices(), sizeof(elm::vec3), id)))
+	{
+		MessageBox(this->hWnd, "VertexBuffer load made fail, lol", "fail, yo", 0);
+		return hr;
+	}
+	mesh->setVertexBufferID(id);
+	if(FAILED(createBuffer((void*)mesh->getNormals().data(), mesh->getNumVertices(), sizeof(elm::vec3), id)))
+	{
+		MessageBox(this->hWnd, "NormalBuffer load made fail, lol", "fail, yo", 0);
+		return hr;
+	}
+	mesh->setNormalBufferID(id);
+	if(FAILED(createBuffer((void*)mesh->getTexCoords().data(), mesh->getNumVertices(), sizeof(elm::vec3), id)))
+	{
+		MessageBox(this->hWnd, "TexCoordsBuffer load made fail, lol", "fail, yo", 0);
+		return hr;
+	}
+	mesh->setTexCoordBufferID(id);
+	if(FAILED(createIndexBuffer((void*)mesh->getIndices().data(), mesh->getNumIndices(), id)))
+	{
+		MessageBox(this->hWnd, "IndexBuffer load made fail, lol", "fail, yo", 0);
+		return hr;
+	}
+	mesh->setIndexBufferID(id);
+
     return S_OK;
 }
 
@@ -338,6 +389,60 @@ HRESULT RenderDX11::createSampleStates()
 		MessageBox(hWnd, "Error creating sampler state", "ERROR", MB_OK);
 
 	return hr;
+}
+
+HRESULT RenderDX11::createBuffer(void *data, int numElements, int bytesPerElement, int &bufferID)
+{
+	D3D11_SUBRESOURCE_DATA initData;
+	initData.pSysMem = data;
+	initData.SysMemPitch = 0;
+	initData.SysMemSlicePitch = 0;
+
+	D3D11_BUFFER_DESC bd;
+	ZeroMemory(&bd, sizeof(bd));
+	bd.Usage = D3D11_USAGE_IMMUTABLE;
+    bd.ByteWidth = bytesPerElement * numElements;
+    bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+    bd.CPUAccessFlags = 0;
+	bd.MiscFlags      = 0;
+
+	ID3D11Buffer *buffer = nullptr;
+	HRESULT hr = g_device->CreateBuffer(&bd, &initData, &buffer);
+    if(FAILED(hr))
+	{
+        MessageBox(NULL,"could not create vertexbuffer", "ERROR", S_OK);
+		return hr;
+	}
+
+	bufferID = g_buffers.size();
+	g_buffers.push_back(buffer);
+}
+
+HRESULT RenderDX11::createIndexBuffer(void* data, int numElements, int &bufferID)
+{
+	D3D11_SUBRESOURCE_DATA initData;
+	initData.pSysMem = data;
+	initData.SysMemPitch = 0;
+	initData.SysMemSlicePitch = 0;
+
+	D3D11_BUFFER_DESC bd;
+	ZeroMemory(&bd, sizeof(bd));
+	bd.Usage = D3D11_USAGE_IMMUTABLE;
+    bd.ByteWidth = sizeof(unsigned int) * numElements;
+    bd.BindFlags = D3D11_BIND_INDEX_BUFFER;
+    bd.CPUAccessFlags = 0;
+	bd.MiscFlags      = 0;
+
+	ID3D11Buffer *buffer = nullptr;
+	HRESULT hr = g_device->CreateBuffer(&bd, &initData, &buffer);
+    if(FAILED(hr))
+	{
+        MessageBox(NULL,"could not create indexbuffer", "ERROR", S_OK);
+		return hr;
+	}
+
+	bufferID = g_buffers.size();
+	g_buffers.push_back(buffer);
 }
 
 HRESULT RenderDX11::createTerrain(int width, int height, float pointStep, bool fromPerlinMap)
@@ -432,6 +537,24 @@ void RenderDX11::renderScene()
 	g_deviceContext->PSSetShader(g_terrainPS, NULL, 0);
 
 	g_deviceContext->DrawIndexed(terrain->getIndexCount(), 0, 0);
+
+	/************************************************************/
+	//						DRAWING A MESH						//
+	/************************************************************/
+
+	g_deviceContext->VSSetShader(g_modelVS, NULL, 0);
+	g_deviceContext->PSSetShader(g_modelPS, NULL, 0);
+	g_deviceContext->IASetInputLayout(g_otherlayout);
+
+	stride = sizeof(elm::vec3);
+
+	g_deviceContext->IASetVertexBuffers(0, 1, &g_buffers.at(mesh->getVertexBufferID()), &stride, &offset);
+	g_deviceContext->IASetVertexBuffers(1, 1, &g_buffers.at(mesh->getNormalBufferID()), &stride, &offset);
+	g_deviceContext->IASetVertexBuffers(2, 1, &g_buffers.at(mesh->getTexCoordBufferID()), &stride, &offset);
+
+	g_deviceContext->IASetIndexBuffer(g_buffers.at(mesh->getIndexBufferID()), DXGI_FORMAT_R32_UINT, 0);
+
+	g_deviceContext->DrawIndexed(mesh->getNumIndices(), 0, 0);
 	
 	g_swapChain->Present(0, 0);
 }
@@ -456,4 +579,27 @@ RenderDX11::~RenderDX11()
 
 	SAFE_RELEASE(g_depthStencilStateDisable);
 	SAFE_RELEASE(g_depthStencilStateEnable);
+
+	SAFE_RELEASE(g_terrainPS);
+	SAFE_RELEASE(g_terrainVS);
+	SAFE_RELEASE(g_modelPS);
+	SAFE_RELEASE(g_modelVS);
+	SAFE_RELEASE(g_layout);
+	SAFE_RELEASE(g_otherlayout);
+	SAFE_RELEASE(g_blendAlpha);
+	for(int i = 0; i < g_buffers.size(); i++)
+	{
+		SAFE_RELEASE(g_buffers[0]);
+	}
+	g_buffers.clear();
+
+	SAFE_RELEASE(g_clamp);
+	SAFE_RELEASE(g_rasterizerState);
+	for(int i = 0; i < g_textures.size(); i++)
+	{
+		SAFE_RELEASE(g_textures[0]);
+	}
+	g_textures.clear();
+	SAFE_RELEASE(g_wrap);
+	SAFE_DELETE(mesh);
 }
