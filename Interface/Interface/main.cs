@@ -50,17 +50,17 @@ namespace LevelEditor
 
 		private void btn_TerrainBrush_Click(object sender, EventArgs e)
 		{
-
+			NO();
 		}
 
 		private void btn_TextureBrush_Click(object sender, EventArgs e)
 		{
-
+			NO();
 		}
 
 		private void lv_Textures_SelectedIndexChanged(object sender, EventArgs e)
 		{
-
+			NO();
 		}
 
         private void toolsShortcutsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -81,12 +81,12 @@ namespace LevelEditor
 
 		private void saveToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			MessageBox.Show("This is not yet implemented you tool!", "FUCK FACE!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+			NO();
 		}
 
 		private void saveAsToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			MessageBox.Show("This is not yet implemented you tool!", "FUCK FACE!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+			NO();
 		}
 
 		private void loadToolStripMenuItem_Click(object sender, EventArgs e)
@@ -101,77 +101,77 @@ namespace LevelEditor
 
 		private void importBrushesToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-
+			NO();
 		}
 
 		private void undoToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-
+			NO();
 		}
 
 		private void redoToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-
+			NO();
 		}
 
 		private void prefrencesToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-
+			NO();
 		}
 
 		private void haalpPleaseToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-
+			NO();
 		}
 
 		private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-
+			NO();
 		}
 
 		private void btn_save_Click(object sender, EventArgs e)
 		{
-
+			NO();
 		}
 
 		private void btn_load_Click(object sender, EventArgs e)
 		{
-
+			loadProject();
 		}
 
 		private void btn_export_Click(object sender, EventArgs e)
 		{
-
+			export();
 		}
 
 		private void cb_history_SelectedIndexChanged(object sender, EventArgs e)
 		{
-
+			NO();
 		}
 
 		private void btn_undo_Click(object sender, EventArgs e)
 		{
-
+			NO();
 		}
 
 		private void btn_redo_Click(object sender, EventArgs e)
 		{
-
+			NO();
 		}
 
 		private void tw_objects_AfterSelect(object sender, TreeViewEventArgs e)
 		{
-
+			NO();
 		}
 
 		private void nud_BrushSize_ValueChanged(object sender, EventArgs e)
 		{
-
+			NO();
 		}
 
 		private void lw_Brush_SelectedIndexChanged(object sender, EventArgs e)
 		{
-
+			NO();
 		}
 
 		private void btn_importResource_Click(object sender, EventArgs e)
@@ -182,12 +182,12 @@ namespace LevelEditor
 
 		private void nud_brushIntensity_ValueChanged(object sender, EventArgs e)
 		{
-
+			NO();
 		}
 
 		private void tw_resources_AfterSelect(object sender, TreeViewEventArgs e)
 		{
-
+			NO();
 		}
 
 		#region logic
@@ -306,6 +306,11 @@ namespace LevelEditor
 					return;
 				}
 			}
+		}
+
+		private static void NO()
+		{
+			MessageBox.Show("This is not yet implemented you tool!", "FUCK FACE!", MessageBoxButtons.OK, MessageBoxIcon.Error);
 		}
 
 		#endregion
