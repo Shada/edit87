@@ -25,6 +25,10 @@ public:
 	int getNormalBufferID() { return normalBufferID; }
 	int getTexCoordBufferID() { return texCoordBufferID; }
 	int getIndexBufferID() { return indexBufferID; }
+
+	std::string getTexDiffusePath() { return texDiffusePath; }
+	int getTexDiffuseID() { return texDiffuseID; }
+	void setTexDiffuseID(int id) { texDiffuseID = id; }
 	
 private:
 	int vertexBufferID;
@@ -40,6 +44,9 @@ private:
 	std::vector<elm::vec3> texCoords;
 	std::vector<unsigned int> indices;
 
+	std::string texDiffusePath;
+
+	int texDiffuseID;
 	// store all raw mesh data here?
 	// load the mesh here or from outside??
 	// start with here and then move it out...

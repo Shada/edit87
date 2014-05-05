@@ -6,6 +6,7 @@
 #include "Terrain.h"
 #include "Camera.h"
 #include "Mesh3D.h"
+#include "Object3D.h"
 
 #define SAFE_RELEASE(x) if( x ) { (x)->Release(); (x) = NULL; }
 #define SAFE_DELETE(x) if( x ) { delete(x); (x) = NULL; }
@@ -67,7 +68,9 @@ private:
 	std::vector<ID3D11Buffer*>	g_buffers;
 	std::vector<ID3D11ShaderResourceView*> g_textures;
 
-	Mesh3D						*mesh;
+	std::vector<Mesh3D*>		g_meshes;
+
+	std::vector<Object3D*>		g_objects;
 
 	HRESULT init();
 	HRESULT createSampleStates();

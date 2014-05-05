@@ -2,6 +2,7 @@
 #pragma comment(lib, "D3DX11.lib")
 #include <D3DX11async.h>
 #include <d3dcompiler.h>
+#include "..\DirectXTex\DirectXTex.h"
 
 RenderDX11::RenderDX11(HWND hWnd) : EngineInterface()
 {
@@ -12,11 +13,12 @@ RenderDX11::RenderDX11(HWND hWnd) : EngineInterface()
 	camera = nullptr;
 	g_swapChain = nullptr;
 
-	mesh = new Mesh3D();
-	if(!mesh->loadMesh("..\\Models\\duck\\duck.dae"))
+	Mesh3D *mesh = new Mesh3D();
+	if(!mesh->loadMesh("..\\Models\\Iron_Man\\Iron_Man1.obj"))
 	{
 		MessageBoxA(hWnd, "Model load fail", "FAIL", 0);
 	}
+	g_meshes.push_back(mesh);
 }
 
 void RenderDX11::setRect(RECT t)
@@ -140,7 +142,7 @@ HRESULT RenderDX11::init()
 	D3D11_RASTERIZER_DESC rasterDesc;
 
 	rasterDesc.AntialiasedLineEnable = false;
-	rasterDesc.CullMode = D3D11_CULL_BACK;
+	rasterDesc.CullMode = D3D11_CULL_NONE;
 	rasterDesc.DepthBias = 0;
 	rasterDesc.DepthBiasClamp = 0.f;
 	rasterDesc.DepthClipEnable = true;
@@ -301,6 +303,7 @@ HRESULT RenderDX11::init()
 	shaderBlob->Release();
 
 	ID3D11ShaderResourceView *tex;
+
 	hr = D3DX11CreateShaderResourceViewFromFile(g_device, "..\\Textures\\grass.png", NULL, NULL, &tex, NULL);
 	if(FAILED(hr))
 	{
@@ -312,31 +315,44 @@ HRESULT RenderDX11::init()
 
 	
 	int id;
-	if(FAILED(createBuffer((void*)mesh->getVertices().data(), mesh->getNumVertices(), sizeof(elm::vec3), id)))
+	if(FAILED(createBuffer((void*)g_meshes[0]->getVertices().data(), g_meshes[0]->getNumVertices(), sizeof(elm::vec3), id)))
 	{
 		MessageBox(this->hWnd, "VertexBuffer load made fail, lol", "fail, yo", 0);
 		return hr;
 	}
-	mesh->setVertexBufferID(id);
-	if(FAILED(createBuffer((void*)mesh->getNormals().data(), mesh->getNumVertices(), sizeof(elm::vec3), id)))
+	g_meshes[0]->setVertexBufferID(id);
+	if(FAILED(createBuffer((void*)g_meshes[0]->getNormals().data(), g_meshes[0]->getNumVertices(), sizeof(elm::vec3), id)))
 	{
 		MessageBox(this->hWnd, "NormalBuffer load made fail, lol", "fail, yo", 0);
 		return hr;
 	}
-	mesh->setNormalBufferID(id);
-	if(FAILED(createBuffer((void*)mesh->getTexCoords().data(), mesh->getNumVertices(), sizeof(elm::vec3), id)))
+	g_meshes[0]->setNormalBufferID(id);
+	if(FAILED(createBuffer((void*)g_meshes[0]->getTexCoords().data(), g_meshes[0]->getNumVertices(), sizeof(elm::vec3), id)))
 	{
 		MessageBox(this->hWnd, "TexCoordsBuffer load made fail, lol", "fail, yo", 0);
 		return hr;
 	}
-	mesh->setTexCoordBufferID(id);
-	if(FAILED(createIndexBuffer((void*)mesh->getIndices().data(), mesh->getNumIndices(), id)))
+	g_meshes[0]->setTexCoordBufferID(id);
+	if(FAILED(createIndexBuffer((void*)g_meshes[0]->getIndices().data(), g_meshes[0]->getNumIndices(), id)))
 	{
 		MessageBox(this->hWnd, "IndexBuffer load made fail, lol", "fail, yo", 0);
 		return hr;
 	}
-	mesh->setIndexBufferID(id);
+	g_meshes[0]->setIndexBufferID(id);
 
+	Object3D *obj = new Object3D();
+	obj->setMeshID(0);
+	obj->setPosition(elm::vec3(200,100,200));
+
+	g_objects.push_back(obj);
+
+	
+	DirectX::ScratchImage *image = new DirectX::ScratchImage();
+	hr = DirectX::LoadFromTGAFile(L"../Models/duck/duckCM.tga", nullptr, *image);
+	if(FAILED(hr))
+	{
+		return hr;
+	}
     return S_OK;
 }
 
@@ -496,7 +512,7 @@ HRESULT RenderDX11::createTerrain(int width, int height, float pointStep, bool f
 		MessageBox(NULL,"could not create terrain indexbuffer", "ERROR", S_OK);
 		return hr;
 	}
-
+	
 	terrainIndexBufferID = g_buffers.size();
 	g_buffers.push_back(buffer);
 
@@ -547,14 +563,17 @@ void RenderDX11::renderScene()
 	g_deviceContext->IASetInputLayout(g_otherlayout);
 
 	stride = sizeof(elm::vec3);
+	cb.world = elm::translationMatrix(g_objects[0]->getPosition());
+	cb.world *= elm::scalingMatrix(.5, .5, .5);// * cb.world;
+	g_deviceContext->UpdateSubresource(g_buffers.at(cbOnChangeID), 0, NULL, &cb, 0, 0);
 
-	g_deviceContext->IASetVertexBuffers(0, 1, &g_buffers.at(mesh->getVertexBufferID()), &stride, &offset);
-	g_deviceContext->IASetVertexBuffers(1, 1, &g_buffers.at(mesh->getNormalBufferID()), &stride, &offset);
-	g_deviceContext->IASetVertexBuffers(2, 1, &g_buffers.at(mesh->getTexCoordBufferID()), &stride, &offset);
+	g_deviceContext->IASetVertexBuffers(0, 1, &g_buffers.at(g_meshes[0]->getVertexBufferID()), &stride, &offset);
+	g_deviceContext->IASetVertexBuffers(1, 1, &g_buffers.at(g_meshes[0]->getNormalBufferID()), &stride, &offset);
+	g_deviceContext->IASetVertexBuffers(2, 1, &g_buffers.at(g_meshes[0]->getTexCoordBufferID()), &stride, &offset);
 
-	g_deviceContext->IASetIndexBuffer(g_buffers.at(mesh->getIndexBufferID()), DXGI_FORMAT_R32_UINT, 0);
+	g_deviceContext->IASetIndexBuffer(g_buffers.at(g_meshes[0]->getIndexBufferID()), DXGI_FORMAT_R32_UINT, 0);
 
-	g_deviceContext->DrawIndexed(mesh->getNumIndices(), 0, 0);
+	g_deviceContext->DrawIndexed(g_meshes[0]->getNumIndices(), 0, 0);
 	
 	g_swapChain->Present(0, 0);
 }
@@ -589,7 +608,7 @@ RenderDX11::~RenderDX11()
 	SAFE_RELEASE(g_blendAlpha);
 	for(int i = 0; i < g_buffers.size(); i++)
 	{
-		SAFE_RELEASE(g_buffers[0]);
+		SAFE_RELEASE(g_buffers[i]);
 	}
 	g_buffers.clear();
 
@@ -597,9 +616,13 @@ RenderDX11::~RenderDX11()
 	SAFE_RELEASE(g_rasterizerState);
 	for(int i = 0; i < g_textures.size(); i++)
 	{
-		SAFE_RELEASE(g_textures[0]);
+		SAFE_RELEASE(g_textures[i]);
 	}
 	g_textures.clear();
 	SAFE_RELEASE(g_wrap);
-	SAFE_DELETE(mesh);
+	for(int i = 0; i < g_meshes.size(); i++)
+	{
+		SAFE_DELETE(g_meshes[i]);
+	}
+	g_meshes.clear();
 }

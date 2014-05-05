@@ -3,11 +3,19 @@
 #include <assimp\scene.h>
 #include <assimp\postprocess.h>
 #include <vector>
+#include <cstdint>
 #include "..\elm\elm.hpp"
+
 Mesh3D::Mesh3D()
 {
 	vertexBufferID = -1;
-	numVertices = -1;
+	normalBufferID = -1;
+	texCoordBufferID = -1;
+	indexBufferID = -1;
+	texDiffuseID = -1;
+
+	numVertices = 0;
+	numIndices = 0;
 }
 
 bool Mesh3D::loadMesh(const char* filePath)
@@ -24,8 +32,72 @@ bool Mesh3D::loadMesh(const char* filePath)
 	{
 		return false;
 	}
+	
+	if(scene->HasMaterials())
+	{
+		for(int i = 0; i < scene->mNumMaterials; i++)
+		{
+			if(scene->mMaterials[i]->GetTextureCount(aiTextureType_DIFFUSE))
+			{
+				aiString texturePath;
+				scene->mMaterials[i]->GetTexture(aiTextureType_DIFFUSE,0,&texturePath);
+				texDiffusePath = texturePath.C_Str();
+			}
+			if(scene->mMaterials[i]->GetTextureCount(aiTextureType_AMBIENT))
+			{
+				aiString texturePath;
+				scene->mMaterials[i]->GetTexture(aiTextureType_AMBIENT,0,&texturePath);
+			}
+			if(scene->mMaterials[i]->GetTextureCount(aiTextureType_DISPLACEMENT))
+			{
+				aiString texturePath;
+				scene->mMaterials[i]->GetTexture(aiTextureType_DISPLACEMENT,0,&texturePath);
+			}
+			if(scene->mMaterials[i]->GetTextureCount(aiTextureType_EMISSIVE))
+			{
+				aiString texturePath;
+				scene->mMaterials[i]->GetTexture(aiTextureType_EMISSIVE,0,&texturePath);
+			}
+			if(scene->mMaterials[i]->GetTextureCount(aiTextureType_HEIGHT))
+			{
+				aiString texturePath;
+				scene->mMaterials[i]->GetTexture(aiTextureType_HEIGHT,0,&texturePath);
+			}
+			if(scene->mMaterials[i]->GetTextureCount(aiTextureType_LIGHTMAP))
+			{
+				aiString texturePath;
+				scene->mMaterials[i]->GetTexture(aiTextureType_LIGHTMAP,0,&texturePath);
+			}
+			if(scene->mMaterials[i]->GetTextureCount(aiTextureType_NORMALS))
+			{
+				aiString texturePath;
+				scene->mMaterials[i]->GetTexture(aiTextureType_NORMALS,0,&texturePath);
+			}
+			if(scene->mMaterials[i]->GetTextureCount(aiTextureType_OPACITY))
+			{
+				aiString texturePath;
+				scene->mMaterials[i]->GetTexture(aiTextureType_OPACITY,0,&texturePath);
+			}
+			if(scene->mMaterials[i]->GetTextureCount(aiTextureType_REFLECTION))
+			{
+				aiString texturePath;
+				scene->mMaterials[i]->GetTexture(aiTextureType_REFLECTION,0,&texturePath);
+			}
+			if(scene->mMaterials[i]->GetTextureCount(aiTextureType_SHININESS))
+			{
+				aiString texturePath;
+				scene->mMaterials[i]->GetTexture(aiTextureType_SHININESS,0,&texturePath);
+			}
+			if(scene->mMaterials[i]->GetTextureCount(aiTextureType_SPECULAR))
+			{
+				aiString texturePath;
+				scene->mMaterials[i]->GetTexture(aiTextureType_SPECULAR,0,&texturePath);
+			}
+		}
+	}
+
 	int tempPos = 0;
-	for(int i = 0; i < scene->mNumMeshes; i++)
+	for(int i = 0; i < scene->mNumMeshes; i++) // load all meshes.. should save meshes as polygroups? Maybe need to do that for multi-material support..
 	{
 		tempPos = vertices.size();
 		vertices.resize(vertices.size() + scene->mMeshes[i]->mNumVertices);
