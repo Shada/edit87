@@ -30,7 +30,6 @@ namespace LevelEditor
         }
         private void resizeWindow()
         {
-            pb_scene.Size = new Size(Size.Width - pb_sceneSizeDiff, Size.Height - pb_sceneSizeDiff);
         }
     }
 }

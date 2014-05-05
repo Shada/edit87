@@ -20,8 +20,12 @@ namespace LevelEditor
 	{
         public const string activeLayoutName = "PanelLayout.xml";
 
+        private bool forwardKey, backwardKey, leftKey, rightKey, leftMouseDown, rightMouseDown;
+
+        private int mousePosX, mousePosY;
+
         bool saveLayout = true;
-        wrap.GraphicsCommunicator graphics;
+        public wrap.GraphicsCommunicator graphics;
         int windowWidth, windowHeight;
         public XmlDocument projectFile = new XmlDocument();
         public DirectoryInfo projectDirectory;
@@ -33,7 +37,8 @@ namespace LevelEditor
 
 		public MapEditor()
 		{
-            graphics = new GraphicsCommunicator(this.Handle);
+            this.KeyPreview = true;
+
 			InitializeComponent();
             createStandardControls();
 
@@ -42,6 +47,12 @@ namespace LevelEditor
 
             deserializeDockContent = new DeserializeDockContent(GetContentFromPersistString);
             mainDockPanel.LoadFromXml(activeLayoutName, deserializeDockContent);
+
+            timer1.Interval = 20;
+            timer1.Start();
+
+            //graphics = new GraphicsCommunicator(panels[3].Handle);
+            //graphics.createTerrain(256, 256, 5, false, 0);
 		}
         private void createStandardControls()
         {
@@ -352,6 +363,81 @@ namespace LevelEditor
         {
             NewProject project = new NewProject(this);
 			project.Show();
+        }
+
+        private void MapEditor_MouseUp(object sender, MouseEventArgs e)
+        {
+            if (rightMouseDown || leftMouseDown)
+            {
+                if (leftMouseDown && e.Button == System.Windows.Forms.MouseButtons.Left)
+                {
+                    //graphics.leftMouseUp();
+                    leftMouseDown = false;
+                }
+                else if (rightMouseDown && e.Button == System.Windows.Forms.MouseButtons.Right)
+                {
+                    //graphics.rightMouseUp();
+                    rightMouseDown = false;
+                }
+            }
+        }
+
+        private void MapEditor_MouseMove(object sender, MouseEventArgs e)
+        {
+            mousePosX = e.X;
+            mousePosY = e.Y;
+        }
+
+        private void MapEditor_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (!rightMouseDown || !leftMouseDown)
+            {
+                if (!leftMouseDown && e.Button == System.Windows.Forms.MouseButtons.Left)
+                {
+                    //graphics.leftMouseDown();
+                    leftMouseDown = true;
+                }
+                else if (!rightMouseDown && e.Button == System.Windows.Forms.MouseButtons.Right)
+                {
+                    //graphics.rightMouseDown();
+                    rightMouseDown = true;
+                }
+            }
+        }
+
+        private void MapEditor_KeyDown(object sender, KeyEventArgs e)
+        {
+            switch (e.KeyCode)
+            {
+                case Keys.W: forwardKey = true; break;
+                case Keys.S: backwardKey = true; break;
+                case Keys.A: leftKey = true; break;
+                case Keys.D: rightKey = true; break;
+            }
+        }
+
+        private void MapEditor_KeyUp(object sender, KeyEventArgs e)
+        {
+            switch (e.KeyCode)
+            {
+                case Keys.W: forwardKey = false; break;
+                case Keys.S: backwardKey = false; break;
+                case Keys.A: leftKey = false; break;
+                case Keys.D: rightKey = false; break;
+            }
+        }
+
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            int xDir = forwardKey ? 1 : backwardKey ? -1 : 0;
+            int zDir = rightKey ? 1 : leftKey ? -1 : 0;
+            //if (xDir != 0 || zDir != 0)
+                //graphics.moveCamera(xDir, zDir);
+
+            //if (rightMouseDown)
+            //    graphics.rightMouseDown();
+            //if (leftMouseDown)
+            //    graphics.leftMouseDown();
         }
 	}
 }
