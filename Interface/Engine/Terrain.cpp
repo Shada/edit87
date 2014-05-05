@@ -248,8 +248,8 @@ float Terrain::getHeightAt(elm::vec2 pos) const
 
 void Terrain::applyBrush(float radius, float intensity, elm::vec2 origin, uint &startID, uint &amount)
 {
-	int startX = (int)((origin.x - radius) / step + 0.5);
-	int startZ = (int)((origin.y - radius) / step + 0.5);
+	uint startX = (int)((origin.x - radius) / step + 0.5);
+	uint startZ = (int)((origin.y - radius) / step + 0.5);
 
 	int cond = (int)(radius / step + 0.5), index, _x = startX, _z = startZ;
 
@@ -260,7 +260,7 @@ void Terrain::applyBrush(float radius, float intensity, elm::vec2 origin, uint &
 
 	startID = _x + _z * width;
 
-	for(int y = 0; y < cond * 2; y++)
+	for(uint y = 0; y < cond * 2; y++)
 	{
 		if(y + startZ < 0 || y + startZ >= (int)height)
 		{
