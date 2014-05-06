@@ -99,9 +99,6 @@ elm::vec3 Camera::getWorldPos(int mousePosX, int mousePosY)
 	{
 		p0 = points.at(iBuffer->at(i));
 
-		if(std::cos(elm::dot(elm::normalize(p0 - vPickRayOrig), vPickRayDir)) > 0.2f)
-			continue;
-
 		p1 = points.at(iBuffer->at(i + 1));
 		p2 = points.at(iBuffer->at(i + 2));
 

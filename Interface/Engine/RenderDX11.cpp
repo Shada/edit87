@@ -354,15 +354,15 @@ void RenderDX11::createAndSetTerrainBuffers(std::vector<Vertex> *vBuffer, std::v
 	D3D11_BUFFER_DESC bd;
 	ZeroMemory(&bd, sizeof(bd));
 	bd.Usage = D3D11_USAGE_DYNAMIC;
-    bd.ByteWidth = sizeof(Vertex) * vBuffer->size();
-    bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-    bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-	bd.MiscFlags      = 0;
+	bd.ByteWidth = sizeof(Vertex) * vBuffer->size();
+	bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	bd.MiscFlags = 0;
 
 	ID3D11Buffer *buffer = nullptr;
 	HRESULT hr = g_device->CreateBuffer(&bd, &initData, &buffer);
-    if(FAILED(hr))
-        MessageBox(NULL,"could not create terrain vertexbuffer", "ERROR", S_OK);
+	if(FAILED(hr))
+		MessageBox(NULL, "could not create terrain vertexbuffer", "ERROR", S_OK);
 
 	if(terrainVertexBufferID == -1)
 	{
@@ -384,8 +384,8 @@ void RenderDX11::createAndSetTerrainBuffers(std::vector<Vertex> *vBuffer, std::v
 
 	buffer = nullptr;
 	hr = g_device->CreateBuffer(&bd, &initData, &buffer);
-	if (FAILED(hr))
-		MessageBox(NULL,"could not create terrain indexbuffer", "ERROR", S_OK);
+	if(FAILED(hr))
+		MessageBox(NULL, "could not create terrain indexbuffer", "ERROR", S_OK);
 
 	if(terrainIndexBufferID == -1)
 	{
@@ -397,6 +397,20 @@ void RenderDX11::createAndSetTerrainBuffers(std::vector<Vertex> *vBuffer, std::v
 		SAFE_RELEASE(g_buffers.at(terrainIndexBufferID));
 		g_buffers.at(terrainIndexBufferID) = buffer;
 	}
+}
+
+void RenderDX11::updateTerrainBuffer(std::vector<Vertex> *vBuffer)
+{
+	D3D11_MAPPED_SUBRESOURCE resource;
+	HRESULT hr = g_deviceContext->Map(g_buffers.at(terrainVertexBufferID), 0, D3D11_MAP_WRITE_DISCARD, 0, &resource);
+
+	// This will be S_OK
+	if(FAILED(hr))
+		MessageBox(NULL, "Could not update terrain buffer", "ERROR", S_OK);
+
+	memcpy(resource.pData, (void**)&vBuffer->at(0), sizeof(Vertex)* vBuffer->size());
+
+	g_deviceContext->Unmap(g_buffers.at(terrainVertexBufferID), 0);
 }
 
 const float color[4] = {0.f, 1.f, 1.f, 1.f};

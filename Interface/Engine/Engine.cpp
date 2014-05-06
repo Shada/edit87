@@ -47,7 +47,8 @@ void Engine::leftMouseDown()
 	}
 	terrain->applyBrush(100, 1, mouseWorldPos.xz);
 	camera->move(elm::vec2(0));
-	dx->createAndSetTerrainBuffers(terrain->getVBuffer(), terrain->getIBuffer());
+	//dx->createAndSetTerrainBuffers(terrain->getVBuffer(), terrain->getIBuffer());
+	dx->updateTerrainBuffer(terrain->getVBuffer());
 	dx->renderScene();
 }
 
@@ -60,7 +61,8 @@ void Engine::rightMouseDown()
 	}
 	terrain->applyBrush(100, -1, mouseWorldPos.xz);
 	camera->move(elm::vec2(0));
-	dx->createAndSetTerrainBuffers(terrain->getVBuffer(), terrain->getIBuffer());
+	//dx->createAndSetTerrainBuffers(terrain->getVBuffer(), terrain->getIBuffer());
+	dx->updateTerrainBuffer(terrain->getVBuffer());
 	dx->renderScene();
 }
 
