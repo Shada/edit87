@@ -22,6 +22,8 @@ namespace LevelEditor
 
         private bool forwardKey, backwardKey, leftKey, rightKey, leftMouseDown, rightMouseDown;
 
+        private bool renderWindowActivated = true;
+
         private int mousePosX, mousePosY;
 
         bool saveLayout = true;
@@ -50,9 +52,16 @@ namespace LevelEditor
 
             timer1.Interval = 20;
             timer1.Start();
+            
+            if (panels[3].IsHandleCreated)
+                graphics = new GraphicsCommunicator(panels[3].Handle);
+            else
+                renderWindowActivated = false;
 
-            //graphics = new GraphicsCommunicator(panels[3].Handle);
-            //graphics.createTerrain(256, 256, 5, false, 0);
+            if (renderWindowActivated)
+            {
+                graphics.createTerrain(256, 256, 5, false, 0);
+            }
 		}
         private void createStandardControls()
         {
@@ -204,8 +213,22 @@ namespace LevelEditor
             windowHeight = Size.Height;
 
             shortcutPanel.Size = new Size(shortcutPanel.Size.Width + sizeDifWidth, shortcutPanel.Size.Height);
+            resizeRenderPanel();
 
 		}
+        private void resizeRenderPanel()
+        {
+            if (!panels[3].IsDisposed)
+            {
+                int tooltipHeight = 1;
+                if (shortcutPanel.Visible)
+                    tooltipHeight = shortcutPanel.Height;
+                panels[3].FloatPane.FloatWindow.Bounds = new Rectangle(this.Left + (int)mainDockPanel.DockLeftPortion + mainDockPanel.Left + 5,
+                                                                        this.Top + (int)mainDockPanel.DockTopPortion + mainDockPanel.Top + tooltipHeight - 10,
+                                                                        mainDockPanel.Width - (int)mainDockPanel.DockLeftPortion - (int)mainDockPanel.DockRightPortion,
+                                                                        mainDockPanel.Height - (int)mainDockPanel.DockTopPortion - (int)mainDockPanel.DockBottomPortion);
+            }
+        }
 
 		private void hideToolsMenu(object sender)
 		{
@@ -347,7 +370,9 @@ namespace LevelEditor
             panels[0].Show(mainDockPanel, DockState.DockRight);
             panels[1].Show(panels[0].Pane, DockAlignment.Bottom, 0.62);
             panels[2].Show(panels[1].Pane, DockAlignment.Bottom, 0.50);
-            panels[3].Show(mainDockPanel, DockState.Document);
+            panels[3].Show(mainDockPanel, DockState.Float);
+            panels[3].AllowEndUserDocking = false;
+            panels[3].Pane.AllowDockDragAndDrop = false;
             panels[4].Show(mainDockPanel, DockState.DockLeft);
             panels[5].Show(panels[4].Pane, DockAlignment.Bottom, 0.50);
 
@@ -371,12 +396,12 @@ namespace LevelEditor
             {
                 if (leftMouseDown && e.Button == System.Windows.Forms.MouseButtons.Left)
                 {
-                    //graphics.leftMouseUp();
+                    graphics.leftMouseUp();
                     leftMouseDown = false;
                 }
                 else if (rightMouseDown && e.Button == System.Windows.Forms.MouseButtons.Right)
                 {
-                    //graphics.rightMouseUp();
+                    graphics.rightMouseUp();
                     rightMouseDown = false;
                 }
             }
@@ -394,12 +419,12 @@ namespace LevelEditor
             {
                 if (!leftMouseDown && e.Button == System.Windows.Forms.MouseButtons.Left)
                 {
-                    //graphics.leftMouseDown();
+                    graphics.leftMouseDown();
                     leftMouseDown = true;
                 }
                 else if (!rightMouseDown && e.Button == System.Windows.Forms.MouseButtons.Right)
                 {
-                    //graphics.rightMouseDown();
+                    graphics.rightMouseDown();
                     rightMouseDown = true;
                 }
             }
@@ -429,15 +454,23 @@ namespace LevelEditor
 
         private void timer1_Tick(object sender, EventArgs e)
         {
-            int xDir = forwardKey ? 1 : backwardKey ? -1 : 0;
-            int zDir = rightKey ? 1 : leftKey ? -1 : 0;
-            //if (xDir != 0 || zDir != 0)
-                //graphics.moveCamera(xDir, zDir);
+            if (renderWindowActivated)
+            {
+                int xDir = forwardKey ? 1 : backwardKey ? -1 : 0;
+                int zDir = rightKey ? 1 : leftKey ? -1 : 0;
+                if (xDir != 0 || zDir != 0)
+                    graphics.moveCamera(xDir, zDir);
 
-            //if (rightMouseDown)
-            //    graphics.rightMouseDown();
-            //if (leftMouseDown)
-            //    graphics.leftMouseDown();
+                if (rightMouseDown)
+                    graphics.rightMouseDown();
+                if (leftMouseDown)
+                    graphics.leftMouseDown();
+            }
+        }
+
+        private void MapEditor_Move(object sender, EventArgs e)
+        {
+            resizeRenderPanel();
         }
 	}
 }
