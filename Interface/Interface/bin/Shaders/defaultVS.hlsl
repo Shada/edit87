@@ -26,10 +26,10 @@ VS_Output main(VS_Input input)
 	//float4x4 worldviewproj = mul(proj, view);
 	output.position = mul(viewProj, float4(input.position, 1));
 
-	float4 lightPos = float4(-4000, 600, 1000, 1);
+	float4 lightPos = float4(-4000, 1600, 1000, 1);
 	float3 s = normalize(lightPos - eyePos).xyz;
 	float3 tnorm = input.norm;
-	output.lightInt = float3(0.9,0.9,0.9) * max(dot(s,tnorm),0.0) + float3(0.35,0.35,0.35);
+	output.lightInt = float3(0.9,0.9,0.9) * max(dot(s,tnorm),0.0) + float3(0.65,0.65,0.65);
 	//output.lightInt = 1.f;
 
 	output.tex = input.tex;

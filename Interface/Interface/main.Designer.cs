@@ -572,6 +572,7 @@
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.MapEditor_KeyDown);
             this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.MapEditor_KeyUp);
             this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.MapEditor_MouseDown);
+            this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.MapEditor_MouseMove);
             this.MouseUp += new System.Windows.Forms.MouseEventHandler(this.MapEditor_MouseUp);
             this.Resize += new System.EventHandler(this.MapEditor_Resize);
             ((System.ComponentModel.ISupportInitialize)(this.nud_brushIntensity)).EndInit();

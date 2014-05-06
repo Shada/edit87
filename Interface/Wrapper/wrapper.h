@@ -14,22 +14,22 @@ namespace wrap
 
 		void setRenderArea(int x, int y, int width, int height);
 
-		void moveCamera(int xDir, int zDir);
-		void createTerrain(int width, int height, float pointStep, bool fromPerlinMap);
-
 		void renderScene();
+		void createTerrain(int width, int height, float pointStep, bool fromPerlinMap, int seed);
+
+		void moveCamera(int xDir, int zDir);
 
 		/* Mouse calls */
-		void mouseDown(int x, int y);
-		void mouseUp();
-		void mouseMoved(int x, int y);
+		void rightMouseDown();
+		void leftMouseDown();
+		void rightMouseUp();
+		void leftMouseUp();
+		void updateMouse(int x, int y);
 
 		/* Tool calls */
-		void setTextureTool();
-		void setSelectorTool();
 		void setElevationTool();
+		void setTextureTool();
 		void setObjectPlacerTool();
-
-		void useTool();
+		void setSelctorTool();
 	};
 }
