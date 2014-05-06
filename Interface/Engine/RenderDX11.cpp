@@ -14,7 +14,7 @@ RenderDX11::RenderDX11(HWND hWnd) : EngineInterface()
 	g_swapChain = nullptr;
 
 	Mesh3D *mesh = new Mesh3D();
-	if(!mesh->loadMesh("..\\Models\\Iron_Man\\Iron_Man1.obj"))
+	if(!mesh->loadMesh("../Models/duck/duck.dae"))
 	{
 		MessageBoxA(hWnd, "Model load fail", "FAIL", 0);
 	}

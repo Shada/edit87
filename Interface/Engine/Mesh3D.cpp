@@ -5,6 +5,7 @@
 #include <vector>
 #include <cstdint>
 #include "..\elm\elm.hpp"
+#include "Utility.h"
 
 Mesh3D::Mesh3D()
 {
@@ -42,6 +43,7 @@ bool Mesh3D::loadMesh(const char* filePath)
 				aiString texturePath;
 				scene->mMaterials[i]->GetTexture(aiTextureType_DIFFUSE,0,&texturePath);
 				texDiffusePath = texturePath.C_Str();
+				texDiffusePath = combinePaths(filePath, texDiffusePath);,
 			}
 			if(scene->mMaterials[i]->GetTextureCount(aiTextureType_AMBIENT))
 			{
