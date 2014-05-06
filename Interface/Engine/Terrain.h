@@ -34,6 +34,7 @@ public:
 	~Terrain();
 
 	/* Camera can only access const functions */
+	const float getStep() const					{ return step; }
 	const float getWidth() const				{ return width * step; }
 	const float getHeight() const				{ return height * step; }
 	const elm::vec3 getPosition() const			{ return position; }
@@ -44,6 +45,9 @@ public:
 
 	std::vector<Vertex> *getVBuffer()			{ return &vBuffer; }
 	std::vector<uint>	*getIBuffer()			{ return &iBuffer; }
+
+	const std::vector<elm::vec3> &getPoints() const { return points; }
+	const std::vector<uint>	*getIBuffer() const	{ return &iBuffer; }
 
 	void createTerrain(int w, int h, float pointStep, bool fromPerlinMap, int seed);
 

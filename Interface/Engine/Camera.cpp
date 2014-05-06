@@ -1,11 +1,15 @@
+#include <windows.h>
+#include <sstream>
 #include "Camera.h"
 
-Camera::Camera(int width, int height, const Terrain *terrain)
+Camera::Camera(int width, int height, const Terrain *terrain, HWND hwnd)
 {
 	vEye		= elm::vec3(100, 300, 100);
 	vRight		= elm::vec3(1, 0, 0);
 	vUp			= elm::vec3(0, 1, 0);
 	vLook		= elm::vec3(0, 0, 1);
+
+	hWnd = hwnd;
 
 	this->terrain = terrain;
 	terrainPos = terrain->getPosition();
@@ -14,6 +18,9 @@ Camera::Camera(int width, int height, const Terrain *terrain)
 	maxX = terrainPos.x + terrain->getWidth();
 	minZ = terrainPos.z;
 	maxZ = terrainPos.z + terrain->getHeight();
+
+	this->height = height;
+	this->width = width;
 
 	elm::rotationAxis(mRot, elm::vec3(1, 0, 0), -ELM_PI / 4);
 	vLook = mRot * vLook;
@@ -49,14 +56,111 @@ void Camera::rotate(float angle)
 	elm::lookAtLH(mView, vLook, vUp, vEye);
 }
 
-elm::vec2 Camera::getWorldPos(int mousePosX, int mousePosY)
+elm::vec3 Camera::getWorldPos(int mousePosX, int mousePosY)
 {
-	// Copy ray vs triangle from raytracer project
-	//while(true)
-	//{
-	//
+	elm::vec3 vPickRayDir, vPickRayOrig;
+
+    // Get the pick ray from the mouse position
+    //if( GetCapture() )
+    //{
+        POINT ptCursor;
+		ptCursor.x = mousePosX;
+		ptCursor.y = mousePosY;
+        //GetCursorPos( &ptCursor );
+        //ScreenToClient(hWnd, &ptCursor);
+		std::stringstream ss;
+
+        // Compute the vector of the pick ray in screen space
+        elm::vec3 v;
+        v.x =  (((2.f * ptCursor.x) / width) - 1) / mProj._11;
+        v.y = -(((2.f * ptCursor.y) / height) - 1) / mProj._22;
+        v.z =  1.f;
+
+		//ss << "Screen space: x = " << v.x << ", y = " << v.y << ", z = " << v.z;
+
+        // Get the inverse view matrix
+        elm::mat4 m;
+		m = elm::inverse(mView);
+
+        // Transform the screen space pick ray into 3D space
+        vPickRayDir.x  = v.x * m._11 + v.y * m._21 + v.z * m._31;
+        vPickRayDir.y  = v.x * m._12 + v.y * m._22 + v.z * m._32;
+        vPickRayDir.z  = v.x * m._13 + v.y * m._23 + v.z * m._33;
+
+		vPickRayDir = elm::normalize(vPickRayDir);
+        vPickRayOrig.x = m._41;
+        vPickRayOrig.y = m._42;
+        vPickRayOrig.z = m._43;
+
+		// calc origin as intersection with near frustum
+		//vPickRayOrig = vEye;
+		vPickRayOrig += vPickRayDir;
+
+		
+		
+
+		// iterate through the scne and find closest match
+
+		//CObj *hitObj=m_pScene->Pick(&vPickRayOrig,&vPickRayDir,FAR_Z-NEAR_Z);
 	//}
-	return elm::vec2(0);
+
+	float pointStep = terrain->getStep();
+
+	elm::vec3 step = vLook * (pointStep * 0.5f);
+	const std::vector<uint> *iBuffer = terrain->getIBuffer();
+	const std::vector<elm::vec3> points = terrain->getPoints();
+
+	float minLen = 999999.f, len;
+	uint at;
+
+	float a, b, c, d;
+	elm::vec3 e1, e2, u, w, p0, p1, p2;
+	for(uint i = 0; i < iBuffer->size() - 2; i += 3)
+	{
+		p0 = points.at(iBuffer->at(i));
+		p1 = points.at(iBuffer->at(i + 1));
+		p2 = points.at(iBuffer->at(i + 2));
+
+		e1 = p1 - p0;
+		e2 = p2 - p0;
+		u = elm::cross(vPickRayDir, e2);
+		//u = elm::cross(vLook, e2);
+		a = elm::dot(e1, u);
+
+		// Acceptance rate
+		if(a > -0.00001 && a < 0.00001)
+			continue;
+
+		b = 1.f / a;
+		v = vPickRayOrig - points.at(iBuffer->at(i));
+		c = b * elm::dot(u, v);
+
+		if(c < 0.0f)
+			continue;
+
+		w = elm::cross(v, e1);
+		d = b * elm::dot(vPickRayDir, w);
+		//d = b * elm::dot(vLook, w);
+	
+		if(d < 0.0f || c + d > 1.0f)
+			continue;
+
+		len = elm::vecLength(vPickRayOrig - p0);
+		if(len < minLen)
+		{
+			minLen = len;
+			at = i;
+		}
+	}
+
+	if(minLen == 999999.f)
+		return elm::vec3(-100);
+
+	w = points.at(iBuffer->at(at));
+	ss << "     World space: x = " << w.x << ", y = " << w.y << ", z = " << w.z;
+		SetWindowTextA(hWnd, ss.str().c_str());
+
+	return points.at(iBuffer->at(at));
 }
 
 Camera::~Camera()

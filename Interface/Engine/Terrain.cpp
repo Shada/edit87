@@ -180,21 +180,21 @@ const float Terrain::getHeightAt(elm::vec2 pos) const
 
 void Terrain::applyBrush(float radius, float intensity, elm::vec2 origin)
 {
-	uint startX = (int)((origin.x - radius) / step + 0.5);
-	uint startZ = (int)((origin.y - radius) / step + 0.5);
+	int startX = (int)((origin.x - radius) / step + 0.5);
+	int startZ = (int)((origin.y - radius) / step + 0.5);
 
-	uint cond = (int)(radius / step + 0.5);
+	int cond = (int)(radius / step + 0.5);
 
-	for(uint y = 0; y < cond * 2; y++)
+	for(int y = 0; y < cond * 2; y++)
 	{
-		if(y + startZ < 0 || y + startZ >= height)
+		if(y + startZ < 0 || y + startZ >= (int)height)
 			continue;
-		for(uint x = 0; x < cond * 2; x++)
+		for(int x = 0; x < cond * 2; x++)
 		{
-			if(x + startX < 0 || x + startX >= width)
+			if(x + startX < 0 || x + startX >= (int)width)
 				continue;
 
-			int index = x + startX + (y + startZ) * width;
+			int index = x + startX + (y + startZ) * (int)width;
 			float len = elm::vecLength(-origin + points.at(index).xz);
 			if(len < radius)
 			{
@@ -207,17 +207,17 @@ void Terrain::applyBrush(float radius, float intensity, elm::vec2 origin)
 	int index1, index2;
 	std::vector<elm::vec3> norms = std::vector<elm::vec3>(points.size());
 	elm::vec3 norm;
-	for(uint y = 0; y < cond * 2; y++)
+	for(int y = 0; y < cond * 2; y++)
 	{
-		if(y + startZ < 0 || y + startZ >= height)
+		if(y + startZ < 0 || y + startZ + 1 >= (int)height)
 			continue;
-		for(uint x = 0; x < cond * 2; x++)
+		for(int x = 0; x < cond * 2; x++)
 		{
-			if(x + startX < 0 || x + startX >= width)
+			if(x + startX < 0 || x + startX >= (int)width)
 				continue;
 
-			index1 = (int)(x + startX + (y + startZ) * width);
-			index2 = (int)(x + startX + (y + 1 + startZ) * width);
+			index1 = (int)(x + startX + (y + startZ) * (int)width);
+			index2 = (int)(x + startX + (y + 1 + startZ) * (int)width);
 
 			norm = elm::cross(	vBuffer.at(index1).pos - vBuffer.at(index2).pos,
 								vBuffer.at(index1).pos - vBuffer.at(index2 + 1).pos);

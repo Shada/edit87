@@ -33,6 +33,8 @@ namespace LevelEditor
 
             windowWidth = Size.Width;
             windowHeight = Size.Height;
+
+            graphics.setRenderArea(0, 0, windowWidth, windowHeight);
             graphics.createTerrain(256, 256, 5, false, 0);
 		}
 
@@ -316,6 +318,7 @@ namespace LevelEditor
         {
             mousePosX = e.X;
             mousePosY = e.Y;
+            graphics.updateMouse(mousePosX, mousePosY);
         }
 	}
 }

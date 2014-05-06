@@ -12,7 +12,13 @@ Engine::Engine(HWND hwnd)
 
 	dx = new RenderDX11(hWnd);
 
-	mouseWorldPos = elm::vec2(200, 1000);
+	mouseWorldPos = elm::vec3(200, 0, 1000);
+}
+
+void Engine::setRect(RECT t)
+{
+	r = t;
+	dx->setRect(t);
 }
 
 void Engine::createTerrain(int width, int height, float pointStep, bool fromPerlinMap, int seed)
@@ -24,7 +30,7 @@ void Engine::createTerrain(int width, int height, float pointStep, bool fromPerl
 	dx->createAndSetTerrainBuffers(terrain->getVBuffer(), terrain->getIBuffer());
 
 	if(!camera)
-		camera = new Camera(width, height, terrain);
+		camera = new Camera(r.right - r.left, r.bottom - r.top, terrain, hWnd);
 
 	dx->setTerrainIndexCount(terrain->getIndexCount());
 	dx->setCamera(camera);
@@ -37,7 +43,7 @@ void Engine::leftMouseDown()
 	case Tools::ELEVATION:
 		break;
 	}
-	terrain->applyBrush(100, 1, elm::vec2(200, 1000));
+	terrain->applyBrush(100, 1, mouseWorldPos.xz);
 	camera->move(elm::vec2(0));
 	dx->createAndSetTerrainBuffers(terrain->getVBuffer(), terrain->getIBuffer());
 	dx->renderScene();
@@ -50,7 +56,7 @@ void Engine::rightMouseDown()
 	case Tools::ELEVATION:
 		break;
 	}
-	terrain->applyBrush(100, -1, elm::vec2(200, 1000));
+	terrain->applyBrush(100, -1, mouseWorldPos.xz);
 	camera->move(elm::vec2(0));
 	dx->createAndSetTerrainBuffers(terrain->getVBuffer(), terrain->getIBuffer());
 	dx->renderScene();

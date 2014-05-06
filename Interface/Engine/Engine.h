@@ -19,7 +19,9 @@ private:
 	Terrain		*terrain;
 	Camera		*camera;
 
-	elm::vec2 mouseWorldPos;
+	RECT r;
+
+	elm::vec3 mouseWorldPos;
 
 	Tools selectedTool;
 
@@ -31,7 +33,7 @@ public:
 
 	void createTerrain(int width, int height, float pointStep, bool fromPerlinMap, int seed);
 
-	void setRect(RECT t)					{ dx->setRect(t); }
+	void setRect(RECT t);
 	void renderScene()						{ dx->renderScene(); }
 	void move(float alongX, float alongZ)	{ camera->move(elm::vec2(alongX, alongZ)); }
 

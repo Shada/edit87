@@ -8,7 +8,7 @@ namespace wrap
 	{
 		hWnd = (HWND)((void*)win);
 		gfx = EngineFactory::createEngine(hWnd);
-		setRenderArea(232, 58, 1048, 670);
+		//setRenderArea(232, 58, 1048, 670);
 	}
 
 	void GraphicsCommunicator::setRenderArea(int x, int y, int width, int height)

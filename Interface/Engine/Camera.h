@@ -4,6 +4,10 @@
 class Camera
 {
 private:
+	HWND hWnd;
+
+	int width, height;
+
 	const Terrain *terrain;
 
 	float minX, maxX, minZ, maxZ;
@@ -13,7 +17,7 @@ private:
 	elm::vec3 terrainPos;
 	elm::vec3 vEye, vLook, vUp, vRight;
 public:
-	Camera(int width, int height, const Terrain *terrain);
+	Camera(int width, int height, const Terrain *terrain, HWND hwnd);
 	~Camera();
 
 	void move(elm::vec2 direction);
@@ -25,5 +29,5 @@ public:
 	elm::mat4 getProj() { return mProj; }
 	elm::mat4 getView() { return mView; }
 
-	elm::vec2 getWorldPos(int mousePosX, int mousePosY);
+	elm::vec3 getWorldPos(int mousePosX, int mousePosY);
 };
