@@ -23,7 +23,7 @@ bool Mesh3D::loadMesh(const char* filePath)
 {
 
 	const aiScene* scene = NULL;
-	scene = aiImportFile(filePath, aiProcessPreset_TargetRealtime_Fast);
+	scene = aiImportFile(filePath, aiProcessPreset_TargetRealtime_MaxQuality);
 	if(!scene)
 	{
 		return false;

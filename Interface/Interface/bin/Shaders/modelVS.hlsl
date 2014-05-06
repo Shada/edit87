@@ -30,7 +30,7 @@ VS_Output main(VS_Input input)
 	float3 tnorm = input.norm;
 	output.lightInt = float3(0.9,0.9,0.9) * max(dot(s,tnorm),0.0) + float3(0.35,0.35,0.35);
 
-	output.tex = input.tex;
+	output.tex = float2(input.tex.x, 1 - input.tex.y);
 
 	return output;
 }

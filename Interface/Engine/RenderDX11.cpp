@@ -348,8 +348,11 @@ HRESULT RenderDX11::init()
 	g_objects.push_back(obj);
 
 	DirectX::ScratchImage *image = new DirectX::ScratchImage();
-	hr = DirectX::LoadFromTGAFile(s2ws(g_meshes[0]->getTexDiffusePath()).c_str(), nullptr, *image);
-	
+	hr = DirectX::LoadFromTGAFile(s2ws(g_meshes[0]->getTexDiffusePath()).c_str(), nullptr, *image); // this should only be done if it's a TGA-file
+	hr = DirectX::CreateShaderResourceView(g_device, image->GetImages(), image->GetImageCount(), image->GetMetadata(), &tex);
+	g_textures.push_back(tex);
+
+	g_meshes[0]->setTexDiffuseID(g_textures.size() - 1);
 	// now we can load the image into a resource and use it in directx.
 	if(FAILED(hr))
 	{
@@ -572,6 +575,8 @@ void RenderDX11::renderScene()
 	g_deviceContext->IASetVertexBuffers(0, 1, &g_buffers.at(g_meshes[0]->getVertexBufferID()), &stride, &offset);
 	g_deviceContext->IASetVertexBuffers(1, 1, &g_buffers.at(g_meshes[0]->getNormalBufferID()), &stride, &offset);
 	g_deviceContext->IASetVertexBuffers(2, 1, &g_buffers.at(g_meshes[0]->getTexCoordBufferID()), &stride, &offset);
+
+	g_deviceContext->PSSetShaderResources(0, 1, &g_textures.at(1));
 
 	g_deviceContext->IASetIndexBuffer(g_buffers.at(g_meshes[0]->getIndexBufferID()), DXGI_FORMAT_R32_UINT, 0);
 
