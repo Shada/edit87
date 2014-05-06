@@ -90,7 +90,6 @@ namespace LevelEditor
 
 		#region events
 
-
 		private void btn_TerrainBrush_Click(object sender, EventArgs e)
 		{
             NO();
@@ -128,7 +127,7 @@ namespace LevelEditor
 
 		private void loadToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-            NO();
+			loadProject();
 		}
 
 		private void exportToolStripMenuItem_Click(object sender, EventArgs e)
@@ -402,6 +401,11 @@ namespace LevelEditor
 			projectFile.Save(projectDirectory.FullName + "\\test.xml");
 		}
 
+		private void loadProject()
+		{
+			throw new NotImplementedException();
+		}
+
 		private void writeXLMResNode(ref XmlElement _rootElement, TreeNode _treeNode)
 		{
 			if (_treeNode.Nodes.Count > 0)
@@ -470,12 +474,7 @@ namespace LevelEditor
 			//    graphics.rightMouseDown();
 			//if (leftMouseDown)
 			//    graphics.leftMouseDown();
-		}
-
-        private void NO()
-        {
-            MessageBox.Show("This is not yet implemented you tool!", "FUCK FACE!", MessageBoxButtons.OK, MessageBoxIcon.Error);
-        }
+		}        
 
 		private void resizeWindow()
 		{
@@ -572,6 +571,11 @@ namespace LevelEditor
                     return panels[i];
             return null;
         }
+
+		private void NO()
+		{
+			MessageBox.Show("This is not yet implemented you tool!", "FUCK FACE!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+		}
 
 		#endregion
 	}
