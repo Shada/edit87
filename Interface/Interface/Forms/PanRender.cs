@@ -13,7 +13,6 @@ namespace LevelEditor
 {
     public partial class PanRender : DockContent
     {
-        int pb_sceneSizeDiff = 0;
         public PanRender()
         {
             InitializeComponent();

@@ -15,11 +15,16 @@ namespace LevelEditor
     {
         int twObjectsSizeDiff = 12;
 		TreeNode copyPaste;
-		public TreeNode resourcesRoot = new TreeNode("Root", 0, 0);
+		public TreeNode resourcesRoot;
 
         public PanLibrary()
         {
             InitializeComponent();
+        }
+
+		public void init(string _rootName)
+		{
+			resourcesRoot = new TreeNode(_rootName, 0, 0);
 
 			resourcesRoot.Tag = new Utils.twTag(Utils.twTag.Type.FOLDER, false);
 			tw_objects.Nodes.Add(resourcesRoot);
@@ -47,7 +52,7 @@ namespace LevelEditor
 			twMenuRemove.Click += twMenu_ClickRemove;
 
 			cms.Items.Add(twMenuRemove);
-        }
+		}
 
 		private void twMenu_ClickRemove(object sender, EventArgs e)
 		{

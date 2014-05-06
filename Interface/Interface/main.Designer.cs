@@ -93,7 +93,6 @@
 			this.menuStrip.Size = new System.Drawing.Size(1264, 24);
 			this.menuStrip.TabIndex = 5;
 			this.menuStrip.Text = "menuStrip";
-			this.menuStrip.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.menuStrip_ItemClicked);
 			// 
 			// fileToolStripMenuItem
 			// 
@@ -225,7 +224,7 @@
 			this.toolsShortcutsToolStripMenuItem.Name = "toolsShortcutsToolStripMenuItem";
 			this.toolsShortcutsToolStripMenuItem.Size = new System.Drawing.Size(155, 22);
 			this.toolsShortcutsToolStripMenuItem.Text = "Tools shortcuts";
-			this.toolsShortcutsToolStripMenuItem.Click += new System.EventHandler(this.toolsShortcutsToolStripMenuItem_Click_1);
+			this.toolsShortcutsToolStripMenuItem.Click += new System.EventHandler(this.toolsShortcutsToolStripMenuItem_Click);
 			// 
 			// brushToolsToolStripMenuItem
 			// 

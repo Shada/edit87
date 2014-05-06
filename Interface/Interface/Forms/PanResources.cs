@@ -14,14 +14,19 @@ namespace LevelEditor
     public partial class PanResources : DockContent
     {
         int tw_resourcesSizeDiff = 12;
-        public TreeNode resourcesRoot = new TreeNode("Root", 0, 0);
+        public TreeNode resourcesRoot;
 		TreeNode copyPaste;
 
         public PanResources()
         {
             InitializeComponent();
-            resourcesRoot.Tag = new Utils.twTag(Utils.twTag.Type.FOLDER, false);
-            tw_resources.Nodes.Add(resourcesRoot);
+		}
+
+		public void init(string _rootName)
+		{
+			resourcesRoot = new TreeNode(_rootName, 0, 0);
+			resourcesRoot.Tag = new Utils.twTag(Utils.twTag.Type.FOLDER, false);
+			tw_resources.Nodes.Add(resourcesRoot);
 
 			ToolStripMenuItem twMenuCreateFolder = new ToolStripMenuItem();
 
@@ -46,7 +51,7 @@ namespace LevelEditor
 			twMenuRemove.Click += twMenu_ClickRemove;
 
 			cms.Items.Add(twMenuRemove);
-        }
+		}
 
 		private void twMenu_ClickRemove(object sender, EventArgs e)
 		{
