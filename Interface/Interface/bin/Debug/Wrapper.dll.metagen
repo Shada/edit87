@@ -14,8 +14,8 @@ Class wrap.GraphicsCommunicator: AutoLayout, AnsiClass, Class, Public, BeforeFie
     renderScene(): PrivateScope, Public, HideBySig
     createTerrain(Int32, Int32, Single, Boolean(HasFieldMarshal), Int32): PrivateScope, Public, HideBySig
     moveCamera(Int32, Int32): PrivateScope, Public, HideBySig
-    rightMouseDown(Int32, Int32): PrivateScope, Public, HideBySig
-    leftMouseDown(Int32, Int32): PrivateScope, Public, HideBySig
+    rightMouseDown(): PrivateScope, Public, HideBySig
+    leftMouseDown(): PrivateScope, Public, HideBySig
     rightMouseUp(): PrivateScope, Public, HideBySig
     leftMouseUp(): PrivateScope, Public, HideBySig
     updateMouse(Int32, Int32): PrivateScope, Public, HideBySig

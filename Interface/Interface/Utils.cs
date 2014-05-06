@@ -15,7 +15,7 @@ namespace LevelEditor
 		{
 			public enum Type
 			{
- 				UNDEFINED = -1,
+				UNDEFINED = -1,
 				FOLDER,
 				IMAGE,
 				MESH,

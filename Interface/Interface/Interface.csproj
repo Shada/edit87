@@ -63,7 +63,7 @@
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="WeifenLuo.WinFormsUI.Docking">
-      <HintPath>..\..\..\..\..\Desktop\edit87-master\Interface\WeifenLuo.WinFormsUI.Docking.dll</HintPath>
+      <HintPath>.\WeifenLuo.WinFormsUI.Docking.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

@@ -101,7 +101,77 @@ namespace LevelEditor
 
 		private void saveToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-            NO();
+			PanResources res = (PanResources)panels[2];
+			TreeNode treeRoot = res.getRootNode();
+
+			XmlElement root = projectFile.DocumentElement;
+
+			XmlElement xmlResRot = projectFile.CreateElement(null, "resources", null);
+			root.AppendChild(xmlResRot);
+
+			XmlElement resRoot = projectFile.CreateElement(null, "root", null);
+
+			writeXLMFolder(ref resRoot, treeRoot);
+
+			xmlResRot.AppendChild(resRoot);
+
+			projectFile.Save(projectDirectory.FullName + "\\test.xml");
+
+		}
+
+		private void writeXLMFolder(ref XmlElement _rootElement, TreeNode _treeNode)
+		{
+			if (_treeNode.Nodes.Count > 0)
+			{
+				Utils.twTag tag = (Utils.twTag)_treeNode.Tag;
+
+				XmlElement node = projectFile.CreateElement(null, "directory", null);
+
+				XmlElement xName = projectFile.CreateElement(null, "name", null);
+				XmlText name = projectFile.CreateTextNode(_treeNode.Text);
+				xName.AppendChild(name);
+
+				XmlElement xType = projectFile.CreateElement(null, "type", null);
+				XmlText type = projectFile.CreateTextNode(Convert.ToString(tag.type).ToLower());
+				xType.AppendChild(type);
+
+				XmlElement xMod = projectFile.CreateElement(null, "modifiable", null);
+				XmlText mod = projectFile.CreateTextNode(Convert.ToString(tag.modifiable));
+				xMod.AppendChild(mod);
+
+				node.AppendChild(xName);
+				node.AppendChild(xType);
+				node.AppendChild(xMod);
+
+				foreach (TreeNode tn in _treeNode.Nodes)
+				{
+					writeXLMFolder(ref node, tn);
+				}
+				_rootElement.AppendChild(node);
+			}
+			else
+			{
+				Utils.twTag tag = (Utils.twTag)_treeNode.Tag;
+
+				XmlElement node = projectFile.CreateElement(null, "directory", null);
+
+				XmlElement xName = projectFile.CreateElement(null, "name", null);
+				XmlText name = projectFile.CreateTextNode(_treeNode.Text);
+				xName.AppendChild(name);
+
+				XmlElement xType = projectFile.CreateElement(null, "type", null);
+				XmlText type = projectFile.CreateTextNode(Convert.ToString(tag.type).ToLower());
+				xType.AppendChild(type);
+
+				XmlElement xMod = projectFile.CreateElement(null, "modifiable", null);
+				XmlText mod = projectFile.CreateTextNode(Convert.ToString(tag.modifiable));
+				xMod.AppendChild(mod);
+
+				node.AppendChild(xName);
+				node.AppendChild(xType);
+				node.AppendChild(xMod);
+				_rootElement.AppendChild(node);
+			}
 		}
 
 		private void saveAsToolStripMenuItem_Click(object sender, EventArgs e)

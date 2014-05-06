@@ -34,20 +34,46 @@ namespace LevelEditor
 
             cms_treeView.Items.Add(twMenuCreateFolder);
 
+			ToolStripMenuItem twMenuRename = new ToolStripMenuItem();
+
+			twMenuRename.Name = "tsm_cmsMenuRename";
+			twMenuRename.Text = "Rename";
+			twMenuRename.Click += twMenu_ClickRename;
+
+			cms_treeView.Items.Add(twMenuRename);
+
 			ToolStripMenuItem twMenuRemove = new ToolStripMenuItem();
 
 			twMenuRemove.Name = "tsm_cmsMenuRemove";
-			twMenuRemove.Text = "Rename";
-            twMenuRemove.Click += twMenu_ClickRemove;
+			twMenuRemove.Text = "Remove";
+			twMenuRemove.Click += twMenu_ClickRemove;
 
 			cms_treeView.Items.Add(twMenuRemove);
 		}
 
-        private void twMenu_ClickRemove(object sender, EventArgs e)
+		private void twMenu_ClickRename(object sender, EventArgs e)
 		{
 			TreeNode tn = tw_fileTree.SelectedNode;
-            NameFolder renameFolder = new NameFolder(ref tn);
+			NameFolder renameFolder = new NameFolder(ref tn);
 			renameFolder.Show();
+		}
+
+        private void twMenu_ClickRemove(object sender, EventArgs e)
+		{
+			Utils.twTag twt = (Utils.twTag)tw_fileTree.SelectedNode.Tag;
+
+			if (tw_fileTree.SelectedNode.Nodes.Count != 0)
+			{
+				DialogResult res = MessageBox.Show("The selected folder is not empty!\nDo you want to continue?", "Warning!", MessageBoxButtons.YesNo);
+
+				if (res == DialogResult.No)
+				{
+					return;
+				}
+			}
+
+			tw_fileTree.SelectedNode.Remove();
+			tw_fileTree.SelectedNode = tw_fileTree.Nodes[0];
 		}
 
         private void twMenu_ClickCreateFolder(object sender, EventArgs e)
@@ -87,16 +113,6 @@ namespace LevelEditor
 			}
 		}
 
-		private void btn_createFolder_Click(object sender, EventArgs e)
-		{
-			TreeNode tn = new TreeNode("New folder", 0, 0);
-			tn.Tag = new Utils.twTag(Utils.twTag.Type.FOLDER);
-            NameFolder renameFolder = new NameFolder(ref tn);
-			renameFolder.Show();
-			tw_fileTree.SelectedNode.Nodes.Add(tn);
-			tw_fileTree.SelectedNode.Expand();
-		}
-
 		private void btn_import_Click(object sender, EventArgs e)
 		{
 			panRes.updateTWRes(tw_fileTree.Nodes[0]);
@@ -111,50 +127,28 @@ namespace LevelEditor
 		private void tw_fileTree_AfterSelect(object sender, TreeViewEventArgs e)
 		{
 			tw_fileTree.SelectedNode = e.Node;
-
-			Utils.twTag twt = (Utils.twTag)tw_fileTree.SelectedNode.Tag;
-
-			if (!twt.modifiable)
-			{
-				btn_removeFolder.Enabled = false;
-			}
-			else
-			{
-				btn_removeFolder.Enabled = true;
-			}
 		}
 
 		private void tw_fileTree_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
 		{
-            tw_fileTree.SelectedNode = e.Node;
-			Utils.twTag twt = (Utils.twTag)tw_fileTree.SelectedNode.Tag;            
-
-			if (e.Button == MouseButtons.Right && twt.modifiable)
-			{                
-				cms_treeView.Show(tw_fileTree, e.Location);
-			}			
-		}
-
-		private void btn_removeFolder_Click(object sender, EventArgs e)
-		{
+			tw_fileTree.SelectedNode = e.Node;
 			Utils.twTag twt = (Utils.twTag)tw_fileTree.SelectedNode.Tag;
 
-			if (tw_fileTree.SelectedNode.Nodes.Count != 0)
+			if (e.Button == MouseButtons.Right)
 			{
-				DialogResult res = MessageBox.Show("The selected folder is not empty!\nDo you want to continue?", "Warning!", MessageBoxButtons.YesNo);
-
-				if (res == DialogResult.No)
+				if (twt.modifiable)
 				{
-					return;
+					cms_treeView.Items[1].Enabled = true;
+					cms_treeView.Items[2].Enabled = true;
+					cms_treeView.Show(tw_fileTree, e.Location);
 				}
-			}
-			else if (!twt.modifiable)
-			{
-				return;
-			}
-
-			tw_fileTree.SelectedNode.Remove();
-			tw_fileTree.SelectedNode = tw_fileTree.Nodes[0];
+				else
+				{
+					cms_treeView.Items[1].Enabled = false;
+					cms_treeView.Items[2].Enabled = false;
+					cms_treeView.Show(tw_fileTree, e.Location);
+				}
+			}			
 		}
 
 		private void tw_fileTree_ItemDrag(object sender, ItemDragEventArgs e)
@@ -220,7 +214,6 @@ namespace LevelEditor
 
 		private void tw_fileTree_KeyUp(object sender, KeyEventArgs e)
 		{
-
 			if (e.Control && e.KeyCode == Keys.V)
 			{
 				tw_fileTree.SelectedNode.Nodes.Add((TreeNode)copyPaste.Clone());
