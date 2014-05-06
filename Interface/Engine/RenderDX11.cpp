@@ -3,6 +3,7 @@
 #include <D3DX11async.h>
 #include <d3dcompiler.h>
 #include "..\DirectXTex\DirectXTex.h"
+#include "Utility.h"
 
 RenderDX11::RenderDX11(HWND hWnd) : EngineInterface()
 {
@@ -13,12 +14,6 @@ RenderDX11::RenderDX11(HWND hWnd) : EngineInterface()
 	camera = nullptr;
 	g_swapChain = nullptr;
 
-	Mesh3D *mesh = new Mesh3D();
-	if(!mesh->loadMesh("../Models/duck/duck.dae"))
-	{
-		MessageBoxA(hWnd, "Model load fail", "FAIL", 0);
-	}
-	g_meshes.push_back(mesh);
 }
 
 void RenderDX11::setRect(RECT t)
@@ -314,6 +309,12 @@ HRESULT RenderDX11::init()
 	createSampleStates();
 
 	
+	Mesh3D *mesh = new Mesh3D();
+	if(!mesh->loadMesh("../Models/duck/duck.dae"))
+	{
+		MessageBoxA(hWnd, "Model load fail", "FAIL", 0);
+	}
+	g_meshes.push_back(mesh);
 	int id;
 	if(FAILED(createBuffer((void*)g_meshes[0]->getVertices().data(), g_meshes[0]->getNumVertices(), sizeof(elm::vec3), id)))
 	{
@@ -346,9 +347,10 @@ HRESULT RenderDX11::init()
 
 	g_objects.push_back(obj);
 
-	
 	DirectX::ScratchImage *image = new DirectX::ScratchImage();
-	hr = DirectX::LoadFromTGAFile(L"../Models/duck/duckCM.tga", nullptr, *image);
+	hr = DirectX::LoadFromTGAFile(s2ws(g_meshes[0]->getTexDiffusePath()).c_str(), nullptr, *image);
+	
+	// now we can load the image into a resource and use it in directx.
 	if(FAILED(hr))
 	{
 		return hr;

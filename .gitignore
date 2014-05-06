@@ -17,11 +17,13 @@
 *.la
 *.a
 *.lib
+*.pch
 
 */Debug/*
 */Release/*
 */*/Debug/*
 */*/Release/*
+*/ipch/*
 
 # Executables
 *.exe

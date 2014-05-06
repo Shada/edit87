@@ -43,7 +43,7 @@ bool Mesh3D::loadMesh(const char* filePath)
 				aiString texturePath;
 				scene->mMaterials[i]->GetTexture(aiTextureType_DIFFUSE,0,&texturePath);
 				texDiffusePath = texturePath.C_Str();
-				texDiffusePath = combinePaths(filePath, texDiffusePath);,
+				texDiffusePath = combinePaths(filePath, texDiffusePath);
 			}
 			if(scene->mMaterials[i]->GetTextureCount(aiTextureType_AMBIENT))
 			{

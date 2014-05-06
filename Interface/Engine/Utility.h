@@ -1,10 +1,12 @@
 #pragma once
+
 #include <string>
+#include <Windows.h>
 
 // so, I assume both paths are file paths.. 
 //I will remove the filename from filepath1 and 
 //go from the resulting path to find the relative path to filepath2
-std::string combinePaths(std::string filepath1, std::string filepath2) // maybe use const char* instead.. well well.. w/e
+inline std::string combinePaths(std::string filepath1, std::string filepath2) // maybe use const char* instead.. well well.. w/e
 {
 	filepath1 = filepath1.substr(0, filepath1.find_last_of('/'));
 
@@ -32,4 +34,16 @@ std::string combinePaths(std::string filepath1, std::string filepath2) // maybe 
 		}
 	}
 	return filepath1 + "/" + filepath2;
-}
+};
+
+inline std::wstring s2ws(const std::string& s)
+{
+	int len;
+    int slength = (int)s.length() + 1;
+	len = MultiByteToWideChar(CP_ACP, 0, s.c_str(), slength, 0, 0);
+	wchar_t* buf = new wchar_t[len];
+	MultiByteToWideChar(CP_ACP, 0, s.c_str(), slength, buf, len);
+	std::wstring r(buf);
+	delete[] buf;
+	return r;
+};
