@@ -5,6 +5,7 @@
 #include "EngineInterface.h"
 #include "Terrain.h"
 #include "Camera.h"
+#include "Blendmap.h"
 
 #define SAFE_RELEASE(x) if( x ) { (x)->Release(); (x) = NULL; }
 #define SAFE_DELETE(x) if( x ) { delete(x); (x) = NULL; }
@@ -32,6 +33,7 @@ private:
 
 	Camera *camera;
 	Terrain *terrain;
+	Blendmap *blendmap;
 
 	D3D_DRIVER_TYPE				g_driverType;
 	D3D_FEATURE_LEVEL			g_featureLevel;

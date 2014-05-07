@@ -9,6 +9,8 @@ RenderDX11::RenderDX11(HWND hWnd) : EngineInterface()
 	terrain = new Terrain();
 	terrainPos = terrain->getPosition();
 
+	blendmap = new Blendmap();
+
 	camera = nullptr;
 	g_swapChain = nullptr;
 }
@@ -286,6 +288,9 @@ HRESULT RenderDX11::init()
 	}
 	g_textures.push_back(tex);
 	createSampleStates();
+
+	blendmap->init(g_device, g_deviceContext,terrain,&g_textures,&this->hWnd);
+
     return S_OK;
 }
 
