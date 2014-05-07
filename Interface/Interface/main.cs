@@ -497,37 +497,48 @@ namespace LevelEditor
 
 			if (res == DialogResult.OK)
 			{
+				initPanels();
 				Utils.ProjectFile.Load(ofd_loadProject.FileName);
 				readResourcesXML();
 				readLibXML();
-				initPanels();
+				
 			}
 		}
 
 		private void readResourcesXML()
 		{
+			PanResources res = (PanResources)panels[2];
+			
+			//initPanels();
+			//TreeNode treeRoot = res.getRootNode();
 			XmlNode projName = Utils.ProjectFile.SelectSingleNode("/root/header/projectName");
 			Utils.ProjectName = projName.InnerText;
 
-			XmlNode xmlResources = Utils.ProjectFile.SelectSingleNode("/root/resourc xes/folder");
+			XmlNode xmlResources = Utils.ProjectFile.SelectSingleNode("/root/resources/folder");
 			TreeNode twResources = new TreeNode(Utils.ProjectName, 0, 0);
 
-			readResourcesXMLElement(xmlResources, twResources);
+			readResourcesXMLElement(xmlResources, ref twResources);
+
+			
+			res.resourcesRoot = twResources;
+			
 		}
 
-		private void readResourcesXMLElement(XmlNode _xmlNode, TreeNode _twNode)
+		private void readResourcesXMLElement(XmlNode _xmlNode, ref TreeNode _twNode)
 		{
 			if (_xmlNode.HasChildNodes)
 			{
-				XmlNodeList list = _xmlNode.ChildNodes;
+				XmlNodeList list = _xmlNode.ChildNodes;				
 
 				for (int i = 0; i < list.Count; i++)
 				{
 					if (list[i].Name == "name")
-					{ 
+					{
+						_twNode.Name = list[i].InnerText;
 					}
 					else if (list[i].Name == "modifiable")
 					{
+						_twNode.Tag = list[i].InnerText;
 					}
 					else if (list[i].Name == "image")
 					{
@@ -540,12 +551,19 @@ namespace LevelEditor
 					}
 					else if (list[i].Name == "folder")
 					{
-						//readResourcesXMLElement(list[i], 
+						TreeNode newNode = new TreeNode();
+						_twNode.Nodes.Add(newNode);
+
+						if(_twNode.GetNodeCount(false) > 0)
+						{
+							readResourcesXMLElement(list[i], ref newNode);
+						}
 					}
 				}
 			}
 			else
-			{ 
+			{
+				return;
 			}
 		}
 
