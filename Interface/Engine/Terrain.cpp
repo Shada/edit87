@@ -93,6 +93,17 @@ void Terrain::fillIndexBuffer(int startX, int startY)
 				continue;
 			}
 
+			if(x == width - 1 || y == height - 1)
+			{
+				iBuffer.at(ii++) = index1;
+				iBuffer.at(ii++) = index1;
+				iBuffer.at(ii++) = index1;
+				iBuffer.at(ii++) = index1;
+				iBuffer.at(ii++) = index1;
+				iBuffer.at(ii++) = index1;
+				continue;
+			}
+
 			iBuffer.at(ii++) = index1;
 			iBuffer.at(ii++) = index2 + 1;
 			iBuffer.at(ii++) = index2;
