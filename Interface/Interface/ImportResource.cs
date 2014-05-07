@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.IO;
 
 namespace LevelEditor
 {
@@ -14,6 +15,7 @@ namespace LevelEditor
     {
         string[] allowedImageFormates = new string[] { "png", "jpg", "jpeg", "bmp" };
 		string[] allowedmeshFormats = new string[] { "fbx", "obj" };
+		string fileRealName = "";
 		TreeNode copyPaste;
         PanResources panRes;
 
@@ -21,6 +23,7 @@ namespace LevelEditor
 		{
 			InitializeComponent();
             panRes = _panRes;
+
 			ofd_importResource.Title = "Import Resource";
 
 			tw_fileTree.Nodes.Add((TreeNode)panRes.resourcesRoot.Clone());
@@ -96,25 +99,27 @@ namespace LevelEditor
 				string[] tmp = ofd_importResource.FileName.Split('\\');
 				txb_fileName.Text = tmp[tmp.Length - 1];
 				tmp = txb_fileName.Text.Split('.');
+				fileRealName = txb_fileName.Text;
 
-				if (allowedImageFormates.Contains(tmp[tmp.Length - 1]))
+				if (allowedImageFormates.Contains(tmp[tmp.Length - 1])) //IMAGE
 				{					
 					pb_preView.Image = new Bitmap(Image.FromFile(txb_input.Text), new Size(350, 350));
 					TreeNode tn = new TreeNode(txb_fileName.Text, 1, 1);
-					tn.Tag = new Utils.twTag(Utils.twTag.Type.IMAGE);
+					tn.Tag = new Utils.twTag(Utils.twTag.Type.IMAGE, true, fileRealName);
 					tw_fileTree.SelectedNode.Nodes.Add(tn);
                     tw_fileTree.SelectedNode.Expand();
                     tw_fileTree.SelectedNode = tn;
 				}
-				else if (allowedmeshFormats.Contains(tmp[tmp.Length - 1]))
+				else if (allowedmeshFormats.Contains(tmp[tmp.Length - 1])) //MESH
 				{
-					//Mesh formats
+
 				}
 			}
 		}
 
 		private void btn_import_Click(object sender, EventArgs e)
 		{
+			File.Copy(txb_input.Text, Utils.ProjectDirectory.FullName + "\\" + fileRealName);
 			panRes.updateTWRes(tw_fileTree.Nodes[0]);
 			this.Close();
 		}

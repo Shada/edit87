@@ -68,7 +68,7 @@ namespace LevelEditor
                 return;
             }
 
-            edit.projectDirectory = Directory.CreateDirectory(folder);
+			Utils.ProjectDirectory = Directory.CreateDirectory(folder);
 			//Directory.CreateDirectory(folder + "\\brushes");
 			//Directory.CreateDirectory(folder + "\\resources");
 			//Directory.CreateDirectory(folder + "\\maps");
@@ -93,8 +93,8 @@ namespace LevelEditor
                 writer.WriteEndDocument();
             }
 
-            edit.projectFile.Load(folder + "\\" + txb_projectName.Text + ".xml");
-			edit.projectName = txb_projectName.Text;
+			Utils.ProjectFile.Load(folder + "\\" + txb_projectName.Text + ".xml");
+			Utils.ProjectName = txb_projectName.Text;
 			edit.initPanels();
 			
             this.Close();

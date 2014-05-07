@@ -6,29 +6,62 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.ComponentModel;
 using System.Drawing;
+using System.IO;
+using System.Xml;
 
 namespace LevelEditor
 {
 	public static class Utils
 	{
+		private static XmlDocument projectFile;
+		private static DirectoryInfo projectDirectory;
+		private static string projectName;
+
+		public static XmlDocument ProjectFile 
+		{ 
+			get 
+			{
+				if (projectFile == null)
+				{
+					projectFile = new XmlDocument();
+				}
+
+				return projectFile; 
+			}
+			set { projectFile = value; }
+		}
+		public static DirectoryInfo ProjectDirectory 
+		{ 
+			get { return projectDirectory; }
+			set { projectDirectory = value; }
+		}
+
+		public static string ProjectName
+		{
+			get { return projectName; }
+			set { projectName = value; }
+		}
+
 		public struct twTag
 		{
 			public enum Type
 			{
 				UNDEFINED = -1,
-				FOLDER,
-				IMAGE,
-				MESH,
-				SOUND
+				FOLDER = 0,
+				IMAGE = 1,
+				MESH = 2,
+				SOUND = 3
 			}
 
 			public bool modifiable;
 			public Type type;
+			public string realName;
 
-			public twTag(Type _type, bool _deletable = true)
+			public twTag(Type _type, bool _deletable = true, string _realName = "N/A")
 			{
 				type = _type;
 				modifiable = _deletable;
+				realName = _realName;
 			}
 		}
 

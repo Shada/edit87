@@ -19,9 +19,6 @@ namespace LevelEditor
 	public partial class MapEditor : Form
 	{
         public const string activeLayoutName = "PanelLayout.xml";
-		public XmlDocument projectFile = new XmlDocument();
-		public DirectoryInfo projectDirectory;
-		public string projectName = "";
 
         private bool forwardKey, backwardKey, leftKey, rightKey, leftMouseDown, rightMouseDown;
 
@@ -61,10 +58,14 @@ namespace LevelEditor
 		public void initPanels()
 		{
 			PanResources res = (PanResources)panels[2];
-			res.init(projectName);
+			res.init(Utils.ProjectName);
 
 			PanLibrary lib = (PanLibrary)panels[4];
-			lib.init(projectName);
+			lib.init(Utils.ProjectName);
+
+			saveToolStripMenuItem.Enabled = true;
+			saveAsToolStripMenuItem.Enabled = true;
+			exportToolStripMenuItem.Enabled = true;
 		}
 
         private void createStandardControls()
@@ -387,52 +388,59 @@ namespace LevelEditor
 			PanResources res = (PanResources)panels[2];
 			TreeNode treeRoot = res.getRootNode();
 
-			XmlElement root = projectFile.DocumentElement;
+			XmlElement root = Utils.ProjectFile.DocumentElement;
 
-			XmlElement xmlResRot = projectFile.CreateElement(null, "resources", null);
+			XmlElement xmlResRot = Utils.ProjectFile.CreateElement(null, "resources", null);
 			root.AppendChild(xmlResRot);
 
 			//XmlElement resRoot = projectFile.CreateElement(null, "root", null);
 
-			writeXLMResNode(ref xmlResRot, treeRoot);
+			writeXLMNode(ref xmlResRot, treeRoot);
 
 			//xmlResRot.AppendChild(resRoot);
 
-			projectFile.Save(projectDirectory.FullName + "\\test.xml");
+			Utils.ProjectFile.Save(Utils.ProjectDirectory.FullName + "\\test.xml");
 		}
 
-		private void loadProject()
-		{
-			throw new NotImplementedException();
-		}
-
-		private void writeXLMResNode(ref XmlElement _rootElement, TreeNode _treeNode)
+		private void writeXLMNode(ref XmlElement _rootElement, TreeNode _treeNode)
 		{
 			if (_treeNode.Nodes.Count > 0)
 			{
 				Utils.twTag tag = (Utils.twTag)_treeNode.Tag;
 
-				XmlElement node = projectFile.CreateElement(null, Convert.ToString(tag.type).ToLower(), null);
+				XmlElement node = Utils.ProjectFile.CreateElement(null, Convert.ToString(tag.type).ToLower(), null);
 
-				XmlElement xName = projectFile.CreateElement(null, "name", null);
-				XmlText name = projectFile.CreateTextNode(_treeNode.Text);
-				xName.AppendChild(name);
-
-				XmlElement xMod = projectFile.CreateElement(null, "modifiable", null);
-				XmlText mod = projectFile.CreateTextNode(Convert.ToString(tag.modifiable));
-				xMod.AppendChild(mod);
-
-				//XmlElement xType = projectFile.CreateElement(null, "type", null);
-				//XmlText type = projectFile.CreateTextNode(Convert.ToString(tag.type).ToLower());
-				//xType.AppendChild(type);
-
-				node.AppendChild(xName);
-				node.AppendChild(xMod);
-				//node.AppendChild(xType);
+				switch (tag.type)
+				{
+					case Utils.twTag.Type.FOLDER:
+					{
+						writeXMLelement("name", _treeNode.Text, node);
+						writeXMLelement("modifiable", Convert.ToString(tag.modifiable), node);
+						break;
+					}
+					case Utils.twTag.Type.IMAGE:
+					{
+						writeXMLelement("showName", _treeNode.Text, node);
+						writeXMLelement("realName", tag.realName, node);
+						break;
+					}
+					case Utils.twTag.Type.MESH:
+					{
+						writeXMLelement("showName", _treeNode.Text, node);
+						writeXMLelement("realName", tag.realName, node);
+						break;
+					}
+					case Utils.twTag.Type.SOUND:
+					{
+						writeXMLelement("showName", _treeNode.Text, node);
+						writeXMLelement("realName", tag.realName, node);
+						break;
+					}
+				}
 
 				foreach (TreeNode tn in _treeNode.Nodes)
 				{
-					writeXLMResNode(ref node, tn);
+					writeXLMNode(ref node, tn);
 				}
 
 				_rootElement.AppendChild(node);
@@ -441,26 +449,108 @@ namespace LevelEditor
 			{
 				Utils.twTag tag = (Utils.twTag)_treeNode.Tag;
 
-				XmlElement node = projectFile.CreateElement(null, Convert.ToString(tag.type).ToLower(), null);
+				XmlElement node = Utils.ProjectFile.CreateElement(null, Convert.ToString(tag.type).ToLower(), null);
 
-				XmlElement xName = projectFile.CreateElement(null, "name", null);
-				XmlText name = projectFile.CreateTextNode(_treeNode.Text);
-				xName.AppendChild(name);
-
-				XmlElement xMod = projectFile.CreateElement(null, "modifiable", null);
-				XmlText mod = projectFile.CreateTextNode(Convert.ToString(tag.modifiable));
-				xMod.AppendChild(mod);
-
-				//XmlElement xType = projectFile.CreateElement(null, "type", null);
-				//XmlText type = projectFile.CreateTextNode(Convert.ToString(tag.type).ToLower());
-				//xType.AppendChild(type);
-
-				node.AppendChild(xName);
-				node.AppendChild(xMod);
-				//node.AppendChild(xType);
+				switch (tag.type)
+				{
+					case Utils.twTag.Type.FOLDER:
+					{
+						writeXMLelement("name", _treeNode.Text, node);
+						writeXMLelement("modifiable", Convert.ToString(tag.modifiable), node);
+						break;
+					}
+					case Utils.twTag.Type.IMAGE:
+					{
+						writeXMLelement("showName", _treeNode.Text, node);
+						writeXMLelement("realName", tag.realName, node);
+						break;
+					}
+					case Utils.twTag.Type.MESH:
+					{
+						writeXMLelement("showName", _treeNode.Text, node);
+						writeXMLelement("realName", tag.realName, node);
+						break;
+					}
+					case Utils.twTag.Type.SOUND:
+					{
+						writeXMLelement("showName", _treeNode.Text, node);
+						writeXMLelement("realName", tag.realName, node);
+						break;
+					}
+				}
 
 				_rootElement.AppendChild(node);
 			}
+		}
+
+		private void writeXMLelement(string _elemName, string _elemVal, XmlElement node)
+		{
+			XmlElement elemTag = Utils.ProjectFile.CreateElement(null, _elemName, null);
+			XmlText elemVal = Utils.ProjectFile.CreateTextNode(_elemVal);
+			elemTag.AppendChild(elemVal);
+			node.AppendChild(elemTag);
+		}
+
+		private void loadProject()
+		{
+			DialogResult res = ofd_loadProject.ShowDialog();
+
+			if (res == DialogResult.OK)
+			{
+				Utils.ProjectFile.Load(ofd_loadProject.FileName);
+				readResourcesXML();
+				readLibXML();
+				initPanels();
+			}
+		}
+
+		private void readResourcesXML()
+		{
+			XmlNode projName = Utils.ProjectFile.SelectSingleNode("/root/header/projectName");
+			Utils.ProjectName = projName.InnerText;
+
+			XmlNode xmlResources = Utils.ProjectFile.SelectSingleNode("/root/resourc xes/folder");
+			TreeNode twResources = new TreeNode(Utils.ProjectName, 0, 0);
+
+			readResourcesXMLElement(xmlResources, twResources);
+		}
+
+		private void readResourcesXMLElement(XmlNode _xmlNode, TreeNode _twNode)
+		{
+			if (_xmlNode.HasChildNodes)
+			{
+				XmlNodeList list = _xmlNode.ChildNodes;
+
+				for (int i = 0; i < list.Count; i++)
+				{
+					if (list[i].Name == "name")
+					{ 
+					}
+					else if (list[i].Name == "modifiable")
+					{
+					}
+					else if (list[i].Name == "image")
+					{
+					}
+					else if (list[i].Name == "mesh")
+					{
+					}
+					else if (list[i].Name == "sound")
+					{
+					}
+					else if (list[i].Name == "folder")
+					{
+						//readResourcesXMLElement(list[i], 
+					}
+				}
+			}
+			else
+			{ 
+			}
+		}
+
+		private void readLibXML()
+		{ 
 		}
 
 		private void timerTick()
