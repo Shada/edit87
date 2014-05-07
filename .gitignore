@@ -26,6 +26,7 @@
 *.exe
 *.out
 *.app
+*.cso
 
 *.pdb
 *.FileListAbsolute.txt
@@ -46,3 +47,4 @@ TemporaryGeneratedFile*
 *.resources
 *.exe.config
 *.manifest
+*.exp

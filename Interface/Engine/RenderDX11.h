@@ -7,8 +7,8 @@
 #include "Camera.h"
 #include "Blendmap.h"
 
-#define SAFE_RELEASE(x) if( x ) { (x)->Release(); (x) = NULL; }
-#define SAFE_DELETE(x) if( x ) { delete(x); (x) = NULL; }
+#define SAFE_RELEASE(x) if( x ) { (x)->Release(); (x) = nullptr; }
+#define SAFE_DELETE(x) if( x ) { delete(x); (x) = nullptr; }
 
 struct CBOnce
 {
@@ -21,10 +21,10 @@ struct CBOnChange
 	elm::vec4 position;
 };
 
-class RenderDX11 : public EngineInterface
+class RenderDX11
 {
 private:
-	int terrainVertexBufferID, terrainIndexBufferID, modelID, cbOnceID, cbOnChangeID;
+	int terrainVertexBufferID, terrainIndexBufferID, modelID, cbOnceID, cbOnChangeID, terrainIndexCount;
 
 	elm::vec3 terrainPos;
 	
@@ -74,8 +74,11 @@ public:
 
 	void renderScene();
 	void setRect(RECT t);
+	void setMouse(POINT pos);
 
-	HRESULT createTerrain(int width, int height, float pointStep, bool fromPerlinMap);
+	void setTerrainIndexCount(int count)	{ terrainIndexCount = count; }
+	void setCamera(Camera *cam)				{ camera = cam; }
 
-	void move(float alongX, float alongZ) { camera->move(elm::vec2(alongX, alongZ)); }
+	void updateTerrainBuffer(std::vector<Vertex> *vBuffer);
+	void createAndSetTerrainBuffers(std::vector<Vertex> *vBuffer, std::vector<uint> *iBuffer);
 };
