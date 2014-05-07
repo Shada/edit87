@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;
 using System.Xml;
+using System.Diagnostics;
 using WeifenLuo.WinFormsUI.Docking;
 
 using wrap;
@@ -37,6 +38,8 @@ namespace LevelEditor
         DockContent[] panels    = new DockContent[10];
         string[] panelStrings   = new string[10];       //the string names of the panel class types
 
+        PanRender renderWindow  = new PanRender();
+
 		public MapEditor()
 		{
             this.KeyPreview = true;
@@ -50,11 +53,17 @@ namespace LevelEditor
             deserializeDockContent = new DeserializeDockContent(GetContentFromPersistString);
             mainDockPanel.LoadFromXml(activeLayoutName, deserializeDockContent);
 
+            //string friendlyName = AppDomain.CurrentDomain.FriendlyName;
+            //Process[] process = Process.GetProcessesByName(friendlyName.Substring(0, friendlyName.LastIndexOf('.')));
+            renderWindow.Owner = this;
+            renderWindow.Show();
+            resizeRenderPanel();
+
             timer1.Interval = 20;
             timer1.Start();
-            
-            if (panels[3].IsHandleCreated)
-                graphics = new GraphicsCommunicator(panels[3].Handle);
+
+            if (renderWindow.IsHandleCreated)
+                graphics = new GraphicsCommunicator(renderWindow.Handle);
             else
                 renderWindowActivated = false;
 
@@ -74,14 +83,11 @@ namespace LevelEditor
             panels[2] = new PanResources();
             panelStrings[2] = typeof(PanResources).ToString();
 
-            panels[3] = new PanRender();
-            panelStrings[3] = typeof(PanRender).ToString();
+            panels[3] = new PanLibrary();
+            panelStrings[3] = typeof(PanLibrary).ToString();
 
-            panels[4] = new PanLibrary();
-            panelStrings[4] = typeof(PanLibrary).ToString();
-
-            panels[5] = new PanProperties();
-            panelStrings[5] = typeof(PanProperties).ToString();
+            panels[4] = new PanProperties();
+            panelStrings[4] = typeof(PanProperties).ToString();
         }
 		private void btn_TerrainBrush_Click(object sender, EventArgs e)
 		{
@@ -97,11 +103,6 @@ namespace LevelEditor
 		{
             NO();
 		}
-
-        private void toolsShortcutsToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-			hideToolsMenu(sender);
-        }
 
         private void MapEditor_Resize(object sender, EventArgs e)
         {
@@ -218,12 +219,12 @@ namespace LevelEditor
 		}
         private void resizeRenderPanel()
         {
-            if (!panels[3].IsDisposed)
+            if (!renderWindow.IsDisposed)
             {
                 int tooltipHeight = 1;
                 if (shortcutPanel.Visible)
                     tooltipHeight = shortcutPanel.Height;
-                panels[3].FloatPane.FloatWindow.Bounds = new Rectangle(this.Left + (int)mainDockPanel.DockLeftPortion + mainDockPanel.Left + 5,
+                renderWindow.Bounds = new Rectangle(this.Left + (int)mainDockPanel.DockLeftPortion + mainDockPanel.Left + 5,
                                                                         this.Top + (int)mainDockPanel.DockTopPortion + mainDockPanel.Top + tooltipHeight - 10,
                                                                         mainDockPanel.Width - (int)mainDockPanel.DockLeftPortion - (int)mainDockPanel.DockRightPortion,
                                                                         mainDockPanel.Height - (int)mainDockPanel.DockTopPortion - (int)mainDockPanel.DockBottomPortion);
@@ -351,6 +352,7 @@ namespace LevelEditor
         private void toolsShortcutsToolStripMenuItem_Click_1(object sender, EventArgs e)
         {
             hideToolsMenu(sender);
+            resizeRenderPanel();
         }
 
         private void brushToolsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -370,13 +372,26 @@ namespace LevelEditor
             panels[0].Show(mainDockPanel, DockState.DockRight);
             panels[1].Show(panels[0].Pane, DockAlignment.Bottom, 0.62);
             panels[2].Show(panels[1].Pane, DockAlignment.Bottom, 0.50);
-            panels[3].Show(mainDockPanel, DockState.Float);
-            panels[3].AllowEndUserDocking = false;
-            panels[3].Pane.AllowDockDragAndDrop = false;
-            panels[4].Show(mainDockPanel, DockState.DockLeft);
-            panels[5].Show(panels[4].Pane, DockAlignment.Bottom, 0.50);
+
+            panels[3].Show(mainDockPanel, DockState.DockLeft);
+            panels[4].Show(panels[3].Pane, DockAlignment.Bottom, 0.50);
 
             mainDockPanel.ResumeLayout(true, true);
+
+            resizeRenderPanel();
+        }
+
+        public class WindowWrapper : IWin32Window
+        {
+            public WindowWrapper(IntPtr handle)
+            {
+                _hwnd = handle;
+            }
+            public IntPtr Handle
+            {
+                get { return _hwnd; }
+            }
+            private IntPtr _hwnd;
         }
 
         private void MapEditor_FormClosing(object sender, FormClosingEventArgs e)
