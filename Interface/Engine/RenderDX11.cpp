@@ -347,17 +347,24 @@ HRESULT RenderDX11::init()
 
 	g_objects.push_back(obj);
 
-	DirectX::ScratchImage *image = new DirectX::ScratchImage();
-	hr = DirectX::LoadFromTGAFile(s2ws(g_meshes[0]->getTexDiffusePath()).c_str(), nullptr, *image); // this should only be done if it's a TGA-file
-	hr = DirectX::CreateShaderResourceView(g_device, image->GetImages(), image->GetImageCount(), image->GetMetadata(), &tex);
-	g_textures.push_back(tex);
-
-	g_meshes[0]->setTexDiffuseID(g_textures.size() - 1);
+	if(g_meshes[0]->getTexDiffusePath().substr(g_meshes[0]->getTexDiffusePath().size()-4, g_meshes[0]->getTexDiffusePath().size()) != ".tga")
+	{
+		hr = D3DX11CreateShaderResourceViewFromFile(g_device, g_meshes[0]->getTexDiffusePath().c_str(), NULL, NULL, &tex, NULL);
+	}
+	else
+	{
+		DirectX::ScratchImage *image = new DirectX::ScratchImage();
+		hr = DirectX::LoadFromTGAFile(s2ws(g_meshes[0]->getTexDiffusePath()).c_str(), nullptr, *image); // this should only be done if it's a TGA-file
+		hr = DirectX::CreateShaderResourceView(g_device, image->GetImages(), image->GetImageCount(), image->GetMetadata(), &tex);
+	}
 	// now we can load the image into a resource and use it in directx.
 	if(FAILED(hr))
 	{
 		return hr;
 	}
+	g_textures.push_back(tex);
+
+	g_meshes[0]->setTexDiffuseID(g_textures.size() - 1);
     return S_OK;
 }
 
@@ -569,7 +576,7 @@ void RenderDX11::renderScene()
 
 	stride = sizeof(elm::vec3);
 	cb.world = elm::translationMatrix(g_objects[0]->getPosition());
-	cb.world *= elm::scalingMatrix(.5, .5, .5);// * cb.world;
+	cb.world = elm::scalingMatrix(.2, .2, .2) * cb.world;
 	g_deviceContext->UpdateSubresource(g_buffers.at(cbOnChangeID), 0, NULL, &cb, 0, 0);
 
 	g_deviceContext->IASetVertexBuffers(0, 1, &g_buffers.at(g_meshes[0]->getVertexBufferID()), &stride, &offset);
