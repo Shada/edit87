@@ -38,7 +38,7 @@ namespace LevelEditor
         DockContent[] panels    = new DockContent[10];
         string[] panelStrings   = new string[10];       //the string names of the panel class types
 
-        PanRender renderWindow  = new PanRender();
+        RenderWindow renderWindow = new RenderWindow();
 
 		public MapEditor()
 		{
@@ -88,6 +88,9 @@ namespace LevelEditor
 
             panels[4] = new PanProperties();
             panelStrings[4] = typeof(PanProperties).ToString();
+
+            panels[5] = new PanRender();
+            panelStrings[5] = typeof(PanRender).ToString();
         }
 		private void btn_TerrainBrush_Click(object sender, EventArgs e)
 		{
@@ -224,10 +227,14 @@ namespace LevelEditor
                 int tooltipHeight = 1;
                 if (shortcutPanel.Visible)
                     tooltipHeight = shortcutPanel.Height;
-                renderWindow.Bounds = new Rectangle(this.Left + (int)mainDockPanel.DockLeftPortion + mainDockPanel.Left + 5,
+               /* renderWindow.Bounds = new Rectangle(this.Left + (int)mainDockPanel.DockLeftPortion + mainDockPanel.Left + 5,
                                                                         this.Top + (int)mainDockPanel.DockTopPortion + mainDockPanel.Top + tooltipHeight - 10,
                                                                         mainDockPanel.Width - (int)mainDockPanel.DockLeftPortion - (int)mainDockPanel.DockRightPortion,
-                                                                        mainDockPanel.Height - (int)mainDockPanel.DockTopPortion - (int)mainDockPanel.DockBottomPortion);
+                                                                        mainDockPanel.Height - (int)mainDockPanel.DockTopPortion - (int)mainDockPanel.DockBottomPortion);*/
+                renderWindow.Bounds = new Rectangle(panels[5].Bounds.X + this.Bounds.X,
+                                                    panels[5].Bounds.Y + this.Bounds.Y,
+                                                    panels[5].Bounds.Width,
+                                                    panels[5].Bounds.Height);
             }
         }
 
@@ -375,6 +382,7 @@ namespace LevelEditor
 
             panels[3].Show(mainDockPanel, DockState.DockLeft);
             panels[4].Show(panels[3].Pane, DockAlignment.Bottom, 0.50);
+            panels[5].Show(mainDockPanel, DockState.Document);
 
             mainDockPanel.ResumeLayout(true, true);
 

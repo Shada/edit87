@@ -1,6 +1,6 @@
 ﻿namespace LevelEditor
 {
-    partial class PanRender
+    partial class RenderWindow
     {
         /// <summary>
         /// Required designer variable.
@@ -30,23 +30,21 @@
         {
             this.SuspendLayout();
             // 
-            // PanRender
+            // RenderWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(672, 483);
-            this.Enabled = false;
-            this.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.Name = "PanRender";
+            this.ClientSize = new System.Drawing.Size(284, 262);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
+            this.Name = "RenderWindow";
             this.ShowInTaskbar = false;
-            this.Text = "PanRender";
-            this.Load += new System.EventHandler(this.PanRender_Load);
-            this.SizeChanged += new System.EventHandler(this.PanRender_SizeChanged);
+            this.Text = "RenderWindow";
+            this.Activated += new System.EventHandler(this.RenderWindow_Activated);
+            this.Load += new System.EventHandler(this.RenderWindow_Load);
             this.ResumeLayout(false);
 
         }
 
         #endregion
-
     }
 }
