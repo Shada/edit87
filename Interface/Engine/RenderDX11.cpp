@@ -310,7 +310,7 @@ HRESULT RenderDX11::init()
 
 	
 	Mesh3D *mesh = new Mesh3D();
-	if(!mesh->loadMesh("../Models/duck/duck.dae"))
+	if(!mesh->loadMesh("../Models/Collada/cube.dae"))
 	{
 		MessageBoxA(hWnd, "Model load fail", "FAIL", 0);
 	}
@@ -342,12 +342,17 @@ HRESULT RenderDX11::init()
 	g_meshes[0]->setIndexBufferID(id);
 
 	Object3D *obj = new Object3D();
-	obj->setMeshID(0);
+	obj->setMeshID(g_meshes.size()-1);
 	obj->setPosition(elm::vec3(200,100,200));
+	obj->setScale(elm::vec3(.2,.2,.2));
 
 	g_objects.push_back(obj);
 
-	if(g_meshes[0]->getTexDiffusePath().substr(g_meshes[0]->getTexDiffusePath().size()-4, g_meshes[0]->getTexDiffusePath().size()) != ".tga")
+	if(g_meshes[0]->getTexDiffusePath().size() == 0)
+	{
+		tex = nullptr;
+	}
+	else if(g_meshes[0]->getTexDiffusePath().substr(g_meshes[0]->getTexDiffusePath().size()-4, g_meshes[0]->getTexDiffusePath().size()) != ".tga")
 	{
 		hr = D3DX11CreateShaderResourceViewFromFile(g_device, g_meshes[0]->getTexDiffusePath().c_str(), NULL, NULL, &tex, NULL);
 	}
@@ -575,20 +580,23 @@ void RenderDX11::renderScene()
 	g_deviceContext->IASetInputLayout(g_otherlayout);
 
 	stride = sizeof(elm::vec3);
-	cb.world = elm::translationMatrix(g_objects[0]->getPosition());
-	cb.world = elm::scalingMatrix(.2, .2, .2) * cb.world;
-	g_deviceContext->UpdateSubresource(g_buffers.at(cbOnChangeID), 0, NULL, &cb, 0, 0);
 
-	g_deviceContext->IASetVertexBuffers(0, 1, &g_buffers.at(g_meshes[0]->getVertexBufferID()), &stride, &offset);
-	g_deviceContext->IASetVertexBuffers(1, 1, &g_buffers.at(g_meshes[0]->getNormalBufferID()), &stride, &offset);
-	g_deviceContext->IASetVertexBuffers(2, 1, &g_buffers.at(g_meshes[0]->getTexCoordBufferID()), &stride, &offset);
+	for(int i = 0; i < g_objects.size(); i++)
+	{
+		cb.world = elm::translationMatrix(g_objects[i]->getPosition());
+		cb.world = elm::scalingMatrix(g_objects[i]->getScale()) * cb.world;
+		g_deviceContext->UpdateSubresource(g_buffers.at(cbOnChangeID), 0, NULL, &cb, 0, 0);
 
-	g_deviceContext->PSSetShaderResources(0, 1, &g_textures.at(1));
+		g_deviceContext->IASetVertexBuffers(0, 1, &g_buffers.at(g_meshes[g_objects[i]->getMeshID()]->getVertexBufferID()), &stride, &offset);
+		g_deviceContext->IASetVertexBuffers(1, 1, &g_buffers.at(g_meshes[g_objects[i]->getMeshID()]->getNormalBufferID()), &stride, &offset);
+		g_deviceContext->IASetVertexBuffers(2, 1, &g_buffers.at(g_meshes[g_objects[i]->getMeshID()]->getTexCoordBufferID()), &stride, &offset);
 
-	g_deviceContext->IASetIndexBuffer(g_buffers.at(g_meshes[0]->getIndexBufferID()), DXGI_FORMAT_R32_UINT, 0);
+		g_deviceContext->PSSetShaderResources(0, 1, &g_textures.at(g_meshes[g_objects[i]->getMeshID()]->getTexDiffuseID()));
 
-	g_deviceContext->DrawIndexed(g_meshes[0]->getNumIndices(), 0, 0);
-	
+		g_deviceContext->IASetIndexBuffer(g_buffers.at(g_meshes[g_objects[i]->getMeshID()]->getIndexBufferID()), DXGI_FORMAT_R32_UINT, 0);
+
+		g_deviceContext->DrawIndexed(g_meshes[g_objects[i]->getMeshID()]->getNumIndices(), 0, 0);
+	}
 	g_swapChain->Present(0, 0);
 }
 
