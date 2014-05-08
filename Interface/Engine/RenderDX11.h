@@ -102,7 +102,7 @@ public:
 	RenderDX11(HWND hWnd);
 	~RenderDX11();
 
-	void renderScene();
+	void renderScene(Quadnode *node);
 	void setRect(RECT t);
 
 	void setTerrainIndexCount(int count)	{ terrainIndexCount = count; }
