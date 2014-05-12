@@ -1,15 +1,23 @@
 #pragma once
 
 #include <D3D11.h>
+#include <map>
 #include <vector>
+#include <string>
+
 #include "EngineInterface.h"
 #include "Terrain.h"
 #include "Camera.h"
 #include "Mesh3D.h"
 #include "Object3D.h"
 
+#include "ModelDefinitions.h"
+
 #define SAFE_RELEASE(x) if( x ) { (x)->Release(); (x) = nullptr; }
 #define SAFE_DELETE(x) if( x ) { delete(x); (x) = nullptr; }
+
+using std::map;
+using std::string;
 
 struct CBOnce
 {
@@ -72,6 +80,7 @@ private:
 	std::vector<Mesh3D*>		g_meshes;
 
 	std::vector<Object3D*>		g_objects;
+	std::vector<Composition>	g_comps;
 
 	void RenderDX11::drawCulledTerrain(Quadnode *node);
 
@@ -81,6 +90,14 @@ private:
 
 	HRESULT createBuffer(void* data, int numElements, int bytesPerElement, int &bufferID);
 	HRESULT createIndexBuffer(void* data, int numElements, int &bufferID);
+
+	HRESULT createSRV(unsigned int& _outId, string _fileName);
+	/********************************** 
+		Internal Data Representation
+	***********************************/
+	/* Shader Resources */
+	map< unsigned int, ID3D11Buffer*>				m_buffers;
+	map< unsigned int, ID3D11ShaderResourceView*>	m_SRVs;
 
 public:
 	RenderDX11(HWND hWnd);
@@ -94,4 +111,6 @@ public:
 
 	void updateTerrainBuffer(std::vector<Vertex> *vBuffer);
 	void createAndSetTerrainBuffers(std::vector<Vertex> *vBuffer, std::vector<uint> *iBuffer);
+
+	friend class Engine;
 };

@@ -34,7 +34,7 @@ namespace LevelEditor
             windowWidth = Size.Width;
             windowHeight = Size.Height;
             graphics.setRenderArea(0, 0, windowWidth, windowHeight);
-            graphics.createTerrain(512, 512, 5, false, 0);
+            graphics.createTerrain(256, 256, 5, false, 0);
 		}
 
 		private void button1_Click(object sender, EventArgs e)

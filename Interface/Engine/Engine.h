@@ -6,6 +6,7 @@
 #include "Terrain.h"
 #include "Camera.h"
 #include "Quadnode.h"
+#include "ModelDefinitions.h"
 
 enum class Tools
 {
@@ -38,10 +39,21 @@ private:
 	POINT mousePos;
 
 	void findMinMaxValues();
+
+	/**********************************
+		External Data Representation
+	***********************************/
+	/* Raw data linkers */
+	map< unsigned int, IModel* >		m_properties;
+
+	/* Generic objects */
+	map< unsigned int, Composition* >	m_compositions;
+
 public:
 	Engine(HWND hwnd);
 	~Engine();
 
+	void init();
 	void createTerrain(int width, int height, float pointStep, bool fromPerlinMap, int seed);
 
 	void setRect(RECT t);

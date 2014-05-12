@@ -346,6 +346,13 @@ HRESULT RenderDX11::init()
 
 	g_objects.push_back(obj);
 
+	CModel<Object3D>* co = new CModel<Object3D>("test", obj);
+
+	Composition c;
+	c.setName("test");
+	c.setProperty(co);
+	g_comps.push_back(c);
+
 	if(g_meshes[0]->getTexDiffusePath().size() == 0)
 	{
 		tex = nullptr;
@@ -446,6 +453,9 @@ HRESULT RenderDX11::createBuffer(void *data, int numElements, int bytesPerElemen
 
 	bufferID = g_buffers.size();
 	g_buffers.push_back(buffer);
+
+	m_buffers[bufferID] = buffer;
+
 	return S_OK;
 }
 
@@ -474,6 +484,29 @@ HRESULT RenderDX11::createIndexBuffer(void* data, int numElements, int &bufferID
 
 	bufferID = g_buffers.size();
 	g_buffers.push_back(buffer);
+
+	m_buffers[bufferID] = buffer;
+
+	return S_OK;
+}
+
+HRESULT RenderDX11::createSRV(unsigned int& _outId, string _fileName)
+{
+	HRESULT hr;
+
+	ID3D11ShaderResourceView *tex	= nullptr;	
+
+	hr = D3DX11CreateShaderResourceViewFromFile(g_device, _fileName.c_str(), NULL, NULL, &tex, NULL);
+
+	if(FAILED(hr))
+	{
+		MessageBox(hWnd, "Image load made fail, lol", "fail, yo", 0);
+		return hr;
+	}
+	
+	_outId			= m_SRVs.size();
+	m_SRVs[_outId]	= tex;
+
 	return S_OK;
 }
 
@@ -583,33 +616,39 @@ void RenderDX11::renderScene(Quadnode *node)
 	//g_deviceContext->DrawIndexed(terrainIndexCount, 0, 0);
 
 	drawCulledTerrain(node);
-
+	
 	/************************************************************/
 	//						DRAWING A MESH						//
 	/************************************************************/
 
+	int i = g_comps.size();
 	g_deviceContext->VSSetShader(g_modelVS, NULL, 0);
 	g_deviceContext->PSSetShader(g_modelPS, NULL, 0);
 	g_deviceContext->IASetInputLayout(g_otherlayout);
 
 	stride = sizeof(elm::vec3);
-
-	for(unsigned int i = 0; i < g_objects.size(); i++)
+	for(unsigned int i = 0; i < g_comps.size(); i++)
 	{
-		cb.world = elm::translationMatrix(g_objects[i]->getPosition());
-		cb.world = elm::scalingMatrix(g_objects[i]->getScale()) * cb.world;
+		Object3D* o = g_comps[i].getProperty<Object3D>();
+
+		if(!o)
+			continue;
+		
+		cb.world = elm::translationMatrix(o->getPosition());
+		cb.world = elm::scalingMatrix(o->getScale()) * cb.world;
 		g_deviceContext->UpdateSubresource(g_buffers.at(cbOnChangeID), 0, NULL, &cb, 0, 0);
 
-		g_deviceContext->IASetVertexBuffers(0, 1, &g_buffers.at(g_meshes[g_objects[i]->getMeshID()]->getVertexBufferID()), &stride, &offset);
-		g_deviceContext->IASetVertexBuffers(1, 1, &g_buffers.at(g_meshes[g_objects[i]->getMeshID()]->getNormalBufferID()), &stride, &offset);
-		g_deviceContext->IASetVertexBuffers(2, 1, &g_buffers.at(g_meshes[g_objects[i]->getMeshID()]->getTexCoordBufferID()), &stride, &offset);
+		g_deviceContext->IASetVertexBuffers(0, 1, &g_buffers.at(g_meshes[o->getMeshID()]->getVertexBufferID()), &stride, &offset);
+		g_deviceContext->IASetVertexBuffers(1, 1, &g_buffers.at(g_meshes[o->getMeshID()]->getNormalBufferID()), &stride, &offset);
+		g_deviceContext->IASetVertexBuffers(2, 1, &g_buffers.at(g_meshes[o->getMeshID()]->getTexCoordBufferID()), &stride, &offset);
 
-		g_deviceContext->PSSetShaderResources(0, 1, &g_textures.at(g_meshes[g_objects[i]->getMeshID()]->getTexDiffuseID()));
+		g_deviceContext->PSSetShaderResources(0, 1, &g_textures.at(g_meshes[o->getMeshID()]->getTexDiffuseID()));
 
-		g_deviceContext->IASetIndexBuffer(g_buffers.at(g_meshes[g_objects[i]->getMeshID()]->getIndexBufferID()), DXGI_FORMAT_R32_UINT, 0);
+		g_deviceContext->IASetIndexBuffer(g_buffers.at(g_meshes[o->getMeshID()]->getIndexBufferID()), DXGI_FORMAT_R32_UINT, 0);
 
-		g_deviceContext->DrawIndexed(g_meshes[g_objects[i]->getMeshID()]->getNumIndices(), 0, 0);
+		g_deviceContext->DrawIndexed(g_meshes[o->getMeshID()]->getNumIndices(), 0, 0);
 	}
+
 	g_swapChain->Present(0, 0);
 }
 

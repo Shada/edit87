@@ -84,6 +84,8 @@
     <ClInclude Include="EngineFactory.h" />
     <ClInclude Include="EngineInterface.h" />
     <ClInclude Include="Mesh3D.h" />
+    <ClInclude Include="Model.h" />
+    <ClInclude Include="ModelDefinitions.h" />
     <ClInclude Include="Object3D.h" />
     <ClInclude Include="Quadnode.h" />
     <ClInclude Include="RenderDX11.h" />
@@ -95,6 +97,7 @@
     <ClCompile Include="Engine.cpp" />
     <ClCompile Include="EngineFactory.cpp" />
     <ClCompile Include="Mesh3D.cpp" />
+    <ClCompile Include="Model.cpp" />
     <ClCompile Include="Object3D.cpp" />
     <ClCompile Include="Quadnode.cpp" />
     <ClCompile Include="RenderDX11.cpp" />

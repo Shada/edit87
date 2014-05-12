@@ -17,6 +17,18 @@ Engine::Engine(HWND hwnd)
 	mouseWorldPos = elm::vec3(200, 0, 1000);
 }
 
+void Engine::init()
+{
+	unsigned int ref;
+	
+	// create ref struct
+	CModel<Object3D>* co = new CModel<Object3D>("test", dx->g_objects[0]);
+
+	// create composition
+	Composition c;
+	c.setProperty(co);
+}
+
 void Engine::setRect(RECT t)
 {
 	r = t;
@@ -36,8 +48,9 @@ void Engine::createTerrain(int width, int height, float pointStep, bool fromPerl
 	node->fillTree(0, terrain->getIBuffer()->size(), terrain->getPosition().xz, terrain->getDim(), terrain->getTreeDepth());
 	node->findAllLeaves(leafNodes);
 
-	minmaxCalc = std::thread(&Terrain::findMinMaxValues, terrain, std::ref(leafNodes));
-	minmaxCalc.join();
+	terrain->findMinMaxValues(leafNodes);
+	//minmaxCalc = std::thread(&Terrain::findMinMaxValues, terrain, std::ref(leafNodes));
+	//minmaxCalc.join();
 
 	dx->createAndSetTerrainBuffers(terrain->getVBuffer(), terrain->getIBuffer());
 
