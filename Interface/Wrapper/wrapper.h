@@ -1,6 +1,7 @@
 //#include "../cproject/printClass.h"
 #include "stfdafx.h"
 #include "../Engine/EngineInterface.h"
+#include "../Engine/Controller.h"
 
 namespace wrap
 {
@@ -9,6 +10,7 @@ namespace wrap
 	private:
 		HWND hWnd;
 		EngineInterface *gfx;
+		Controller		*controller;
 	public:
 		GraphicsCommunicator(System::IntPtr win);
 		~GraphicsCommunicator();

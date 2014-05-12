@@ -39,32 +39,33 @@ private:
 	ID3D11DeviceContext			*g_deviceContext;
 	IDXGISwapChain				*g_swapChain;
 	ID3D11RenderTargetView		*g_renderTargetView;
-	ID3D11ShaderResourceView	*g_shaderView;
+	//ID3D11ShaderResourceView	*g_shaderView;
 	ID3D11RasterizerState		*g_rasterizerState;
 
 	ID3D11DepthStencilView		*g_depthStencilView;								
 								
-	ID3D11BlendState			*g_blendEnable,
-								*g_blendDisable,
-								*g_blendAlpha;
+	//ID3D11BlendState			*g_blendEnable,
+	//							*g_blendDisable,
+	//							*g_blendAlpha;
 
-	ID3D11SamplerState			*g_wrap,
-								*g_clamp;
+	//ID3D11SamplerState			*g_wrap,
+	//							*g_clamp;
 								
 	ID3D11DepthStencilState		*g_depthStencilStateEnable;
 	ID3D11DepthStencilState		*g_depthStencilStateDisable;
 
 	ID3D11InputLayout			*g_layout;
 
-	ID3D11VertexShader			*g_terrainVS;
-	ID3D11PixelShader			*g_terrainPS;
+	//ID3D11VertexShader			*g_terrainVS;
+	//ID3D11PixelShader			*g_terrainPS;
 
-	std::vector<ID3D11Buffer*>	g_buffers;
-	std::vector<ID3D11ShaderResourceView*> g_textures;
+	//std::vector<ID3D11Buffer*>	g_buffers;
+	//std::vector<ID3D11ShaderResourceView*> g_textures;
 
 	HRESULT init();
 	HRESULT createSampleStates();
 	HRESULT compileShader(LPCSTR filePath, LPCSTR shaderType, ID3DBlob **shaderBlob);
+	HRESULT createSRV(LPCSTR filePath, ID3D11ShaderResourceView*& _tex);
 
 public:
 	RenderDX11(HWND hWnd);
@@ -73,7 +74,15 @@ public:
 	void renderScene();
 	void setRect(RECT t);
 
+	void setupScene(ID3D11BlendState* _blendState, ID3D11InputLayout* _layout);
+	void drawMesh(ID3D11Buffer* _vBuffer, ID3D11ShaderResourceView* _sRV, unsigned int _indexCount = 0, ID3D11Buffer* _iBuffer = 0);
+	void setTransformation(ID3D11Buffer* _cBuffer, elm::vec3 _scale = elm::vec3(1), elm::vec3 _rotate = elm::vec3(0), elm::vec3 _translate = elm::vec3(0) );
+	void setShaders(ID3D11VertexShader* _vShader, ID3D11GeometryShader* _gShader, ID3D11PixelShader* _pShader);
+
 	HRESULT createTerrain(int width, int height, float pointStep, bool fromPerlinMap);
 
 	void move(float alongX, float alongZ) { camera->move(elm::vec2(alongX, alongZ)); }
+
+	friend class Controller;
+	friend class ResourceHandler;
 };

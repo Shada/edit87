@@ -2,6 +2,9 @@
 #include "../Engine/EngineFactory.h"
 #include <Windows.h>
 
+#include "../Engine/RenderDX11.h" 
+#include "../Engine/Controller.h"
+
 namespace wrap
 {
 	GraphicsCommunicator::GraphicsCommunicator(System::IntPtr win)
@@ -9,6 +12,12 @@ namespace wrap
 		hWnd = (HWND)((void*)win);
 		gfx = EngineFactory::createGraphics(hWnd);
 		setRenderArea(232, 58, 1048, 670);
+		
+		bool result;
+
+		controller = EngineFactory::createController();
+		result = controller->init( (RenderDX11*)gfx, "../");
+		int i = 42;
 	}
 
 	void GraphicsCommunicator::setRenderArea(int x, int y, int width, int height)
@@ -24,12 +33,14 @@ namespace wrap
 
 	void GraphicsCommunicator::createTerrain(int width, int height, float pointStep, bool fromPerlinMap)
 	{
-		gfx->createTerrain(width, height, pointStep, fromPerlinMap);
+		//gfx->createTerrain(width, height, pointStep, fromPerlinMap);
+		controller->createTerrain(width, height, pointStep, fromPerlinMap);
 	}
 
 	void GraphicsCommunicator::renderScene()
 	{
-		gfx->renderScene();
+		controller->draw();
+		//gfx->renderScene();
 	}
 
 	void GraphicsCommunicator::mouseReleased(MouseKeyType mType)
@@ -53,7 +64,8 @@ namespace wrap
 	void GraphicsCommunicator::moveCamera(int xDir, int zDir)
 	{
 		gfx->move((float)xDir, (float)zDir);
-		gfx->renderScene();
+		//gfx->renderScene();
+		controller->draw();
 	}
 	
 	GraphicsCommunicator::~GraphicsCommunicator()

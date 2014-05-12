@@ -176,7 +176,7 @@ HRESULT RenderDX11::init()
     blendDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
     blendDesc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
     blendDesc.RenderTarget[0].RenderTargetWriteMask = 0x0f;
-	hr = g_device->CreateBlendState(&blendDesc, &g_blendEnable);
+	//hr = g_device->CreateBlendState(&blendDesc, &g_blendEnable);
     if(FAILED(hr))
 	{
 		MessageBox(this->hWnd, "blendenable made fail, lol", "fail, yo", 0);
@@ -184,7 +184,7 @@ HRESULT RenderDX11::init()
 	}
 
 	blendDesc.RenderTarget[0].BlendEnable = FALSE;
-	hr = g_device->CreateBlendState(&blendDesc, &g_blendDisable);
+	//hr = g_device->CreateBlendState(&blendDesc, &g_blendDisable);
     if(FAILED(hr))
 	{
 		MessageBox(this->hWnd, "blenddisable made fail, lol", "fail, yo", 0);
@@ -195,7 +195,7 @@ HRESULT RenderDX11::init()
 	blendDesc.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
 	blendDesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ZERO;
 	blendDesc.RenderTarget[0].BlendEnable = TRUE;
-	hr = g_device->CreateBlendState(&blendDesc, &g_blendAlpha);
+	//hr = g_device->CreateBlendState(&blendDesc, &g_blendAlpha);
     if(FAILED(hr))
 	{
 		MessageBox(this->hWnd, "blendalpha made fail, lol", "fail, yo", 0);
@@ -246,46 +246,46 @@ HRESULT RenderDX11::init()
 	if(FAILED(hr))
 		return hr;
 
-	cbOnceID = g_buffers.size();
-	g_buffers.push_back(b);
+	//cbOnceID = g_buffers.size();
+	//g_buffers.push_back(b);
 
-	bd.ByteWidth = sizeof(CBOnChange);
-	b = nullptr;
-	hr = g_device->CreateBuffer(&bd, NULL, &b);
-	if(FAILED(hr))
-		return hr;
+	//bd.ByteWidth = sizeof(CBOnChange);
+	//b = nullptr;
+	//hr = g_device->CreateBuffer(&bd, NULL, &b);
+	//if(FAILED(hr))
+	//	return hr;
 
-	cbOnChangeID = g_buffers.size();
-	g_buffers.push_back(b);
+	//cbOnChangeID = g_buffers.size();
+	//g_buffers.push_back(b);
 
-	D3D11_INPUT_ELEMENT_DESC standardLayout[] =
-	{
-		{ "POSITION",	0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{ "NORMAL",		0, DXGI_FORMAT_R32G32B32_FLOAT, 0, sizeof(float) * 3, D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{ "TEXCOORD",	0, DXGI_FORMAT_R32G32_FLOAT,	0, sizeof(float) * 6, D3D11_INPUT_PER_VERTEX_DATA, 0}
-	};
+	//D3D11_INPUT_ELEMENT_DESC standardLayout[] =
+	//{
+	//	{ "POSITION",	0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+	//	{ "NORMAL",		0, DXGI_FORMAT_R32G32B32_FLOAT, 0, sizeof(float) * 3, D3D11_INPUT_PER_VERTEX_DATA, 0},
+	//	{ "TEXCOORD",	0, DXGI_FORMAT_R32G32_FLOAT,	0, sizeof(float) * 6, D3D11_INPUT_PER_VERTEX_DATA, 0}
+	//};
 
-	/* Create shaders */
-	ID3DBlob *terrainBlob;
-	compileShader("..\\Shaders\\defaultVS.hlsl", "vs_4_0", &terrainBlob);
-	g_device->CreateVertexShader(terrainBlob->GetBufferPointer(), terrainBlob->GetBufferSize(), NULL, &g_terrainVS);
-	g_device->CreateInputLayout(standardLayout, ARRAYSIZE(standardLayout), terrainBlob->GetBufferPointer(), terrainBlob->GetBufferSize(), &g_layout);
-	terrainBlob->Release();
+	///* Create shaders */
+	//ID3DBlob *terrainBlob;
+	//compileShader("..\\Shaders\\defaultVS.hlsl", "vs_4_0", &terrainBlob);
+	//g_device->CreateVertexShader(terrainBlob->GetBufferPointer(), terrainBlob->GetBufferSize(), NULL, &g_terrainVS);
+	//g_device->CreateInputLayout(standardLayout, ARRAYSIZE(standardLayout), terrainBlob->GetBufferPointer(), terrainBlob->GetBufferSize(), &g_layout);
+	//terrainBlob->Release();
 
-	compileShader("..\\Shaders\\defaultPS.hlsl", "ps_4_0", &terrainBlob);
-	g_device->CreatePixelShader(terrainBlob->GetBufferPointer(), terrainBlob->GetBufferSize(), NULL, &g_terrainPS);
+	//compileShader("..\\Shaders\\defaultPS.hlsl", "ps_4_0", &terrainBlob);
+	//g_device->CreatePixelShader(terrainBlob->GetBufferPointer(), terrainBlob->GetBufferSize(), NULL, &g_terrainPS);
 
-	terrainBlob->Release();
+	//terrainBlob->Release();
 
-	ID3D11ShaderResourceView *tex;
-	hr = D3DX11CreateShaderResourceViewFromFile(g_device, "..\\Textures\\grass.png", NULL, NULL, &tex, NULL);
-	if(FAILED(hr))
-	{
-		MessageBox(this->hWnd, "Image load made fail, lol", "fail, yo", 0);
-		return hr;
-	}
-	g_textures.push_back(tex);
-	createSampleStates();
+	//ID3D11ShaderResourceView *tex;
+	//hr = D3DX11CreateShaderResourceViewFromFile(g_device, "..\\Textures\\grass.png", NULL, NULL, &tex, NULL);
+	//if(FAILED(hr))
+	//{
+	//	MessageBox(this->hWnd, "Image load made fail, lol", "fail, yo", 0);
+	//	return hr;
+	//}
+	////g_textures.push_back(tex);
+	//createSampleStates();
     return S_OK;
 }
 
@@ -312,6 +312,14 @@ HRESULT RenderDX11::compileShader(LPCSTR filePath, LPCSTR shaderType, ID3DBlob *
 	return hr;
 }
 
+HRESULT RenderDX11::createSRV(LPCSTR filePath, ID3D11ShaderResourceView*& _tex)
+{
+	HRESULT hr;
+	hr = D3DX11CreateShaderResourceViewFromFile(g_device, filePath, NULL, NULL, &_tex, NULL);
+
+	return hr;
+}
+
 HRESULT RenderDX11::createSampleStates()
 {
 	D3D11_SAMPLER_DESC sampDesc;
@@ -325,17 +333,17 @@ HRESULT RenderDX11::createSampleStates()
 	sampDesc.MaxLOD = D3D11_FLOAT32_MAX;
 
 	HRESULT hr;
-	hr = g_device->CreateSamplerState(&sampDesc, &g_wrap);
-	if(FAILED(hr))
-		MessageBox(hWnd, "Error creating sampler state", "ERROR", MB_OK);
+	//hr = g_device->CreateSamplerState(&sampDesc, &g_wrap);
+	//if(FAILED(hr))
+	//	MessageBox(hWnd, "Error creating sampler state", "ERROR", MB_OK);
 
-	sampDesc.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP;
-	sampDesc.AddressV = D3D11_TEXTURE_ADDRESS_CLAMP;
-	sampDesc.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP;
+	//sampDesc.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP;
+	//sampDesc.AddressV = D3D11_TEXTURE_ADDRESS_CLAMP;
+	//sampDesc.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP;
 
-	hr = g_device->CreateSamplerState(&sampDesc, &g_clamp);
-	if(FAILED(hr))
-		MessageBox(hWnd, "Error creating sampler state", "ERROR", MB_OK);
+	//hr = g_device->CreateSamplerState(&sampDesc, &g_clamp);
+	//if(FAILED(hr))
+	//	MessageBox(hWnd, "Error creating sampler state", "ERROR", MB_OK);
 
 	return hr;
 }
@@ -374,8 +382,8 @@ HRESULT RenderDX11::createTerrain(int width, int height, float pointStep, bool f
 		return hr;
 	}
 
-	terrainVertexBufferID = g_buffers.size();
-	g_buffers.push_back(buffer);
+	//terrainVertexBufferID = g_buffers.size();
+	//g_buffers.push_back(buffer);
 
 	initData.pSysMem = &indexBuffer.at(0);
 
@@ -392,8 +400,8 @@ HRESULT RenderDX11::createTerrain(int width, int height, float pointStep, bool f
 		return hr;
 	}
 
-	terrainIndexBufferID = g_buffers.size();
-	g_buffers.push_back(buffer);
+	//terrainIndexBufferID = g_buffers.size();
+	//g_buffers.push_back(buffer);
 
 	return S_OK;
 }
@@ -408,32 +416,95 @@ void RenderDX11::renderScene()
 	cb.viewProj = camera->getView() * camera->getProj();
 	cb.position = elm::vec4(camera->getEye(), 1.f);
 	cb.world = elm::mat4();
-	g_deviceContext->UpdateSubresource(g_buffers.at(cbOnChangeID), 0, NULL, &cb, 0, 0);
+	//g_deviceContext->UpdateSubresource(g_buffers.at(cbOnChangeID), 0, NULL, &cb, 0, 0);
 
 	// Terrain
 	g_deviceContext->OMSetDepthStencilState(g_depthStencilStateEnable, 0);
 	g_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	g_deviceContext->IASetInputLayout(g_layout);
 	
-	g_deviceContext->PSSetSamplers(0, 1, &g_wrap);
-	g_deviceContext->PSSetShaderResources(0, 1, &g_textures.at(0));
-	g_deviceContext->VSSetConstantBuffers(0, 1, &g_buffers.at(cbOnChangeID));
+	//g_deviceContext->PSSetSamplers(0, 1, &g_wrap);
+	//g_deviceContext->PSSetShaderResources(0, 1, &g_textures.at(0));
+	//g_deviceContext->VSSetConstantBuffers(0, 1, &g_buffers.at(cbOnChangeID));
 
 	float blendFactor[4] = {0.f, 0.f, 0.f, 0.f};
-	g_deviceContext->OMSetBlendState(g_blendDisable, blendFactor, 0xffffffff);
+	//g_deviceContext->OMSetBlendState(g_blendDisable, blendFactor, 0xffffffff);
 
 	// Set vertex buffer
 	UINT stride = sizeof(Vertex);
 	UINT offset = 0;
-	g_deviceContext->IASetVertexBuffers(0, 1, &g_buffers.at(terrainVertexBufferID), &stride, &offset);
-	g_deviceContext->IASetIndexBuffer(g_buffers.at(terrainIndexBufferID), DXGI_FORMAT_R32_UINT, offset);
+	//g_deviceContext->IASetVertexBuffers(0, 1, &g_buffers.at(terrainVertexBufferID), &stride, &offset);
+	//g_deviceContext->IASetIndexBuffer(g_buffers.at(terrainIndexBufferID), DXGI_FORMAT_R32_UINT, offset);
 
-	g_deviceContext->VSSetShader(g_terrainVS, NULL, 0);
-	g_deviceContext->PSSetShader(g_terrainPS, NULL, 0);
+	//g_deviceContext->VSSetShader(g_terrainVS, NULL, 0);
+	//g_deviceContext->PSSetShader(g_terrainPS, NULL, 0);
 
 	g_deviceContext->DrawIndexed(terrain->getIndexCount(), 0, 0);
 	
 	g_swapChain->Present(0, 0);
+}
+
+void RenderDX11::drawMesh(ID3D11Buffer* _vBuffer, ID3D11ShaderResourceView* _sRV, unsigned int _indexCount, ID3D11Buffer* _iBuffer)
+{
+
+	UINT stride = sizeof(Vertex);	// needs change
+	UINT offset = 0;
+
+	// set vertex buffer	(req)
+	g_deviceContext->IASetVertexBuffers(0, 1, &_vBuffer, &stride, &offset);
+	// set SRV	(req)
+	g_deviceContext->PSSetShaderResources(0, 1, &_sRV);
+
+	if(_iBuffer)
+	{
+		g_deviceContext->IASetIndexBuffer(_iBuffer, DXGI_FORMAT_R32_UINT, offset);
+		g_deviceContext->DrawIndexed(_indexCount, 0, 0);
+	}
+	else
+	{
+		g_deviceContext->DrawAuto();
+	}
+}
+
+void RenderDX11::setTransformation(ID3D11Buffer* _cBuffer, elm::vec3 _scale, elm::vec3 _rotate, elm::vec3 _translate)
+{
+	elm::mat4 scale = elm::scalingMatrix(_scale);
+	elm::mat4 rotate;
+	elm::yawPitchRoll(rotate, _rotate);
+	elm::mat4 translate = elm::translationMatrix(_translate);
+
+	elm::mat4 world = scale * rotate * translate;
+
+	CBOnChange cb;
+	cb.viewProj = camera->getView() * camera->getProj();
+	cb.position = elm::vec4(camera->getEye(), 1.f);
+	cb.world	= world;
+
+	g_deviceContext->UpdateSubresource(_cBuffer, 0, NULL, &cb, 0, 0);
+	g_deviceContext->VSSetConstantBuffers(0, 1, &_cBuffer);
+}
+
+void RenderDX11::setShaders(ID3D11VertexShader* _vShader, ID3D11GeometryShader* _gShader, ID3D11PixelShader* _pShader)
+{
+	if(_vShader)
+		g_deviceContext->VSSetShader(_vShader, NULL, 0);
+	if(_gShader)
+		g_deviceContext->GSSetShader(_gShader, NULL, 0);
+	if(_pShader)
+		g_deviceContext->PSSetShader(_pShader, NULL, 0);
+}
+
+void RenderDX11::setupScene(ID3D11BlendState* _blendState, ID3D11InputLayout* _layout)
+{
+	g_deviceContext->ClearRenderTargetView(g_renderTargetView, color);
+	g_deviceContext->ClearDepthStencilView(g_depthStencilView, D3D11_CLEAR_DEPTH, 1.f, 0);
+
+	float blendFactor[4] = {0.f, 0.f, 0.f, 0.f};
+	g_deviceContext->OMSetBlendState(_blendState, blendFactor, 0xffffffff);
+
+	g_deviceContext->OMSetDepthStencilState(g_depthStencilStateEnable, 0);
+	g_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	g_deviceContext->IASetInputLayout(_layout);
 }
 
 RenderDX11::~RenderDX11()
@@ -446,13 +517,13 @@ RenderDX11::~RenderDX11()
     SAFE_RELEASE(g_swapChain);
 	SAFE_RELEASE(g_renderTargetView);
 	SAFE_RELEASE(g_depthStencilView);
-	SAFE_RELEASE(g_shaderView);
+	//SAFE_RELEASE(g_shaderView);
 
     SAFE_RELEASE(g_deviceContext);
     SAFE_RELEASE(g_device);
 
-	SAFE_RELEASE(g_blendEnable);
-	SAFE_RELEASE(g_blendDisable);
+	//SAFE_RELEASE(g_blendEnable);
+	//SAFE_RELEASE(g_blendDisable);
 
 	SAFE_RELEASE(g_depthStencilStateDisable);
 	SAFE_RELEASE(g_depthStencilStateEnable);
