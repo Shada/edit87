@@ -15,7 +15,7 @@ namespace LevelEditor
     {
         int twObjectsSizeDiff = 12;
 		TreeNode copyPaste;
-		public TreeNode resourcesRoot;
+		public TreeNode libraryRoot;
 
         public PanLibrary()
         {
@@ -24,13 +24,13 @@ namespace LevelEditor
 
 		public void init(TreeNode _rootNode)
 		{
-			resourcesRoot = _rootNode;
+			libraryRoot = _rootNode;
 
 			Utils.twTag tag = new Utils.twTag(Utils.twTag.TYPE.FOLDER);
 			tag.addAttribute(Utils.twTagAttribute.dataType.BOOL, "modifiable", false);
 
-			resourcesRoot.Tag = tag;
-			tw_objects.Nodes.Add(resourcesRoot);
+			libraryRoot.Tag = tag;
+			tw_objects.Nodes.Add(libraryRoot);
 
 			ToolStripMenuItem twMenuCreateFolder = new ToolStripMenuItem();
 
@@ -55,6 +55,11 @@ namespace LevelEditor
 			twMenuRemove.Click += twMenu_ClickRemove;
 
 			cms.Items.Add(twMenuRemove);
+		}
+
+		public TreeNode getRootNode()
+		{
+			return tw_objects.Nodes[0];
 		}
 
 		private void twMenu_ClickRemove(object sender, EventArgs e)
@@ -107,6 +112,11 @@ namespace LevelEditor
 			TreeNode ttn = tw_objects.GetNodeAt(p);
 			TreeNode dtn = (TreeNode)e.Data.GetData(typeof(TreeNode));
 
+			if(ttn == null)
+			{
+				ttn = tw_objects.Nodes[0];
+			}
+
 			if (!dtn.Equals(ttn) && !ContainsNode(dtn, ttn))
 			{
 				if (e.Effect == DragDropEffects.Move)
@@ -130,8 +140,18 @@ namespace LevelEditor
 
 		private void tw_objects_DragOver(object sender, DragEventArgs e)
 		{
+			if (tw_objects.Nodes.Count == 0)
+			{
+				init(new TreeNode(Utils.ProjectName, 0, 0));
+			}
+
 			Point p = tw_objects.PointToClient(new Point(e.X, e.Y));
 			tw_objects.SelectedNode = tw_objects.GetNodeAt(p);
+
+			if (tw_objects.SelectedNode == null)
+			{
+				tw_objects.SelectedNode = tw_objects.Nodes[0];
+			}
 		}
 
 		private void tw_objects_ItemDrag(object sender, ItemDragEventArgs e)

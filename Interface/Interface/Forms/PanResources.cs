@@ -56,10 +56,10 @@ namespace LevelEditor
 
 			cms.Items.Add(twMenuRemove);
 
-			toolTipRes.AutomaticDelay = 500;
+			toolTipRes.AutomaticDelay = 0;
 			toolTipRes.AutoPopDelay = 5000;
 			toolTipRes.InitialDelay = 500;
-			toolTipRes.ReshowDelay = 0;
+			toolTipRes.ReshowDelay = 100;
 			toolTipRes.UseAnimation = true;
 			toolTipRes.UseFading = true;
 		}
@@ -120,11 +120,6 @@ namespace LevelEditor
             tw_resources.Nodes.Add((TreeNode)_tn.Clone());
             resourcesRoot = tw_resources.Nodes[0];
         }
-
-		public TreeNode getRootNode()
-		{
-			return tw_resources.Nodes[0];
-		}
 
 		private void tw_resources_AfterSelect(object sender, TreeViewEventArgs e)
 		{

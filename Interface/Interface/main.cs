@@ -387,101 +387,141 @@ namespace LevelEditor
 		private void saveProject()
 		{
 			PanResources res = (PanResources)panels[2];
-			TreeNode treeRoot = res.getRootNode();
+			TreeNode tnRes = res.resourcesRoot;
+			
+			PanLibrary lib = (PanLibrary)panels[4];
+			TreeNode tnLib = lib.libraryRoot;
 
 			XmlNode root = Utils.ProjectFile.DocumentElement;
-			XmlNode xmlResources = Utils.ProjectFile.SelectSingleNode("/root/resources");
 			XmlNode xmlHeader = Utils.ProjectFile.SelectSingleNode("/root/header");
 
+			XmlNode xmlResources = Utils.ProjectFile.SelectSingleNode("/root/resources");
 			root.RemoveChild(xmlResources);
 
 			XmlElement xmlNewResources = Utils.ProjectFile.CreateElement(null, "resources", null);
 			root.InsertAfter(xmlNewResources, xmlHeader);
 
-			writeXLMNode(ref xmlNewResources, treeRoot);
+			writeXLMResNode(ref xmlNewResources, tnRes);
+
+			XmlNode xmlLibrary = Utils.ProjectFile.SelectSingleNode("/root/library");
+			root.RemoveChild(xmlLibrary);
+
+			XmlElement xmlNewLibrary = Utils.ProjectFile.CreateElement(null, "library", null);
+			root.InsertAfter(xmlNewLibrary, xmlNewResources);
+
+			writeXLMLibNode(ref xmlNewLibrary, tnLib);
 
 			Utils.ProjectFile.Save(Utils.ProjectDirectory.FullName + "\\test.xml");
 		}
 
-		private void writeXLMNode(ref XmlElement _rootElement, TreeNode _treeNode)
+		private void writeXLMResNode(ref XmlElement _rootElement, TreeNode _treeNode)
 		{
+			XmlElement elem = writeXMLResNodeHelper(_treeNode);
+
 			if (_treeNode.Nodes.Count > 0)
 			{
-				Utils.twTag tag = (Utils.twTag)_treeNode.Tag;
-
-				XmlElement node = Utils.ProjectFile.CreateElement(null, Convert.ToString(tag.Type).ToLower(), null);
-
-				switch (tag.Type)
-				{
-					case Utils.twTag.TYPE.FOLDER:
-					{
-						writeXMLelement("name", _treeNode.Text, node);
-						writeXMLelement("modifiable", Convert.ToString(tag.getAttributeByName<bool>("modifiable")), node);
-						break;
-					}
-					case Utils.twTag.TYPE.IMAGE:
-					{
-						writeXMLelement("showName", _treeNode.Text, node);
-						writeXMLelement("realName", tag.getAttributeByName<string>("realname"), node);
-						break;
-					}
-					case Utils.twTag.TYPE.MESH:
-					{
-						writeXMLelement("showName", _treeNode.Text, node);
-						writeXMLelement("realName", tag.getAttributeByName<string>("realname"), node);
-						break;
-					}
-					case Utils.twTag.TYPE.SOUND:
-					{
-						writeXMLelement("showName", _treeNode.Text, node);
-						writeXMLelement("realName", tag.getAttributeByName<string>("realname"), node);
-						break;
-					}
-				}
-
 				foreach (TreeNode tn in _treeNode.Nodes)
 				{
-					writeXLMNode(ref node, tn);
+					writeXLMResNode(ref elem, tn);
 				}
 
-				_rootElement.AppendChild(node);
+				_rootElement.AppendChild(elem);
 			}
 			else
 			{
-				Utils.twTag tag = (Utils.twTag)_treeNode.Tag;
+				_rootElement.AppendChild(elem);
+			}
+		}
 
-				XmlElement node = Utils.ProjectFile.CreateElement(null, Convert.ToString(tag.Type).ToLower(), null);
+		private XmlElement writeXMLResNodeHelper(TreeNode _treeNode)
+		{
+			Utils.twTag tag = (Utils.twTag)_treeNode.Tag;
+			XmlElement node = Utils.ProjectFile.CreateElement(null, Convert.ToString(tag.Type).ToLower(), null);
 
-				switch (tag.Type)
-				{
-					case Utils.twTag.TYPE.FOLDER:
+			switch (tag.Type)
+			{
+				case Utils.twTag.TYPE.FOLDER:
 					{
 						writeXMLelement("name", _treeNode.Text, node);
 						writeXMLelement("modifiable", Convert.ToString(tag.getAttributeByName<bool>("modifiable")), node);
 						break;
 					}
-					case Utils.twTag.TYPE.IMAGE:
+				case Utils.twTag.TYPE.IMAGE:
 					{
 						writeXMLelement("showName", _treeNode.Text, node);
 						writeXMLelement("realName", tag.getAttributeByName<string>("realname"), node);
 						break;
 					}
-					case Utils.twTag.TYPE.MESH:
+				case Utils.twTag.TYPE.MESH:
 					{
 						writeXMLelement("showName", _treeNode.Text, node);
 						writeXMLelement("realName", tag.getAttributeByName<string>("realname"), node);
 						break;
 					}
-					case Utils.twTag.TYPE.SOUND:
+				case Utils.twTag.TYPE.SOUND:
 					{
 						writeXMLelement("showName", _treeNode.Text, node);
 						writeXMLelement("realName", tag.getAttributeByName<string>("realname"), node);
 						break;
 					}
+			}
+			return node;
+		}
+
+		private void writeXLMLibNode(ref XmlElement _rootElement, TreeNode _treeNode)
+		{
+			XmlElement elem = writeXMLLibNodeHelper(_treeNode);
+
+			if (_treeNode.Nodes.Count > 0)
+			{
+				foreach (TreeNode tn in _treeNode.Nodes)
+				{
+					writeXLMLibNode(ref elem, tn);
 				}
 
-				_rootElement.AppendChild(node);
+				_rootElement.AppendChild(elem);
 			}
+			else
+			{
+				_rootElement.AppendChild(elem);
+			}
+		}
+
+		private XmlElement writeXMLLibNodeHelper(TreeNode _treeNode)
+		{
+			Utils.twTag tag = (Utils.twTag)_treeNode.Tag;
+			XmlElement node = Utils.ProjectFile.CreateElement(null, Convert.ToString(tag.Type).ToLower(), null);
+
+			writeXMLelement("name", _treeNode.Text, node);
+
+			foreach (Utils.twTagAttribute twa in tag.Attributes)
+			{
+				switch (twa.dt)
+				{
+ 					case Utils.twTagAttribute.dataType.BOOL:
+						bool b = (bool)twa.val;
+						writeXMLelement(twa.name, "B|" + b.ToString(), node);
+						break;
+					case Utils.twTagAttribute.dataType.CHAR:
+						char c = (char)twa.val;
+						writeXMLelement(twa.name, "C|" + c.ToString(), node);
+						break;
+					case Utils.twTagAttribute.dataType.FLOAT:
+						float f = (float)twa.val;
+						writeXMLelement(twa.name, "F|" + f.ToString(), node);
+						break;
+					case Utils.twTagAttribute.dataType.INT:
+						int i = (int)twa.val;
+						writeXMLelement(twa.name, "I|" + i.ToString(), node);
+						break;
+					case Utils.twTagAttribute.dataType.STRING:
+						string s = (string)twa.val;
+						writeXMLelement(twa.name, "S|" + s, node);
+						break;
+				}
+			}
+
+			return node;
 		}
 
 		private void writeXMLelement(string _elemName, string _elemVal, XmlElement node)

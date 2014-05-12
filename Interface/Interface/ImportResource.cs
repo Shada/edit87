@@ -51,7 +51,7 @@ namespace LevelEditor
 			twMenuRemove.Text = "Remove";
 			twMenuRemove.Click += twMenu_ClickRemove;
 
-			cms_treeView.Items.Add(twMenuRemove);
+			cms_treeView.Items.Add(twMenuRemove);			
 		}
 
 		private void twMenu_ClickRename(object sender, EventArgs e)

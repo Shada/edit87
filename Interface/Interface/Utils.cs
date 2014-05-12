@@ -95,6 +95,8 @@ namespace LevelEditor
 
 			public TYPE Type { get { return type; } }
 
+			public List<twTagAttribute> Attributes { get { return attributes; } }
+
 			public void addAttribute(twTagAttribute.dataType _dt, string _name, object _val)
 			{
 				attributes.Add(new twTagAttribute(_dt, _name, _val));
