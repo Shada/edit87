@@ -1,4 +1,3 @@
-//#include "../cproject/printClass.h"
 #include "stfdafx.h"
 #include "../Engine/EngineInterface.h"
 
@@ -15,13 +14,22 @@ namespace wrap
 
 		void setRenderArea(int x, int y, int width, int height);
 
-		void createTerrain(int width, int height, float pointStep, bool fromPerlinMap);
-
 		void renderScene();
-		void mouseReleased(MouseKeyType mType);
-		void mousePressed(MouseKeyType mType);
-		void sendMousePos(int x, int y);
+		void createTerrain(int width, int height, float pointStep, bool fromPerlinMap, int seed);
 
 		void moveCamera(int xDir, int zDir);
+
+		/* Mouse calls */
+		void rightMouseDown();
+		void leftMouseDown();
+		void rightMouseUp();
+		void leftMouseUp();
+		void updateMouse(int x, int y);
+
+		/* Tool calls */
+		void setElevationTool();
+		void setTextureTool();
+		void setObjectPlacerTool();
+		void setSelctorTool();
 	};
 }

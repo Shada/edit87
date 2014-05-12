@@ -9,13 +9,24 @@ Class wrap.GraphicsCommunicator: AutoLayout, AnsiClass, Class, Public, BeforeFie
     System.IDisposable
   Methods:
     setRenderArea(Int32, Int32, Int32, Int32): PrivateScope, Public, HideBySig
-    createTerrain(Int32, Int32, Int32, Boolean(HasFieldMarshal)): PrivateScope, Public, HideBySig
     renderScene(): PrivateScope, Public, HideBySig
-    mouseReleased(MouseKeyType): PrivateScope, Public, HideBySig
-    mousePressed(MouseKeyType): PrivateScope, Public, HideBySig
-    sendMousePos(Int32, Int32): PrivateScope, Public, HideBySig
+    createTerrain(Int32, Int32, Single, Boolean(HasFieldMarshal), Int32): PrivateScope, Public, HideBySig
+    moveCamera(Int32, Int32): PrivateScope, Public, HideBySig
+    rightMouseDown(): PrivateScope, Public, HideBySig
+    leftMouseDown(): PrivateScope, Public, HideBySig
+    rightMouseUp(): PrivateScope, Public, HideBySig
+    leftMouseUp(): PrivateScope, Public, HideBySig
+    updateMouse(Int32, Int32): PrivateScope, Public, HideBySig
+    setElevationTool(): PrivateScope, Public, HideBySig
+    setTextureTool(): PrivateScope, Public, HideBySig
+    setObjectPlacerTool(): PrivateScope, Public, HideBySig
+    setSelctorTool(): PrivateScope, Public, HideBySig
     Dispose(): PrivateScope, Public, Final, Virtual, HideBySig
 Struct wrap.MouseKeyType: AutoLayout, AnsiClass, Class, Public, Sealed, BeforeFieldInit
+  :System.Enum
+  Fields:
+    Int32 value__ : Public, SpecialName, RTSpecialName
+Struct wrap.MoveDirection: AutoLayout, AnsiClass, Class, Public, Sealed, BeforeFieldInit
   :System.Enum
   Fields:
     Int32 value__ : Public, SpecialName, RTSpecialName

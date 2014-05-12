@@ -36,7 +36,7 @@ bool Mesh3D::loadMesh(const char* filePath)
 	
 	if(scene->HasMaterials())
 	{
-		for(int i = 0; i < scene->mNumMaterials; i++)
+		for(unsigned int i = 0; i < scene->mNumMaterials; i++)
 		{
 			if(scene->mMaterials[i]->GetTextureCount(aiTextureType_DIFFUSE))
 			{
@@ -99,7 +99,7 @@ bool Mesh3D::loadMesh(const char* filePath)
 	}
 
 	int tempPos = 0;
-	for(int i = 0; i < scene->mNumMeshes; i++) // load all meshes.. should save meshes as polygroups? Maybe need to do that for multi-material support..
+	for(unsigned int i = 0; i < scene->mNumMeshes; i++) // load all meshes.. should save meshes as polygroups? Maybe need to do that for multi-material support..
 	{
 		tempPos = vertices.size();
 		vertices.resize(vertices.size() + scene->mMeshes[i]->mNumVertices);
@@ -117,7 +117,7 @@ bool Mesh3D::loadMesh(const char* filePath)
 		}
 		tempPos = indices.size();
 		indices.resize(indices.size() + scene->mMeshes[i]->mFaces->mNumIndices * scene->mMeshes[i]->mNumFaces);
-		for(int j = 0; j < scene->mMeshes[i]->mNumFaces; j++)
+		for(unsigned int j = 0; j < scene->mMeshes[i]->mNumFaces; j++)
 		{
 			indices[j * scene->mMeshes[i]->mFaces->mNumIndices + tempPos] = scene->mMeshes[i]->mFaces[j].mIndices[0]; 
 			indices[j * scene->mMeshes[i]->mFaces->mNumIndices + tempPos + 1] = scene->mMeshes[i]->mFaces[j].mIndices[1]; 

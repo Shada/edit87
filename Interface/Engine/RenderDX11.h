@@ -8,8 +8,8 @@
 #include "Mesh3D.h"
 #include "Object3D.h"
 
-#define SAFE_RELEASE(x) if( x ) { (x)->Release(); (x) = NULL; }
-#define SAFE_DELETE(x) if( x ) { delete(x); (x) = NULL; }
+#define SAFE_RELEASE(x) if( x ) { (x)->Release(); (x) = nullptr; }
+#define SAFE_DELETE(x) if( x ) { delete(x); (x) = nullptr; }
 
 struct CBOnce
 {
@@ -22,18 +22,19 @@ struct CBOnChange
 	elm::vec4 position;
 };
 
-class RenderDX11 : public EngineInterface
+class RenderDX11
 {
 private:
-	int terrainVertexBufferID, terrainIndexBufferID, modelID, cbOnceID, cbOnChangeID;
+	int terrainVertexBufferID, terrainIndexBufferID, modelID, cbOnceID, cbOnChangeID, terrainIndexCount;
 
 	elm::vec3 terrainPos;
+
+	std::vector<uint> *iBuffer;
 	
 	RECT r;
 	HWND hWnd;
 
 	Camera *camera;
-	Terrain *terrain;
 
 	D3D_DRIVER_TYPE				g_driverType;
 	D3D_FEATURE_LEVEL			g_featureLevel;
@@ -72,6 +73,8 @@ private:
 
 	std::vector<Object3D*>		g_objects;
 
+	void RenderDX11::drawCulledTerrain(Quadnode *node);
+
 	HRESULT init();
 	HRESULT createSampleStates();
 	HRESULT compileShader(LPCSTR filePath, LPCSTR shaderType, ID3DBlob **shaderBlob);
@@ -83,10 +86,12 @@ public:
 	RenderDX11(HWND hWnd);
 	~RenderDX11();
 
-	void renderScene();
+	void renderScene(Quadnode *node);
 	void setRect(RECT t);
 
-	HRESULT createTerrain(int width, int height, float pointStep, bool fromPerlinMap);
+	void setTerrainIndexCount(int count)	{ terrainIndexCount = count; }
+	void setCamera(Camera *cam)				{ camera = cam; }
 
-	void move(float alongX, float alongZ) { camera->move(elm::vec2(alongX, alongZ)); }
+	void updateTerrainBuffer(std::vector<Vertex> *vBuffer);
+	void createAndSetTerrainBuffers(std::vector<Vertex> *vBuffer, std::vector<uint> *iBuffer);
 };

@@ -246,6 +246,7 @@
             this.menuStrip.Size = new System.Drawing.Size(1264, 24);
             this.menuStrip.TabIndex = 3;
             this.menuStrip.Text = "menuStrip";
+            this.menuStrip.Visible = false;
             // 
             // fileToolStripMenuItem
             // 
@@ -584,6 +585,9 @@
             this.Text = "Map Editor";
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.MapEditor_KeyDown);
             this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.MapEditor_KeyUp);
+            this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.MapEditor_MouseDown);
+            this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.MapEditor_MouseMove);
+            this.MouseUp += new System.Windows.Forms.MouseEventHandler(this.MapEditor_MouseUp);
             this.Resize += new System.EventHandler(this.MapEditor_Resize);
             ((System.ComponentModel.ISupportInitialize)(this.nud_brushIntensity)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nud_BrushSize)).EndInit();

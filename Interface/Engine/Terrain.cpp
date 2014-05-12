@@ -4,27 +4,57 @@
 
 Terrain::Terrain()
 {
+	position = elm::vec3(0);
 }
 
-void Terrain::createTerrain(int w, int h, float pointStep, bool fromPerlinMap, std::vector<Vertex> &vBuffer, std::vector<uint> &iBuffer)
+int ii;
+void Terrain::createTerrain(int w, int h, float pointStep, bool fromPerlinMap, int seed)
 {
 	width = w;
 	height = h;
 	step = pointStep;
 
-	position = elm::vec3(0);
-
 	points = std::vector<elm::vec3>(width * height, elm::vec3());
 	vBuffer = std::vector<Vertex>(width * height);
-	iBuffer = std::vector<uint>((width - 1) * (height - 1) * 6);
+	iBuffer = std::vector<uint>(width * height * 6);
+
+	int counterX = 0, counterY = 0;
+	float _w = (float)width, _h = (float)height;
+	while(_w != 1.f)
+	{
+		_w /= 4;
+		counterX++;
+		if(_w < 4 && _w > 1)
+		{
+			if(_w > 2)
+				counterX++;
+			break;
+			//_w = (float)((int)(_w + 1.5f));
+		}
+	}
+	
+	while(_h != 1.f)
+	{
+		_h /= 4;
+		counterY++;
+		if(_h < 4 && _h > 1)
+			{
+			if(_w > 2)
+				counterY++;
+			break;
+			//_h = (float)((int)(_h + 1.5f));
+		}
+	}
+	
+	maxDepth = (int)((counterX + counterY) / 2 + 0.33);
+	int nQuads = (int)pow(4, maxDepth);
 
 	if(fromPerlinMap)
 	{
-		perlinNoise(32, 64, 128);
+		perlinNoise(32, 64, 128, seed);
 		normalizeTerrain();
 	}
 
-	int index1, index2, ii = 0;
 	for(uint y = 0; y < height; y++)
 	{
 		for(uint x = 0; x < width; x++)
@@ -33,12 +63,36 @@ void Terrain::createTerrain(int w, int h, float pointStep, bool fromPerlinMap, s
 			vBuffer.at(index).pos = points.at(y * width + x) = elm::vec3(x * step, points.at(index).y, y * step);
 			vBuffer.at(index).texCoord.x = (vBuffer.at(index).pos.x + (0.5f * width)) / width;
 			vBuffer.at(index).texCoord.y = (vBuffer.at(index).pos.z - (0.5f * height)) / -(int)height;
+		}
+	}
+
+	ii = 0;
+
+	createQuadTree(0, 0, 0);
+
+	createTerrainNormals(vBuffer);
+}
+
+void Terrain::fillIndexBuffer(int startX, int startY)
+{
+	int _ii = ii;
+	for(int y = startY; y < startY + ceil(height / pow(2, maxDepth)); y++)
+	{
+		for(int x = startX; x < startX + ceil(width / pow(2, maxDepth)); x++)
+		{
+			int index1 = x + y * width;
+			int index2 = x + (y + 1) * width;
 
 			if(x == width - 1 || y == height - 1)
+			{
+				iBuffer.at(ii++) = index1;
+				iBuffer.at(ii++) = index1;
+				iBuffer.at(ii++) = index1;
+				iBuffer.at(ii++) = index1;
+				iBuffer.at(ii++) = index1;
+				iBuffer.at(ii++) = index1;
 				continue;
-
-			index1 = x + y * width;
-			index2 = x + (y + 1) * width;
+			}
 
 			iBuffer.at(ii++) = index1;
 			iBuffer.at(ii++) = index2 + 1;
@@ -48,29 +102,34 @@ void Terrain::createTerrain(int w, int h, float pointStep, bool fromPerlinMap, s
 			iBuffer.at(ii++) = index2 + 1;
 		}
 	}
-
-	createTerrainNormals(vBuffer);
 }
 
+void Terrain::createQuadTree(int startX, int startY, int depth)
+{
+	if(depth == maxDepth)
+		fillIndexBuffer(startX, startY);
+	else
+	{
+		int startX2 = (int)(startX + width / powf(2, depth + 1));
+		int startY2 = (int)(startY + height / powf(2, depth + 1));
 
-void Terrain::perlinNoise(uint startFrequency, uint frequency, float amplitude, float persistence)
+		createQuadTree(startX, startY, depth + 1);
+		createQuadTree(startX2, startY, depth + 1);
+		createQuadTree(startX, startY2, depth + 1);
+		createQuadTree(startX2, startY2, depth + 1);
+	}
+}
+
+void Terrain::perlinNoise(uint startFrequency, uint frequency, float amplitude, int seed, float persistence)
 {
 	std::uniform_real_distribution<float> range(0, 1);
 	std::mt19937 numberGenerator;
-	numberGenerator.seed(rand());
+	numberGenerator.seed(seed);
 
 	std::vector<float> randomMap((width + 1) * (height + 1));
 	for(uint x = 0; x < width + 1; x++)
-	{
 		for(uint y = 0; y < height + 1; y++)
-		{
 			randomMap[x + y * (height + 1)] = range(numberGenerator);
-			//for(int i(0); i < _terrain.level - 1; i++)
-			//	range(numberGenerator);
-		}
-		//for(uint i(0); i < (_terrain.level - 1) * (Y + 1); i++)
-		//	range(numberGenerator);
-	}
 
 	auto value = [&](uint x, uint y)->float&{ return randomMap[(y + 1) * width + (x + 1)]; };
 	auto interpolate = [](float a, float b, float x)->float
@@ -173,10 +232,10 @@ void Terrain::normalizeTerrain()
 		points.at(i).y -= min;
 }
 
-const float Terrain::getHeightAt(elm::vec2 pos) const
+float Terrain::getHeightAt(elm::vec2 pos) const
 {
-	int index1 = (int)((pos.y - position.z + step / 2) / step) * width;
-	int index2 = (int)((pos.x - position.x + step / 2) / step);
+	uint index1 = (int)((pos.y - position.z + step / 2) / step) * width;
+	uint index2 = (int)((pos.x - position.x + step / 2) / step);
 
 	if(index1 < 0) index1 = 0;
 	if(index1 > (width - 1) * height) index1 = (width - 1) * height;
@@ -185,6 +244,120 @@ const float Terrain::getHeightAt(elm::vec2 pos) const
 	if(index2 > width - 1) index2 = width - 1;
 
 	return points.at(index1 + index2).y;
+}
+
+void Terrain::applyBrush(float radius, float intensity, elm::vec2 origin)
+{
+	int startX = (int)((origin.x - radius) / step + 0.5);
+	int startZ = (int)((origin.y - radius) / step + 0.5);
+
+	int cond = (int)(radius / step + 0.5);
+
+	for(int y = 0; y < cond * 2; y++)
+	{
+		if(y + startZ < 0 || y + startZ >= (int)height)
+		{
+			if(y + startZ < 0)
+				continue;
+			else break;
+		}
+		for(int x = 0; x < cond * 2; x++)
+		{
+			if(x + startX < 0 || x + startX >= (int)width)
+			{
+				if(x + startX < 0)
+					continue;
+				else break;
+			}
+
+			int index = x + startX + (y + startZ) * (int)width;
+			float len = elm::vecLength(-origin + points.at(index).xz);
+			if(len < radius)
+			{
+				float val = std::cos(pow(len / radius * 1.75f, 2)) + 1;
+				vBuffer.at(index).pos.y = points.at(index).y += val * intensity;
+			}
+		}
+	}
+
+	int index1, index2;
+	std::vector<elm::vec3> norms = std::vector<elm::vec3>(points.size());
+	elm::vec3 norm;
+	for(int y = 0; y < cond * 2; y++)
+	{
+		if(y + startZ < 0 || y + startZ + 1 >= (int)height - 1)
+		{
+			if(y + startZ < 0)
+				continue;
+			else break;
+		}
+		for(int x = 0; x < cond * 2; x++)
+		{
+			if(x + startX < 0 || x + startX >= (int)width - 1)
+			{
+				if(x + startX < 0)
+					continue;
+				else break;
+			}
+
+			index1 = (int)(x + startX + (y + startZ) * (int)width);
+			index2 = (int)(x + startX + (y + 1 + startZ) * (int)width);
+
+			norm = elm::cross(	vBuffer.at(index1).pos - vBuffer.at(index2).pos,
+								vBuffer.at(index1).pos - vBuffer.at(index2 + 1).pos);
+
+			norms.at(index1) += norm;
+			norms.at(index2 + 1) += norm;
+			norms.at(index2) += norm;
+
+			norm = elm::cross(	vBuffer.at(index1).pos - vBuffer.at(index2 + 1).pos,
+								vBuffer.at(index1).pos - vBuffer.at(index1 + 1).pos);
+
+			norms.at(index1) += norm;
+			norms.at(index1 + 1) += norm;
+			norms.at(index2 + 1) += norm;
+
+			vBuffer.at(index1).normal = elm::normalize(norms.at(index1));
+		}
+	}
+}
+
+void Terrain::findMinMaxValues(std::vector<Quadnode*> &nodes)
+{
+	uint start, end;
+	float min, max, p0, p1, p2, p3;
+
+	for(uint i = 0; i < nodes.size(); i++)
+	{
+		end = nodes.at(i)->getBufferEnd();
+		start = nodes.at(i)->getBufferStart();
+
+		min = 99999.f;
+		max = -99999.f;
+
+		for(uint j = start; j < end; j += 4)
+		{
+			p0 = vBuffer.at(iBuffer.at(j + 0)).pos.y;
+			p1 = vBuffer.at(iBuffer.at(j + 1)).pos.y;
+			p2 = vBuffer.at(iBuffer.at(j + 2)).pos.y;
+			p3 = vBuffer.at(iBuffer.at(j + 3)).pos.y;
+
+			if		(p0 < min)	min = p0;
+			else if (p0 > max)	max = p0;
+
+			if		(p1 < min)	min = p1;
+			else if (p1 > max)	max = p1;
+
+			if		(p2 < min)	min = p2;
+			else if (p2 > max)	max = p2;
+
+			if		(p3 < min)	min = p3;
+			else if (p3 > max)	max = p3;
+		}
+
+		nodes.at(i)->setMaxY(max + 5.f);
+		nodes.at(i)->setMinY(min - 5.f);
+	}
 }
 
 Terrain::~Terrain()

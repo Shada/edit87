@@ -2,9 +2,6 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Interface", "Interface\Interface.csproj", "{6CEFAE64-F7CA-486B-9356-AFD3F96CE6B2}"
-	ProjectSection(ProjectDependencies) = postProject
-		{020452F3-B072-4ED8-AAB5-C1D5FED0A7C8} = {020452F3-B072-4ED8-AAB5-C1D5FED0A7C8}
-	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Wrapper", "Wrapper\cliproject.vcxproj", "{3FAA1EA8-C6E5-4A6E-915C-B9BD387FCB05}"
 	ProjectSection(ProjectDependencies) = postProject

@@ -5,15 +5,13 @@
 #include "..\DirectXTex\DirectXTex.h"
 #include "Utility.h"
 
-RenderDX11::RenderDX11(HWND hWnd) : EngineInterface()
+RenderDX11::RenderDX11(HWND hWnd)
 {
 	this->hWnd = hWnd;
-	terrain = new Terrain();
-	terrainPos = terrain->getPosition();
+	terrainVertexBufferID = terrainIndexBufferID = -1;
 
 	camera = nullptr;
 	g_swapChain = nullptr;
-
 }
 
 void RenderDX11::setRect(RECT t)
@@ -344,7 +342,7 @@ HRESULT RenderDX11::init()
 	Object3D *obj = new Object3D();
 	obj->setMeshID(g_meshes.size()-1);
 	obj->setPosition(elm::vec3(200,100,200));
-	obj->setScale(elm::vec3(.2,.2,.2));
+	obj->setScale(elm::vec3(.2f,.2f,.2f));
 
 	g_objects.push_back(obj);
 
@@ -359,10 +357,9 @@ HRESULT RenderDX11::init()
 	else
 	{
 		DirectX::ScratchImage *image = new DirectX::ScratchImage();
-		hr = DirectX::LoadFromTGAFile(s2ws(g_meshes[0]->getTexDiffusePath()).c_str(), nullptr, *image); // this should only be done if it's a TGA-file
+		hr = DirectX::LoadFromTGAFile(s2ws(g_meshes[0]->getTexDiffusePath()).c_str(), nullptr, *image);
 		hr = DirectX::CreateShaderResourceView(g_device, image->GetImages(), image->GetImageCount(), image->GetMetadata(), &tex);
 	}
-	// now we can load the image into a resource and use it in directx.
 	if(FAILED(hr))
 	{
 		return hr;
@@ -449,6 +446,7 @@ HRESULT RenderDX11::createBuffer(void *data, int numElements, int bytesPerElemen
 
 	bufferID = g_buffers.size();
 	g_buffers.push_back(buffer);
+	return S_OK;
 }
 
 HRESULT RenderDX11::createIndexBuffer(void* data, int numElements, int &bufferID)
@@ -476,68 +474,79 @@ HRESULT RenderDX11::createIndexBuffer(void* data, int numElements, int &bufferID
 
 	bufferID = g_buffers.size();
 	g_buffers.push_back(buffer);
+	return S_OK;
 }
 
-HRESULT RenderDX11::createTerrain(int width, int height, float pointStep, bool fromPerlinMap)
+void RenderDX11::createAndSetTerrainBuffers(std::vector<Vertex> *vBuffer, std::vector<uint> *iBuffer)
 {
-	std::vector<unsigned int> indexBuffer;
-	std::vector<Vertex> vertexBuffer;
-	terrain->createTerrain(width, height, pointStep, fromPerlinMap, vertexBuffer, indexBuffer);
-
-	int w = abs(r.right - r.left);
-	int h = abs(r.bottom - r.top);
-	if(!camera)
-		camera = new Camera(w, h, terrain);
-	else
-		camera->resizeWindow(w, h);
+	this->iBuffer = iBuffer;
 
 	D3D11_SUBRESOURCE_DATA initData;
-	initData.pSysMem = &vertexBuffer.at(0);
+	initData.pSysMem = &vBuffer->at(0);
 	initData.SysMemPitch = 0;
 	initData.SysMemSlicePitch = 0;
 
 	D3D11_BUFFER_DESC bd;
 	ZeroMemory(&bd, sizeof(bd));
 	bd.Usage = D3D11_USAGE_DYNAMIC;
-    bd.ByteWidth = sizeof(Vertex) * vertexBuffer.size();
-    bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-    bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-	bd.MiscFlags      = 0;
+	bd.ByteWidth = sizeof(Vertex) * vBuffer->size();
+	bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	bd.MiscFlags = 0;
 
 	ID3D11Buffer *buffer = nullptr;
 	HRESULT hr = g_device->CreateBuffer(&bd, &initData, &buffer);
-    if(FAILED(hr))
+	if(FAILED(hr))
+		MessageBox(NULL, "could not create terrain vertexbuffer", "ERROR", S_OK);
+
+	if(terrainVertexBufferID == -1)
 	{
-        MessageBox(NULL,"could not create terrain vertexbuffer", "ERROR", S_OK);
-		return hr;
+		terrainVertexBufferID = g_buffers.size();
+		g_buffers.push_back(buffer);
+	}
+	else
+	{
+		SAFE_RELEASE(g_buffers.at(terrainVertexBufferID));
+		g_buffers.at(terrainVertexBufferID) = buffer;
 	}
 
-	terrainVertexBufferID = g_buffers.size();
-	g_buffers.push_back(buffer);
+	initData.pSysMem = &iBuffer->at(0);
 
-	initData.pSysMem = &indexBuffer.at(0);
-
-	bd.Usage = D3D11_USAGE_IMMUTABLE;
 	bd.BindFlags = D3D11_BIND_INDEX_BUFFER;
-	bd.ByteWidth = sizeof(unsigned int) * indexBuffer.size();
-	bd.CPUAccessFlags = 0;
+	bd.ByteWidth = sizeof(unsigned int) * iBuffer->size();
 
 	buffer = nullptr;
 	hr = g_device->CreateBuffer(&bd, &initData, &buffer);
-	if (FAILED(hr))
-	{
-		MessageBox(NULL,"could not create terrain indexbuffer", "ERROR", S_OK);
-		return hr;
-	}
-	
-	terrainIndexBufferID = g_buffers.size();
-	g_buffers.push_back(buffer);
+	if(FAILED(hr))
+		MessageBox(NULL, "could not create terrain indexbuffer", "ERROR", S_OK);
 
-	return S_OK;
+	if(terrainIndexBufferID == -1)
+	{
+		terrainIndexBufferID = g_buffers.size();
+		g_buffers.push_back(buffer);
+	}
+	else
+	{
+		SAFE_RELEASE(g_buffers.at(terrainIndexBufferID));
+		g_buffers.at(terrainIndexBufferID) = buffer;
+	}
+}
+
+void RenderDX11::updateTerrainBuffer(std::vector<Vertex> *vBuffer)
+{
+	D3D11_MAPPED_SUBRESOURCE resource;
+	HRESULT hr = g_deviceContext->Map(g_buffers.at(terrainVertexBufferID), 0, D3D11_MAP_WRITE_DISCARD, 0, &resource);
+
+	if(FAILED(hr))
+		MessageBox(NULL, "Could not update terrain buffer", "ERROR", S_OK);
+
+	memcpy(resource.pData, (void**)&vBuffer->at(0), sizeof(Vertex)* vBuffer->size());
+
+	g_deviceContext->Unmap(g_buffers.at(terrainVertexBufferID), 0);
 }
 
 const float color[4] = {0.f, 1.f, 1.f, 1.f};
-void RenderDX11::renderScene()
+void RenderDX11::renderScene(Quadnode *node)
 {
 	g_deviceContext->ClearRenderTargetView(g_renderTargetView, color);
 	g_deviceContext->ClearDepthStencilView(g_depthStencilView, D3D11_CLEAR_DEPTH, 1.f, 0);
@@ -548,7 +557,9 @@ void RenderDX11::renderScene()
 	cb.world = elm::mat4();
 	g_deviceContext->UpdateSubresource(g_buffers.at(cbOnChangeID), 0, NULL, &cb, 0, 0);
 
-	// Terrain
+	/* ************************************************** 
+						Terrain
+	*  ************************************************** */
 	g_deviceContext->OMSetDepthStencilState(g_depthStencilStateEnable, 0);
 	g_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	g_deviceContext->IASetInputLayout(g_layout);
@@ -564,12 +575,14 @@ void RenderDX11::renderScene()
 	UINT stride = sizeof(Vertex);
 	UINT offset = 0;
 	g_deviceContext->IASetVertexBuffers(0, 1, &g_buffers.at(terrainVertexBufferID), &stride, &offset);
-	g_deviceContext->IASetIndexBuffer(g_buffers.at(terrainIndexBufferID), DXGI_FORMAT_R32_UINT, offset);
+	//g_deviceContext->IASetIndexBuffer(g_buffers.at(terrainIndexBufferID), DXGI_FORMAT_R32_UINT, offset);
 
 	g_deviceContext->VSSetShader(g_terrainVS, NULL, 0);
 	g_deviceContext->PSSetShader(g_terrainPS, NULL, 0);
 
-	g_deviceContext->DrawIndexed(terrain->getIndexCount(), 0, 0);
+	//g_deviceContext->DrawIndexed(terrainIndexCount, 0, 0);
+
+	drawCulledTerrain(node);
 
 	/************************************************************/
 	//						DRAWING A MESH						//
@@ -581,7 +594,7 @@ void RenderDX11::renderScene()
 
 	stride = sizeof(elm::vec3);
 
-	for(int i = 0; i < g_objects.size(); i++)
+	for(unsigned int i = 0; i < g_objects.size(); i++)
 	{
 		cb.world = elm::translationMatrix(g_objects[i]->getPosition());
 		cb.world = elm::scalingMatrix(g_objects[i]->getScale()) * cb.world;
@@ -600,9 +613,37 @@ void RenderDX11::renderScene()
 	g_swapChain->Present(0, 0);
 }
 
+// woudn't it be faster to draw the terrain chunks one by one instead of copying incides and update the index buffer every frame?
+void RenderDX11::drawCulledTerrain(Quadnode *node)
+{
+	std::vector<int> ids;
+	node->getIndexBufferValues(camera->getFrustum(), ids, 3);
+
+	D3D11_MAPPED_SUBRESOURCE resource;
+	HRESULT hr = g_deviceContext->Map(g_buffers.at(terrainIndexBufferID), 0, D3D11_MAP_WRITE_DISCARD, 0, &resource);
+
+	if(FAILED(hr))
+		MessageBox(NULL, "Could not update index buffer", "ERROR", S_OK);
+
+	std::vector<uint> indexBuffer(int((ids.at(1) - ids.at(0)) * ids.size() * 0.5));
+
+	uint count = 0;
+	for(uint i = 0; i < ids.size(); i += 2) // why memcpy and not insert?
+	{
+		memcpy((void**)&indexBuffer.at(count), (void**)&iBuffer->at(ids.at(i)), sizeof(uint)* (ids.at(i + 1) - ids.at(i)));
+		count += (ids.at(i + 1) - ids.at(i));
+	}
+	memcpy(resource.pData, (void**)&indexBuffer.at(0), sizeof(uint) * count);
+
+	g_deviceContext->Unmap(g_buffers.at(terrainIndexBufferID), 0);
+
+	g_deviceContext->IASetIndexBuffer(g_buffers.at(terrainIndexBufferID), DXGI_FORMAT_R32_UINT, (UINT)0);
+
+	g_deviceContext->DrawIndexed(count, 0, 0);
+}
+
 RenderDX11::~RenderDX11()
 {
-	SAFE_DELETE(terrain);
 	SAFE_DELETE(camera);
 
 	g_deviceContext->Flush();
@@ -628,7 +669,7 @@ RenderDX11::~RenderDX11()
 	SAFE_RELEASE(g_layout);
 	SAFE_RELEASE(g_otherlayout);
 	SAFE_RELEASE(g_blendAlpha);
-	for(int i = 0; i < g_buffers.size(); i++)
+	for(unsigned int i = 0; i < g_buffers.size(); i++)
 	{
 		SAFE_RELEASE(g_buffers[i]);
 	}
@@ -636,13 +677,13 @@ RenderDX11::~RenderDX11()
 
 	SAFE_RELEASE(g_clamp);
 	SAFE_RELEASE(g_rasterizerState);
-	for(int i = 0; i < g_textures.size(); i++)
+	for(unsigned int i = 0; i < g_textures.size(); i++)
 	{
 		SAFE_RELEASE(g_textures[i]);
 	}
 	g_textures.clear();
 	SAFE_RELEASE(g_wrap);
-	for(int i = 0; i < g_meshes.size(); i++)
+	for(unsigned int i = 0; i < g_meshes.size(); i++)
 	{
 		SAFE_DELETE(g_meshes[i]);
 	}

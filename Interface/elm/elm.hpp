@@ -11,8 +11,6 @@
 #ifndef _ELM_HPP_
 #define _ELM_HPP_
 
-#define ELM_PI 3.14159265359f
-
 #include "maros.hpp"
 
 #include "types/type_vec2.hpp"

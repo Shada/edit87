@@ -15,10 +15,12 @@ using wrap;
 namespace LevelEditor
 {
 	public partial class MapEditor : Form
-	{
+    {
         private wrap.GraphicsCommunicator graphics;
-        int windowWidth, windowHeight;
-        private bool forwardKey, backwardKey, leftKey, rightKey;
+        private int windowWidth, windowHeight;
+        private bool forwardKey, backwardKey, leftKey, rightKey, leftMouseDown, rightMouseDown;
+
+        private int mousePosX, mousePosY;
 
 		public MapEditor()
 		{
@@ -26,12 +28,13 @@ namespace LevelEditor
             graphics = new GraphicsCommunicator(this.Handle);
 			InitializeComponent();
 
-            timer1.Interval = 20;
+            timer1.Interval = 1;
             timer1.Start();
 
             windowWidth = Size.Width;
             windowHeight = Size.Height;
-            graphics.createTerrain(256, 256, 5, false);
+            graphics.setRenderArea(0, 0, windowWidth, windowHeight);
+            graphics.createTerrain(512, 512, 5, false, 0);
 		}
 
 		private void button1_Click(object sender, EventArgs e)
@@ -41,9 +44,9 @@ namespace LevelEditor
 		}
 
 		private void btn_TerrainBrush_Click(object sender, EventArgs e)
-		{
-            //MessageBox.Show("this is fuckface");
-            graphics.createTerrain(256, 256, 5, true);
+        {
+            int seed = Environment.TickCount & Int32.MaxValue;
+            graphics.createTerrain(256, 256, 5, true, seed);
             graphics.renderScene();
 		}
 
@@ -261,10 +264,13 @@ namespace LevelEditor
         {
             int xDir = forwardKey ? 1 : backwardKey ? -1 : 0;
             int zDir = rightKey ? 1 : leftKey ? -1 : 0;
-            if(xDir != 0 || zDir != 0)
+            if (xDir != 0 || zDir != 0)
                 graphics.moveCamera(xDir, zDir);
-            //if (xDir != 0 && zDir != 0)
-            //    graphics.moveCamera(xDir, zDir);
+
+            if (rightMouseDown)
+                graphics.rightMouseDown();
+            if (leftMouseDown)
+                graphics.leftMouseDown();
         }
 
         private void MapEditor_KeyUp(object sender, KeyEventArgs e)
@@ -276,6 +282,47 @@ namespace LevelEditor
                 case Keys.A:    leftKey = false;        break;
                 case Keys.D:    rightKey = false;       break;
             }
+        }
+
+        private void MapEditor_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (!rightMouseDown || !leftMouseDown)
+            {
+                if (!leftMouseDown && e.Button == System.Windows.Forms.MouseButtons.Left)
+                {
+                    graphics.leftMouseDown();
+                    leftMouseDown = true;
+                }
+                else if (!rightMouseDown && e.Button == System.Windows.Forms.MouseButtons.Right)
+                {
+                    graphics.rightMouseDown();
+                    rightMouseDown = true;
+                }
+            }
+        }
+
+        private void MapEditor_MouseUp(object sender, MouseEventArgs e)
+        {
+            if (rightMouseDown || leftMouseDown)
+            {
+                if (leftMouseDown && e.Button == System.Windows.Forms.MouseButtons.Left)
+                {
+                    graphics.leftMouseUp();
+                    leftMouseDown = false;
+                }
+                else if (rightMouseDown && e.Button == System.Windows.Forms.MouseButtons.Right)
+                {
+                    graphics.rightMouseUp();
+                    rightMouseDown = false;
+                }
+            }
+        }
+
+        private void MapEditor_MouseMove(object sender, MouseEventArgs e)
+        {
+            mousePosX = e.X;
+            mousePosY = e.Y;
+            graphics.updateMouse(mousePosX, mousePosY);
         }
 	}
 }
