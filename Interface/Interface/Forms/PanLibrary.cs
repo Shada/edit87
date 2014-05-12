@@ -22,11 +22,14 @@ namespace LevelEditor
             InitializeComponent();
         }
 
-		public void init(string _rootName)
+		public void init(TreeNode _rootNode)
 		{
-			resourcesRoot = new TreeNode(_rootName, 0, 0);
+			resourcesRoot = _rootNode;
 
-			resourcesRoot.Tag = new Utils.twTag(Utils.twTag.Type.FOLDER, false);
+			Utils.twTag tag = new Utils.twTag(Utils.twTag.TYPE.FOLDER);
+			tag.addAttribute(Utils.twTagAttribute.dataType.BOOL, "modifiable", false);
+
+			resourcesRoot.Tag = tag;
 			tw_objects.Nodes.Add(resourcesRoot);
 
 			ToolStripMenuItem twMenuCreateFolder = new ToolStripMenuItem();
@@ -82,7 +85,11 @@ namespace LevelEditor
 		private void twMenu_ClickCreateFolder(object sender, EventArgs e)
 		{
 			TreeNode tn = new TreeNode("New folder", 0, 0);
-			tn.Tag = new Utils.twTag(Utils.twTag.Type.FOLDER);
+
+			Utils.twTag tag = new Utils.twTag(Utils.twTag.TYPE.FOLDER);
+			tag.addAttribute(Utils.twTagAttribute.dataType.BOOL, "modifiable", false);
+
+			tn.Tag = tag;
 			NameFolder renameFolder = new NameFolder(ref tn);
 			renameFolder.Show();
 			tw_objects.SelectedNode.Nodes.Add(tn);
@@ -163,7 +170,7 @@ namespace LevelEditor
 
 			if (e.Button == MouseButtons.Right)
 			{
-				if (twt.modifiable)
+				if (twt.getAttributeByName<bool>("modifiable"))
 				{
 					cms.Items[1].Enabled = true;
 					cms.Items[2].Enabled = true;

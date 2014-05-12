@@ -34,6 +34,7 @@
 			this.imageList = new System.Windows.Forms.ImageList(this.components);
 			this.btn_importResource = new System.Windows.Forms.Button();
 			this.cms = new System.Windows.Forms.ContextMenuStrip(this.components);
+			this.toolTipRes = new System.Windows.Forms.ToolTip(this.components);
 			this.SuspendLayout();
 			// 
 			// tw_resources
@@ -55,6 +56,7 @@
 			this.tw_resources.DragOver += new System.Windows.Forms.DragEventHandler(this.tw_resources_DragOver);
 			this.tw_resources.KeyDown += new System.Windows.Forms.KeyEventHandler(this.tw_resources_KeyDown);
 			this.tw_resources.KeyUp += new System.Windows.Forms.KeyEventHandler(this.tw_resources_KeyUp);
+			this.tw_resources.MouseMove += new System.Windows.Forms.MouseEventHandler(this.tw_resources_MouseMove);
 			// 
 			// imageList
 			// 
@@ -100,5 +102,6 @@
         private System.Windows.Forms.Button btn_importResource;
         private System.Windows.Forms.ImageList imageList;
 		private System.Windows.Forms.ContextMenuStrip cms;
+		private System.Windows.Forms.ToolTip toolTipRes;
     }
 }

@@ -82,7 +82,11 @@ namespace LevelEditor
         private void twMenu_ClickCreateFolder(object sender, EventArgs e)
         {
             TreeNode tn = new TreeNode("New folder", 0, 0);
-            tn.Tag = new Utils.twTag(Utils.twTag.Type.FOLDER);
+
+			Utils.twTag tag = new Utils.twTag(Utils.twTag.TYPE.FOLDER);
+			tag.addAttribute(Utils.twTagAttribute.dataType.BOOL, "modifiable", true);
+
+			tn.Tag = tag;
             NameFolder renameFolder = new NameFolder(ref tn);
             renameFolder.Show();
             tw_fileTree.SelectedNode.Nodes.Add(tn);
@@ -105,7 +109,12 @@ namespace LevelEditor
 				{					
 					pb_preView.Image = new Bitmap(Image.FromFile(txb_input.Text), new Size(350, 350));
 					TreeNode tn = new TreeNode(txb_fileName.Text, 1, 1);
-					tn.Tag = new Utils.twTag(Utils.twTag.Type.IMAGE, true, fileRealName);
+
+					Utils.twTag tag = new Utils.twTag(Utils.twTag.TYPE.IMAGE);
+					tag.addAttribute(Utils.twTagAttribute.dataType.BOOL, "modifiable", true);
+					tag.addAttribute(Utils.twTagAttribute.dataType.STRING, "realname", fileRealName);
+
+					tn.Tag = tag;
 					tw_fileTree.SelectedNode.Nodes.Add(tn);
                     tw_fileTree.SelectedNode.Expand();
                     tw_fileTree.SelectedNode = tn;
@@ -141,7 +150,7 @@ namespace LevelEditor
 
 			if (e.Button == MouseButtons.Right)
 			{
-				if (twt.modifiable)
+				if (twt.getAttributeByName<bool>("modifiable"))
 				{
 					cms_treeView.Items[1].Enabled = true;
 					cms_treeView.Items[2].Enabled = true;
@@ -230,7 +239,7 @@ namespace LevelEditor
         {
             Utils.twTag tag = (Utils.twTag)tw_fileTree.SelectedNode.Tag;
 
-            if (e.KeyChar == 13 && tag.modifiable)
+            if (e.KeyChar == 13 && tag.getAttributeByName<bool>("modifiable"))
             {
                 tw_fileTree.SelectedNode.Text = txb_fileName.Text;
             }

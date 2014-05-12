@@ -42,26 +42,78 @@ namespace LevelEditor
 			set { projectName = value; }
 		}
 
-		public struct twTag
+		public class twTagAttribute
 		{
-			public enum Type
+			public enum dataType
 			{
-				UNDEFINED = -1,
-				FOLDER = 0,
-				IMAGE = 1,
-				MESH = 2,
-				SOUND = 3
+				UNDEFINED,
+ 				STRING,
+				INT,
+				FLOAT,
+				BOOL,
+				CHAR
 			}
 
-			public bool modifiable;
-			public Type type;
-			public string realName;
+			public dataType dt;
+			public object val;
+			public string name;
 
-			public twTag(Type _type, bool _deletable = true, string _realName = "N/A")
+			public twTagAttribute(dataType _dt, string _name, object _val)
+			{
+				dt = _dt;
+				name = _name;
+				val = _val;
+			}
+
+			public twTagAttribute()
+			{
+				dt = dataType.UNDEFINED;
+				val = null;
+				name = "N/A";
+			}
+		}
+
+		public class twTag
+		{
+			public enum TYPE
+			{
+				UNDEFINED,
+				FOLDER,
+				IMAGE,
+				MESH,
+				SOUND
+			}
+
+			private TYPE type;
+			private List<twTagAttribute> attributes;
+
+			public twTag(TYPE _type)
 			{
 				type = _type;
-				modifiable = _deletable;
-				realName = _realName;
+				attributes = new List<twTagAttribute>();
+			}
+
+			public TYPE Type { get { return type; } }
+
+			public void addAttribute(twTagAttribute.dataType _dt, string _name, object _val)
+			{
+				attributes.Add(new twTagAttribute(_dt, _name, _val));
+			}
+
+			public T getAttributeByName<T>(string _name)
+			{
+				twTagAttribute tag = new twTagAttribute();
+
+				foreach (twTagAttribute ta in attributes)
+				{
+					if (ta.name == _name)
+					{
+						tag = ta;
+						break;
+					}
+				}
+
+				return (T)tag.val;
 			}
 		}
 

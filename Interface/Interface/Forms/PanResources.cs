@@ -22,10 +22,14 @@ namespace LevelEditor
             InitializeComponent();
 		}
 
-		public void init(string _rootName)
+		public void init(TreeNode _rootNode)
 		{
-			resourcesRoot = new TreeNode(_rootName, 0, 0);
-			resourcesRoot.Tag = new Utils.twTag(Utils.twTag.Type.FOLDER, false);
+			resourcesRoot = _rootNode;
+
+			Utils.twTag tag = new Utils.twTag(Utils.twTag.TYPE.FOLDER);
+			tag.addAttribute(Utils.twTagAttribute.dataType.BOOL, "modifiable", false);
+
+			resourcesRoot.Tag = tag;
 			tw_resources.Nodes.Add(resourcesRoot);
 
 			ToolStripMenuItem twMenuCreateFolder = new ToolStripMenuItem();
@@ -51,6 +55,13 @@ namespace LevelEditor
 			twMenuRemove.Click += twMenu_ClickRemove;
 
 			cms.Items.Add(twMenuRemove);
+
+			toolTipRes.AutomaticDelay = 500;
+			toolTipRes.AutoPopDelay = 5000;
+			toolTipRes.InitialDelay = 500;
+			toolTipRes.ReshowDelay = 0;
+			toolTipRes.UseAnimation = true;
+			toolTipRes.UseFading = true;
 		}
 
 		private void twMenu_ClickRemove(object sender, EventArgs e)
@@ -81,7 +92,11 @@ namespace LevelEditor
 		private void twMenu_ClickCreateFolder(object sender, EventArgs e)
 		{
 			TreeNode tn = new TreeNode("New folder", 0, 0);
-			tn.Tag = new Utils.twTag(Utils.twTag.Type.FOLDER);
+
+			Utils.twTag tag = new Utils.twTag(Utils.twTag.TYPE.FOLDER);
+			tag.addAttribute(Utils.twTagAttribute.dataType.BOOL, "modifiable", false);
+
+			tn.Tag = tag;
 			NameFolder renameFolder = new NameFolder(ref tn);
 			renameFolder.Show();
 			tw_resources.SelectedNode.Nodes.Add(tn);
@@ -185,7 +200,7 @@ namespace LevelEditor
 
 			if (e.Button == MouseButtons.Right)
 			{
-				if (twt.modifiable)
+				if (twt.getAttributeByName<bool>("modifiable"))
 				{
 					cms.Items[1].Enabled = true;
 					cms.Items[2].Enabled = true;
@@ -206,6 +221,41 @@ namespace LevelEditor
 			if (n2.Parent.Equals(n1)) return true;
 
 			return ContainsNode(n1, n2.Parent);
+		}
+
+		private void tw_resources_MouseMove(object sender, MouseEventArgs e)
+		{
+			TreeNode node = tw_resources.GetNodeAt(e.X, e.Y);
+
+			if (node != null)
+			{
+				Utils.twTag tag = (Utils.twTag)node.Tag;
+
+				switch (tag.Type)
+				{
+					case Utils.twTag.TYPE.IMAGE:
+						string msg = "Modifiable: " + (tag.getAttributeByName<bool>("modifiable") == false ? "false" : "true") + "\n"
+									+ "Real name: " + tag.getAttributeByName<string>("realname") + "\n"
+									+ "Size: " + tag.getAttributeByName<float>("size") + " MB\n"
+									+ "Dimensions: " + tag.getAttributeByName<int>("sizex") + " X " + tag.getAttributeByName<int>("sizey");
+
+
+						if (toolTipRes.GetToolTip(tw_resources) != msg)
+						{
+							msg = "Modifiable: " + (tag.getAttributeByName<bool>("modifiable") == false ? "false" : "true") + "\n"
+								+ "Real name: " + tag.getAttributeByName<string>("realname") + "\n"
+								+ "Size: " + tag.getAttributeByName<float>("size") + " MB\n"
+								+ "Dimensions: " + tag.getAttributeByName<int>("sizex") + " X " + tag.getAttributeByName<int>("sizey");
+
+							toolTipRes.SetToolTip(tw_resources, msg);
+						}
+					break;
+				}
+			}
+			else
+			{
+				toolTipRes.SetToolTip(tw_resources, "");
+			}
 		}
     }
 }
