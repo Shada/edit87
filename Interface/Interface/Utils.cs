@@ -8,6 +8,7 @@ using System.ComponentModel;
 using System.Drawing;
 using System.IO;
 using System.Xml;
+using System.Globalization;
 
 namespace LevelEditor
 {

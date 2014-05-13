@@ -58,7 +58,7 @@ namespace LevelEditor
 		public void initPanels()
 		{
 			PanResources res = (PanResources)panels[2];
-			res.init(new TreeNode(Utils.ProjectName, 0, 0));
+			res.init(new TreeNode(Utils.ProjectName, 0, 0), (PanProperties)panels[5]);
 
 			PanLibrary lib = (PanLibrary)panels[4];
 			lib.init(new TreeNode(Utils.ProjectName, 0, 0));
@@ -401,7 +401,7 @@ namespace LevelEditor
 			XmlElement xmlNewResources = Utils.ProjectFile.CreateElement(null, "resources", null);
 			root.InsertAfter(xmlNewResources, xmlHeader);
 
-			writeXLMResNode(ref xmlNewResources, tnRes);
+			writeXLMNode(ref xmlNewResources, tnRes);
 
 			XmlNode xmlLibrary = Utils.ProjectFile.SelectSingleNode("/root/library");
 			root.RemoveChild(xmlLibrary);
@@ -409,20 +409,20 @@ namespace LevelEditor
 			XmlElement xmlNewLibrary = Utils.ProjectFile.CreateElement(null, "library", null);
 			root.InsertAfter(xmlNewLibrary, xmlNewResources);
 
-			writeXLMLibNode(ref xmlNewLibrary, tnLib);
+			writeXLMNode(ref xmlNewLibrary, tnLib);
 
 			Utils.ProjectFile.Save(Utils.ProjectDirectory.FullName + "\\test.xml");
 		}
 
-		private void writeXLMResNode(ref XmlElement _rootElement, TreeNode _treeNode)
+		private void writeXLMNode(ref XmlElement _rootElement, TreeNode _treeNode)
 		{
-			XmlElement elem = writeXMLResNodeHelper(_treeNode);
+			XmlElement elem = writeXMLNodeHelper(_treeNode);
 
 			if (_treeNode.Nodes.Count > 0)
 			{
 				foreach (TreeNode tn in _treeNode.Nodes)
 				{
-					writeXLMResNode(ref elem, tn);
+					writeXLMNode(ref elem, tn);
 				}
 
 				_rootElement.AppendChild(elem);
@@ -433,61 +433,7 @@ namespace LevelEditor
 			}
 		}
 
-		private XmlElement writeXMLResNodeHelper(TreeNode _treeNode)
-		{
-			Utils.twTag tag = (Utils.twTag)_treeNode.Tag;
-			XmlElement node = Utils.ProjectFile.CreateElement(null, Convert.ToString(tag.Type).ToLower(), null);
-
-			switch (tag.Type)
-			{
-				case Utils.twTag.TYPE.FOLDER:
-					{
-						writeXMLelement("name", _treeNode.Text, node);
-						writeXMLelement("modifiable", Convert.ToString(tag.getAttributeByName<bool>("modifiable")), node);
-						break;
-					}
-				case Utils.twTag.TYPE.IMAGE:
-					{
-						writeXMLelement("showName", _treeNode.Text, node);
-						writeXMLelement("realName", tag.getAttributeByName<string>("realname"), node);
-						break;
-					}
-				case Utils.twTag.TYPE.MESH:
-					{
-						writeXMLelement("showName", _treeNode.Text, node);
-						writeXMLelement("realName", tag.getAttributeByName<string>("realname"), node);
-						break;
-					}
-				case Utils.twTag.TYPE.SOUND:
-					{
-						writeXMLelement("showName", _treeNode.Text, node);
-						writeXMLelement("realName", tag.getAttributeByName<string>("realname"), node);
-						break;
-					}
-			}
-			return node;
-		}
-
-		private void writeXLMLibNode(ref XmlElement _rootElement, TreeNode _treeNode)
-		{
-			XmlElement elem = writeXMLLibNodeHelper(_treeNode);
-
-			if (_treeNode.Nodes.Count > 0)
-			{
-				foreach (TreeNode tn in _treeNode.Nodes)
-				{
-					writeXLMLibNode(ref elem, tn);
-				}
-
-				_rootElement.AppendChild(elem);
-			}
-			else
-			{
-				_rootElement.AppendChild(elem);
-			}
-		}
-
-		private XmlElement writeXMLLibNodeHelper(TreeNode _treeNode)
+		private XmlElement writeXMLNodeHelper(TreeNode _treeNode)
 		{
 			Utils.twTag tag = (Utils.twTag)_treeNode.Tag;
 			XmlElement node = Utils.ProjectFile.CreateElement(null, Convert.ToString(tag.Type).ToLower(), null);
@@ -566,7 +512,7 @@ namespace LevelEditor
 
 			readResourcesXMLElement(xmlResources, ref twResources);
 
-			res.init(twResources);
+			res.init(twResources, (PanProperties)panels[5]);
 			saveToolStripMenuItem.Enabled = true;
 			saveAsToolStripMenuItem.Enabled = true;
 			exportToolStripMenuItem.Enabled = true;

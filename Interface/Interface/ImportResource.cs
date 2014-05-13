@@ -16,7 +16,7 @@ namespace LevelEditor
         string[] allowedImageFormates = new string[] { "png", "jpg", "jpeg", "bmp" };
 		string[] allowedmeshFormats = new string[] { "fbx", "obj" };
 		string fileRealName = "";
-		TreeNode copyPaste;
+		TreeNode copyPaste, newNode;
         PanResources panRes;
 
         public ImportResource(PanResources _panRes)
@@ -106,18 +106,23 @@ namespace LevelEditor
 				fileRealName = txb_fileName.Text;
 
 				if (allowedImageFormates.Contains(tmp[tmp.Length - 1])) //IMAGE
-				{					
-					pb_preView.Image = new Bitmap(Image.FromFile(txb_input.Text), new Size(350, 350));
-					TreeNode tn = new TreeNode(txb_fileName.Text, 1, 1);
+				{
+					Image img = Image.FromFile(txb_input.Text);
+					pb_preView.Image = new Bitmap(img, new Size(350, 350));
+					float fileSize = (float)Math.Round((new FileInfo(txb_input.Text).Length) / 1000000.0f, 2);
+					newNode = new TreeNode(txb_fileName.Text, 1, 1);
 
 					Utils.twTag tag = new Utils.twTag(Utils.twTag.TYPE.IMAGE);
 					tag.addAttribute(Utils.twTagAttribute.dataType.BOOL, "modifiable", true);
 					tag.addAttribute(Utils.twTagAttribute.dataType.STRING, "realname", fileRealName);
+					tag.addAttribute(Utils.twTagAttribute.dataType.FLOAT, "size", fileSize);
+					tag.addAttribute(Utils.twTagAttribute.dataType.INT, "sizex", img.Width);
+					tag.addAttribute(Utils.twTagAttribute.dataType.INT, "sizey", img.Height);
 
-					tn.Tag = tag;
-					tw_fileTree.SelectedNode.Nodes.Add(tn);
+					newNode.Tag = tag;
+					tw_fileTree.SelectedNode.Nodes.Add(newNode);
                     tw_fileTree.SelectedNode.Expand();
-                    tw_fileTree.SelectedNode = tn;
+					tw_fileTree.SelectedNode = newNode;
 				}
 				else if (allowedmeshFormats.Contains(tmp[tmp.Length - 1])) //MESH
 				{
@@ -129,6 +134,11 @@ namespace LevelEditor
 		private void btn_import_Click(object sender, EventArgs e)
 		{
 			File.Copy(txb_input.Text, Utils.ProjectDirectory.FullName + "\\" + fileRealName);
+
+			Utils.twTag t = (Utils.twTag)newNode.Tag;
+			t.addAttribute(Utils.twTagAttribute.dataType.STRING, "showname", txb_fileName.Text);
+			newNode.Tag = t;
+
 			panRes.updateTWRes(tw_fileTree.Nodes[0]);
 			this.Close();
 		}

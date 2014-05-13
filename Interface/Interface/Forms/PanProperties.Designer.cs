@@ -28,34 +28,34 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.PG_test = new System.Windows.Forms.PropertyGrid();
-            this.SuspendLayout();
-            // 
-            // PG_test
-            // 
-            this.PG_test.Location = new System.Drawing.Point(6, 2);
-            this.PG_test.Name = "PG_test";
-            this.PG_test.Size = new System.Drawing.Size(260, 238);
-            this.PG_test.TabIndex = 1;
-            // 
-            // PanProperties
-            // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(284, 262);
-            this.Controls.Add(this.PG_test);
-            this.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.Name = "PanProperties";
-            this.Text = "PanProperties";
-            this.Load += new System.EventHandler(this.PanProperties_Load);
-            this.SizeChanged += new System.EventHandler(this.PanProperties_SizeChanged);
-            this.Resize += new System.EventHandler(this.PanProperties_Resize);
-            this.ResumeLayout(false);
+			this.pg_object = new System.Windows.Forms.PropertyGrid();
+			this.SuspendLayout();
+			// 
+			// pg_object
+			// 
+			this.pg_object.Location = new System.Drawing.Point(6, 2);
+			this.pg_object.Name = "pg_object";
+			this.pg_object.Size = new System.Drawing.Size(260, 238);
+			this.pg_object.TabIndex = 1;
+			// 
+			// PanProperties
+			// 
+			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.ClientSize = new System.Drawing.Size(284, 262);
+			this.Controls.Add(this.pg_object);
+			this.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.Name = "PanProperties";
+			this.Text = "PanProperties";
+			this.Load += new System.EventHandler(this.PanProperties_Load);
+			this.SizeChanged += new System.EventHandler(this.PanProperties_SizeChanged);
+			this.Resize += new System.EventHandler(this.PanProperties_Resize);
+			this.ResumeLayout(false);
 
         }
 
         #endregion
 
-        private System.Windows.Forms.PropertyGrid PG_test;
+        private System.Windows.Forms.PropertyGrid pg_object;
     }
 }

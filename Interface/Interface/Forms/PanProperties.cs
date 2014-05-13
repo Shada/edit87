@@ -19,6 +19,18 @@ namespace LevelEditor
             InitializeComponent();
         }
 
+		public void update(Utils.twTag _tagInfo)
+		{
+			PropertyMesh m = new PropertyMesh();
+			m.Position = new Vector3(45,42,86);
+			m.PolygonCount = uint.MaxValue;
+			m.RealName = _tagInfo.getAttributeByName<string>("realname");
+			m.Rotation = new Vector3(67,86,12);
+			m.Scale = new Vector3(98,36,74);
+			m.ShowName = _tagInfo.getAttributeByName<string>("showname");
+			pg_object.SelectedObject = m;
+		}
+
         private void PanProperties_Load(object sender, EventArgs e)
         {
 
@@ -26,7 +38,7 @@ namespace LevelEditor
 
         private void resizeWindow()
         {
-            PG_test.Size = new Size(Size.Width - pgTestSizeDiff, Size.Height - pgTestSizeDiff);
+            pg_object.Size = new Size(Size.Width - pgTestSizeDiff, Size.Height - pgTestSizeDiff);
         }
 
         private void PanProperties_Resize(object sender, EventArgs e)

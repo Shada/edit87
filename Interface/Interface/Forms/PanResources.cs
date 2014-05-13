@@ -16,15 +16,17 @@ namespace LevelEditor
         int tw_resourcesSizeDiff = 12;
         public TreeNode resourcesRoot;
 		TreeNode copyPaste;
+		PanProperties prop;
 
         public PanResources()
         {
             InitializeComponent();
 		}
 
-		public void init(TreeNode _rootNode)
+		public void init(TreeNode _rootNode, PanProperties _prop)
 		{
 			resourcesRoot = _rootNode;
+			prop = _prop;
 
 			Utils.twTag tag = new Utils.twTag(Utils.twTag.TYPE.FOLDER);
 			tag.addAttribute(Utils.twTagAttribute.dataType.BOOL, "modifiable", false);
@@ -192,6 +194,9 @@ namespace LevelEditor
 		{
 			tw_resources.SelectedNode = e.Node;
 			Utils.twTag twt = (Utils.twTag)tw_resources.SelectedNode.Tag;
+
+			if(twt.Type != Utils.twTag.TYPE.FOLDER)
+				prop.update(twt);
 
 			if (e.Button == MouseButtons.Right)
 			{

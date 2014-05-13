@@ -89,6 +89,10 @@ namespace LevelEditor
                 writer.WriteElementString("Y", Y.ToString());
                 writer.WriteEndElement(); //SIZE
                 writer.WriteEndElement(); //HEADER
+				writer.WriteStartElement("resources");
+				writer.WriteEndElement(); //RESOURCES
+				writer.WriteStartElement("library");
+				writer.WriteEndElement(); //LIBRARY
                 writer.WriteEndElement(); //ROOT
                 writer.WriteEndDocument();
             }
