@@ -49,8 +49,6 @@ void Engine::createTerrain(int width, int height, float pointStep, bool fromPerl
 	node->findAllLeaves(leafNodes);
 
 	terrain->findMinMaxValues(leafNodes);
-	//minmaxCalc = std::thread(&Terrain::findMinMaxValues, terrain, std::ref(leafNodes));
-	//minmaxCalc.join();
 
 	dx->createAndSetTerrainBuffers(terrain->getVBuffer(), terrain->getIBuffer());
 
@@ -68,14 +66,19 @@ void Engine::leftMouseDown()
 	case Tools::ELEVATION:
 		break;
 	}
-	terrain->applyBrush(100, 1, mouseWorldPos.xz);
+
+	uint start, amount;
+	terrain->applyBrush(100, 1, mouseWorldPos.xz, start, amount);
+
 	if(minmaxCalcDone)
-		findMinMaxValues();
+	{
+		minmaxCalc = std::thread(&Engine::findMinMaxValues, this);
+		minmaxCalc.detach();
+	}
 
 	camera->move(elm::vec2(0));
 
-	dx->updateTerrainBuffer(terrain->getVBuffer());
-	dx->renderScene(node);
+	dx->updateTerrainBuffer(terrain->getVBuffer(), start, amount);
 }
 
 void Engine::rightMouseDown()
@@ -85,14 +88,19 @@ void Engine::rightMouseDown()
 	case Tools::ELEVATION:
 		break;
 	}
-	terrain->applyBrush(100, -1, mouseWorldPos.xz);
+
+	uint start, amount;
+	terrain->applyBrush(100, -1, mouseWorldPos.xz, start, amount);
+
 	if(minmaxCalcDone)
-		findMinMaxValues();
+	{
+		minmaxCalc = std::thread(&Engine::findMinMaxValues, this);
+		minmaxCalc.detach();
+	}
 
 	camera->move(elm::vec2(0));
 
-	dx->updateTerrainBuffer(terrain->getVBuffer());
-	dx->renderScene(node);
+	dx->updateTerrainBuffer(terrain->getVBuffer(), start, amount);
 }
 
 void Engine::move(float alongX, float alongZ)
@@ -110,8 +118,7 @@ void Engine::updateMouse(POINT mouse)
 void Engine::findMinMaxValues()
 {
 	minmaxCalcDone = false;
-	minmaxCalc = std::thread(&Terrain::findMinMaxValues, terrain, std::ref(leafNodes));
-	minmaxCalc.detach();
+	terrain->findMinMaxValues(leafNodes);
 	minmaxCalcDone = true;
 }
 

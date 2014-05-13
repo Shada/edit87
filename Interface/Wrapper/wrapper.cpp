@@ -33,7 +33,7 @@ namespace wrap
 	void GraphicsCommunicator::moveCamera(int xDir, int zDir)
 	{
 		gfx->move((float)xDir, (float)zDir);
-		gfx->renderScene();
+		//gfx->renderScene();
 	}
 
 	void GraphicsCommunicator::rightMouseDown()

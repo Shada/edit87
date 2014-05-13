@@ -59,6 +59,6 @@ public:
 
 	void createTerrain(int w, int h, float pointStep, bool fromPerlinMap, int seed);
 
-	void applyBrush(float radius, float intensity, elm::vec2 origin);
+	void applyBrush(float radius, float intensity, elm::vec2 origin, uint &startID, uint &amount);
 	void findMinMaxValues(std::vector<Quadnode*> &nodes);
 };

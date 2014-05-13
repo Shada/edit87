@@ -32,6 +32,7 @@ struct CBOnChange
 
 class RenderDX11
 {
+friend class Engine;
 private:
 	int terrainVertexBufferID, terrainIndexBufferID, modelID, cbOnceID, cbOnChangeID, terrainIndexCount;
 
@@ -82,8 +83,6 @@ private:
 	std::vector<Object3D*>		g_objects;
 	std::vector<Composition>	g_comps;
 
-	void RenderDX11::drawCulledTerrain(Quadnode *node);
-
 	HRESULT init();
 	HRESULT createSampleStates();
 	HRESULT compileShader(LPCSTR filePath, LPCSTR shaderType, ID3DBlob **shaderBlob);
@@ -103,14 +102,13 @@ public:
 	RenderDX11(HWND hWnd);
 	~RenderDX11();
 
-	void renderScene(Quadnode *node);
+	void renderScene();
 	void setRect(RECT t);
 
 	void setTerrainIndexCount(int count)	{ terrainIndexCount = count; }
 	void setCamera(Camera *cam)				{ camera = cam; }
 
-	void updateTerrainBuffer(std::vector<Vertex> *vBuffer);
+	void updateTerrainBuffer(std::vector<Vertex> *vBuffer, uint startID, uint amount);
 	void createAndSetTerrainBuffers(std::vector<Vertex> *vBuffer, std::vector<uint> *iBuffer);
 
-	friend class Engine;
 };

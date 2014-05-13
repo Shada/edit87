@@ -545,8 +545,10 @@ void RenderDX11::createAndSetTerrainBuffers(std::vector<Vertex> *vBuffer, std::v
 
 	initData.pSysMem = &iBuffer->at(0);
 
+	bd.Usage = D3D11_USAGE_IMMUTABLE;
 	bd.BindFlags = D3D11_BIND_INDEX_BUFFER;
 	bd.ByteWidth = sizeof(unsigned int) * iBuffer->size();
+	bd.CPUAccessFlags = 0;
 
 	buffer = nullptr;
 	hr = g_device->CreateBuffer(&bd, &initData, &buffer);
@@ -565,10 +567,10 @@ void RenderDX11::createAndSetTerrainBuffers(std::vector<Vertex> *vBuffer, std::v
 	}
 }
 
-void RenderDX11::updateTerrainBuffer(std::vector<Vertex> *vBuffer)
+void RenderDX11::updateTerrainBuffer(std::vector<Vertex> *vBuffer, uint startID, uint amount)
 {
 	D3D11_MAPPED_SUBRESOURCE resource;
-	HRESULT hr = g_deviceContext->Map(g_buffers.at(terrainVertexBufferID), 0, D3D11_MAP_WRITE_DISCARD, 0, &resource);
+	HRESULT hr = g_deviceContext->Map(g_buffers.at(terrainVertexBufferID), 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &resource);
 
 	if(FAILED(hr))
 		MessageBox(NULL, "Could not update terrain buffer", "ERROR", S_OK);
@@ -579,7 +581,7 @@ void RenderDX11::updateTerrainBuffer(std::vector<Vertex> *vBuffer)
 }
 
 const float color[4] = {0.f, 1.f, 1.f, 1.f};
-void RenderDX11::renderScene(Quadnode *node)
+void RenderDX11::renderScene()
 {
 	g_deviceContext->ClearRenderTargetView(g_renderTargetView, color);
 	g_deviceContext->ClearDepthStencilView(g_depthStencilView, D3D11_CLEAR_DEPTH, 1.f, 0);
@@ -608,14 +610,12 @@ void RenderDX11::renderScene(Quadnode *node)
 	UINT stride = sizeof(Vertex);
 	UINT offset = 0;
 	g_deviceContext->IASetVertexBuffers(0, 1, &g_buffers.at(terrainVertexBufferID), &stride, &offset);
-	//g_deviceContext->IASetIndexBuffer(g_buffers.at(terrainIndexBufferID), DXGI_FORMAT_R32_UINT, offset);
+	g_deviceContext->IASetIndexBuffer(g_buffers.at(terrainIndexBufferID), DXGI_FORMAT_R32_UINT, offset);
 
 	g_deviceContext->VSSetShader(g_terrainVS, NULL, 0);
 	g_deviceContext->PSSetShader(g_terrainPS, NULL, 0);
 
-	//g_deviceContext->DrawIndexed(terrainIndexCount, 0, 0);
-
-	drawCulledTerrain(node);
+	g_deviceContext->DrawIndexed(terrainIndexCount, 0, 0);
 	
 	/************************************************************/
 	//						DRAWING A MESH						//
@@ -650,35 +650,6 @@ void RenderDX11::renderScene(Quadnode *node)
 	}
 
 	g_swapChain->Present(0, 0);
-}
-
-// woudn't it be faster to draw the terrain chunks one by one instead of copying incides and update the index buffer every frame?
-void RenderDX11::drawCulledTerrain(Quadnode *node)
-{
-	std::vector<int> ids;
-	node->getIndexBufferValues(camera->getFrustum(), ids, 3);
-
-	D3D11_MAPPED_SUBRESOURCE resource;
-	HRESULT hr = g_deviceContext->Map(g_buffers.at(terrainIndexBufferID), 0, D3D11_MAP_WRITE_DISCARD, 0, &resource);
-
-	if(FAILED(hr))
-		MessageBox(NULL, "Could not update index buffer", "ERROR", S_OK);
-
-	std::vector<uint> indexBuffer(int((ids.at(1) - ids.at(0)) * ids.size() * 0.5));
-
-	uint count = 0;
-	for(uint i = 0; i < ids.size(); i += 2) // why memcpy and not insert?
-	{
-		memcpy((void**)&indexBuffer.at(count), (void**)&iBuffer->at(ids.at(i)), sizeof(uint)* (ids.at(i + 1) - ids.at(i)));
-		count += (ids.at(i + 1) - ids.at(i));
-	}
-	memcpy(resource.pData, (void**)&indexBuffer.at(0), sizeof(uint) * count);
-
-	g_deviceContext->Unmap(g_buffers.at(terrainIndexBufferID), 0);
-
-	g_deviceContext->IASetIndexBuffer(g_buffers.at(terrainIndexBufferID), DXGI_FORMAT_R32_UINT, (UINT)0);
-
-	g_deviceContext->DrawIndexed(count, 0, 0);
 }
 
 RenderDX11::~RenderDX11()

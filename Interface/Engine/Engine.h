@@ -57,7 +57,7 @@ public:
 	void createTerrain(int width, int height, float pointStep, bool fromPerlinMap, int seed);
 
 	void setRect(RECT t);
-	void renderScene()						{ dx->renderScene(node); }
+	void renderScene()						{ dx->renderScene(); }
 	void move(float alongX, float alongZ);
 
 	/* Mouse calls */ // Maybe we want to handle mouse up and down entirely in c#. Discuss this with other ppl

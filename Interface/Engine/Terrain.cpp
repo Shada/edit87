@@ -246,12 +246,19 @@ float Terrain::getHeightAt(elm::vec2 pos) const
 	return points.at(index1 + index2).y;
 }
 
-void Terrain::applyBrush(float radius, float intensity, elm::vec2 origin)
+void Terrain::applyBrush(float radius, float intensity, elm::vec2 origin, uint &startID, uint &amount)
 {
 	int startX = (int)((origin.x - radius) / step + 0.5);
 	int startZ = (int)((origin.y - radius) / step + 0.5);
 
-	int cond = (int)(radius / step + 0.5);
+	int cond = (int)(radius / step + 0.5), index, _x = startX, _z = startZ;
+
+	if(_x < 0 || _x >= width)
+		_x = startX < 0 ? 0 : width - 1;
+	if(_z < 0 || _z >= height)
+		_z = startZ < 0 ? 0 : width - 1;
+
+	startID = _x + _z * width;
 
 	for(int y = 0; y < cond * 2; y++)
 	{
@@ -270,7 +277,7 @@ void Terrain::applyBrush(float radius, float intensity, elm::vec2 origin)
 				else break;
 			}
 
-			int index = x + startX + (y + startZ) * (int)width;
+			index = x + startX + (y + startZ) * (int)width;
 			float len = elm::vecLength(-origin + points.at(index).xz);
 			if(len < radius)
 			{
@@ -279,6 +286,8 @@ void Terrain::applyBrush(float radius, float intensity, elm::vec2 origin)
 			}
 		}
 	}
+
+	amount = index - startID;
 
 	int index1, index2;
 	std::vector<elm::vec3> norms = std::vector<elm::vec3>(points.size());

@@ -28,7 +28,7 @@ namespace LevelEditor
             graphics = new GraphicsCommunicator(this.Handle);
 			InitializeComponent();
 
-            timer1.Interval = 1;
+            timer1.Interval = 20;
             timer1.Start();
 
             windowWidth = Size.Width;
@@ -264,13 +264,17 @@ namespace LevelEditor
         {
             int xDir = forwardKey ? 1 : backwardKey ? -1 : 0;
             int zDir = rightKey ? 1 : leftKey ? -1 : 0;
-            if (xDir != 0 || zDir != 0)
+            bool mouseMove = xDir != 0 || zDir != 0;
+            if (mouseMove)
                 graphics.moveCamera(xDir, zDir);
 
-            if (rightMouseDown)
+            if (rightMouseDown && !leftMouseDown)
                 graphics.rightMouseDown();
-            if (leftMouseDown)
+            if (leftMouseDown && !rightMouseDown)
                 graphics.leftMouseDown();
+
+            if(rightMouseDown || leftMouseDown || mouseMove)
+                graphics.renderScene();
         }
 
         private void MapEditor_KeyUp(object sender, KeyEventArgs e)
