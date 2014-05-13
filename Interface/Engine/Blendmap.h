@@ -1,6 +1,7 @@
 #pragma once
 #include <D3D11.h>
 #include "Terrain.h"
+#include <string>
 
 #define MaxTextures 20
 #define SAFE_RELEASE(x) if( x ) { (x)->Release(); (x) = NULL; }
@@ -12,6 +13,7 @@ public:
 	Blendmap();
 	~Blendmap();
 	void init(ID3D11Device *_g_device, ID3D11DeviceContext *_g_deviceContext, Terrain *_terrain, std::vector<ID3D11ShaderResourceView*> *_g_textures, HWND *_hWnd);
+	void applayBrush(float _radius, float _intensity, elm::vec2 _origin, char* _texture);
 
 private:
 
@@ -27,7 +29,26 @@ private:
 	void createShaderResourceView3D();
 	void CSexec();
 	void CSexecupdate();
+	int addTexture(const char *_texture);
 
+	struct textureHandler
+	{
+		std::string texturePath;
+		int textureIndex;
+	};
+
+	struct cbConfig
+	{
+		float radius;
+		float intensity;
+		elm::vec2 origin;
+		elm::vec2 textureIndex;
+		elm::vec2 pad;
+	};
+
+	cbConfig config;
+
+	ID3D11Buffer *cbuffer;
 
 	HWND *hWnd;
 
@@ -35,13 +56,15 @@ private:
 	ID3D11DeviceContext			*g_deviceContext;
 
 	std::vector<ID3D11ShaderResourceView*> *g_textures;
-
+	std::vector<textureHandler> textureArrayHandler;
 	ID3D11Texture2D* textureArray;
 	ID3D11ShaderResourceView* srvArray;
 
 	ID3D11Texture3D* blendmapsTextures;
+	ID3D11Texture3D* blendmapsTexturesRead;
 	ID3D11UnorderedAccessView* uavtd;
 	ID3D11ShaderResourceView* blendmapsSRV;
+	//ID3D11ShaderResourceView* blendmapsReadSRV;
 
 	ID3D11Texture2D *uavTexture;
 	ID3D11UnorderedAccessView*  uav;

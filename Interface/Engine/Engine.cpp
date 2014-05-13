@@ -13,6 +13,7 @@ Engine::Engine(HWND hwnd)
 	dx = new RenderDX11(hWnd);
 
 	mouseWorldPos = elm::vec3(200, 0, 1000);
+
 }
 
 void Engine::setRect(RECT t)
@@ -49,6 +50,9 @@ void Engine::leftMouseDown()
 	camera->move(elm::vec2(0));
 	//dx->createAndSetTerrainBuffers(terrain->getVBuffer(), terrain->getIBuffer());
 	dx->updateTerrainBuffer(terrain->getVBuffer());
+
+	dx->blendmapBrush(100, 0.5, mouseWorldPos.xz, "..\\Textures\\grass.png");
+
 	dx->renderScene();
 }
 

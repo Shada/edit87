@@ -474,3 +474,8 @@ RenderDX11::~RenderDX11()
 	SAFE_RELEASE(g_depthStencilStateDisable);
 	SAFE_RELEASE(g_depthStencilStateEnable);
 }
+
+void RenderDX11::blendmapBrush(float _radius, float _intensity, elm::vec2 _origin, char* _texture)
+{
+	blendmap->applayBrush(_radius,_intensity,_origin,_texture);
+}

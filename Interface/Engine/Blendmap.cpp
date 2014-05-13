@@ -5,8 +5,8 @@
 
 Blendmap::Blendmap()
 {
+	nrOfTextures = 0;
 }
-
 
 Blendmap::~Blendmap()
 {
@@ -22,18 +22,37 @@ void Blendmap::init(ID3D11Device *_g_device, ID3D11DeviceContext *_g_deviceConte
 	hWnd = _hWnd;
 
 	g_textures = _g_textures;
-	nrOfTextures = 20;
 
-	//ID3D11ShaderResourceView *tex;
-	//hr = D3DX11CreateShaderResourceViewFromFile(g_device, "..\\Textures\\ground.jpg", NULL, NULL, &tex, NULL);
-	//if (FAILED(hr))
-	//{
-	//	MessageBox(*hWnd, "Image load made fail, lol", "fail in Blendmap, yo", 0);
-	//}
+	D3D11_BUFFER_DESC bd;
+	ZeroMemory(&bd, sizeof(bd));
+	bd.Usage = D3D11_USAGE_DEFAULT;
+	bd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	bd.CPUAccessFlags = 0;
+	bd.ByteWidth = sizeof(cbConfig);
+	hr = g_device->CreateBuffer(&bd, NULL, &cbuffer);
 
-	//g_textures->at(0) = tex;
 	createTexture2DArray(512,512);
 
+}
+
+void Blendmap::applayBrush(float _radius, float _intensity, elm::vec2 _origin, char* _texture)
+{
+	//--------------------------------------- set the constant buffer
+	int temp = addTexture(_texture);
+	
+	config.textureIndex.x = temp / 4;
+	config.textureIndex.y = temp % 4;
+
+	config.intensity = _intensity;
+	config.origin = _origin;
+	config.radius = _radius;
+	config.pad = elm::vec2(0, 0);
+
+	g_deviceContext->UpdateSubresource(cbuffer, 0, NULL, (const void*)&config, 0, 0);
+
+	//--------------------------------------- uppdate the textures
+	CSexecupdate();
+	CSexec();
 }
 
 void Blendmap::createTexture2DArray(int _width, int _height)
@@ -61,10 +80,10 @@ void Blendmap::createTexture2DArray(int _width, int _height)
 		MessageBox(NULL, "Failed to create texture for render target view.", "RenderDX11 Error", S_OK);
 	}
 
-	LoadTextureInToTextureArray("..\\Textures\\ground.jpg", 0);
-	LoadTextureInToTextureArray("..\\Textures\\grass.png", 5);
-	LoadTextureInToTextureArray("..\\Textures\\lava.jpg", 10);
-	LoadTextureInToTextureArray("..\\Textures\\sand.jpg", 15);
+	addTexture("..\\Textures\\ground.jpg");
+	addTexture("..\\Textures\\grass.png");
+	addTexture("..\\Textures\\lava.jpg");
+	addTexture("..\\Textures\\sand.jpg");
 
 
 	//---------------------------------------------------------------------------- creating compute shader resources
@@ -91,7 +110,7 @@ void Blendmap::createTexture2DArray(int _width, int _height)
 	dsvDesc.Texture2DArray.ArraySize = MaxTextures;
 	dsvDesc.Texture2DArray.MipLevels = 1;
 	dsvDesc.Texture2DArray.MostDetailedMip = 0;
-
+	
 
 	result = g_device->CreateShaderResourceView(textureArray, &dsvDesc, &srvArray);
 	if (FAILED(result))
@@ -106,6 +125,9 @@ void Blendmap::createTexture2DArray(int _width, int _height)
 	createUAVTextureView3D();
 
 	//------------------------------------------------------------------------- first compile
+
+
+
 	CSexecupdate();
 
 	CSexec();
@@ -145,8 +167,8 @@ int Blendmap::LoadTextureInToTextureArray(const char *pAddr, int Index)
 
 	ID3D11Resource *pRes = NULL;
 
-	ID3D11ShaderResourceView *srv;
-	ID3D11Texture2D *tex;
+	//ID3D11ShaderResourceView *srv;
+	//ID3D11Texture2D *tex;
 	//hr = D3DX11CreateShaderResourceViewFromFile(g_device, pAddr, &ImageloadInfo, NULL, &srv, NULL);
 
 	hr = D3DX11CreateTextureFromFile(g_device, pAddr, &ImageloadInfo, NULL, &pRes, NULL);
@@ -253,9 +275,16 @@ void Blendmap::createUAVTextureView()
 void Blendmap::createUAVTextureView3D()
 {
 	HRESULT result = S_OK;
+	D3D11_UNORDERED_ACCESS_VIEW_DESC desc;
+	ZeroMemory(&desc, sizeof(desc));
+	//desc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+	//desc.Texture3D.FirstWSlice = 0;
+	//desc.Texture3D.MipSlice = 0;
+	//desc.Texture3D.WSize = 0;
+	//desc.ViewDimension = D3D11_UAV_DIMENSION_TEXTURE3D;
 
-	result = g_device->CreateUnorderedAccessView(blendmapsTextures, NULL, &uavtd);
-
+	result = g_device->CreateUnorderedAccessView(blendmapsTextures, &desc, &uavtd);
+	//result = g_device->CreateUnorderedAccessView(blendmapsTextures, NULL, &uavtd);
 	if (FAILED(result))
 	{
 		MessageBox(NULL, "Failed to create UAV texture for the UAV texture..", "RenderDX11 Error", S_OK);
@@ -335,6 +364,8 @@ void Blendmap::createTexture3D(unsigned int _width, unsigned int _height, unsign
 	{
 		MessageBox(NULL, "Failed to create 3D texture.", "RenderDX11 Error", S_OK);
 	}
+
+	blendmapsTexturesRead = blendmapsTextures;
 }
 
 void Blendmap::createShaderResourceView3D()
@@ -358,7 +389,11 @@ void Blendmap::createShaderResourceView3D()
 	{
 		MessageBox(NULL, "Failed to create 3D SRV.", "RenderDX11 Error", S_OK);
 	}
-
+	/*result = g_device->CreateShaderResourceView(blendmapsTexturesRead, &desc, &blendmapsReadSRV);
+	if (FAILED(result))
+	{
+		MessageBox(NULL, "Failed to create 3D SRV.", "RenderDX11 Error", S_OK);
+	}*/
 }
 
 void Blendmap::CSexec()
@@ -389,6 +424,10 @@ void Blendmap::CSexecupdate()
 	// write
 	g_deviceContext->CSSetUnorderedAccessViews(0, 1, &uavtd, NULL);
 
+	//g_deviceContext->CSSetShaderResources(0, 1, &blendmapsReadSRV);
+
+	g_deviceContext->CSSetConstantBuffers(0, 1, &cbuffer);
+
 	g_deviceContext->CSSetShader(computeShaderUpdate, NULL, 0);
 
 	g_deviceContext->Dispatch(45, 45, 1);
@@ -397,4 +436,33 @@ void Blendmap::CSexecupdate()
 
 	ID3D11UnorderedAccessView* nullUAV[1] = { NULL };
 	g_deviceContext->CSSetUnorderedAccessViews(0, 1, nullUAV, NULL);
+
+	//blendmapsTexturesRead = blendmapsTextures; // --------------------------------------------- kolla att detta funkar
+
+}
+
+int Blendmap::addTexture(const char *_texture)
+{
+	if (nrOfTextures <= 20)
+	{
+		for (int i = 0; i < nrOfTextures; i++)
+		{
+			if (strcmp(textureArrayHandler.at(i).texturePath.c_str(),_texture) == 0)
+			{
+				return i;
+			}
+		}
+
+		LoadTextureInToTextureArray(_texture,nrOfTextures);
+		textureHandler temp;
+		temp.textureIndex = nrOfTextures;
+		temp.texturePath = _texture;
+		textureArrayHandler.push_back(temp);
+		nrOfTextures++;
+		return nrOfTextures-1;
+	}
+	else
+	{
+		MessageBox(NULL, "Using maximum amount of blendmap textures. Maybe you can replace one of the old?", "Blendmap Error", S_OK);
+	}
 }
