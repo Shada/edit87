@@ -11,6 +11,7 @@ using System.Windows.Forms;
 using System.IO;
 using System.Xml;
 using WeifenLuo.WinFormsUI.Docking;
+using System.Globalization;
 
 using wrap;
 
@@ -438,7 +439,7 @@ namespace LevelEditor
 			Utils.twTag tag = (Utils.twTag)_treeNode.Tag;
 			XmlElement node = Utils.ProjectFile.CreateElement(null, Convert.ToString(tag.Type).ToLower(), null);
 
-			writeXMLelement("name", _treeNode.Text, node);
+			writeXMLelement("name", "s|" + _treeNode.Text, node);
 
 			foreach (Utils.twTagAttribute twa in tag.Attributes)
 			{
@@ -446,23 +447,23 @@ namespace LevelEditor
 				{
  					case Utils.twTagAttribute.dataType.BOOL:
 						bool b = (bool)twa.val;
-						writeXMLelement(twa.name, "B|" + b.ToString(), node);
+						writeXMLelement(twa.name, "b|" + b.ToString(), node);
 						break;
 					case Utils.twTagAttribute.dataType.CHAR:
 						char c = (char)twa.val;
-						writeXMLelement(twa.name, "C|" + c.ToString(), node);
+						writeXMLelement(twa.name, "c|" + c.ToString(), node);
 						break;
 					case Utils.twTagAttribute.dataType.FLOAT:
 						float f = (float)twa.val;
-						writeXMLelement(twa.name, "F|" + f.ToString(), node);
+						writeXMLelement(twa.name, "f|" + f.ToString(), node);
 						break;
 					case Utils.twTagAttribute.dataType.INT:
 						int i = (int)twa.val;
-						writeXMLelement(twa.name, "I|" + i.ToString(), node);
+						writeXMLelement(twa.name, "i|" + i.ToString(), node);
 						break;
 					case Utils.twTagAttribute.dataType.STRING:
 						string s = (string)twa.val;
-						writeXMLelement(twa.name, "S|" + s, node);
+						writeXMLelement(twa.name, "s|" + s, node);
 						break;
 				}
 			}
@@ -493,103 +494,128 @@ namespace LevelEditor
 				tmp = tmp.Substring(0, tmpI);
 
 				Utils.ProjectDirectory = new DirectoryInfo(tmp);
-				readResourcesXML();
-				readLibXML();
-				
+				readXML();				
 			}
 		}
 
-		private void readResourcesXML()
+		private void readXML()
 		{
 			PanResources res = (PanResources)panels[2];
+			PanLibrary lib = (PanLibrary)panels[4];
 
 			XmlNode projName = Utils.ProjectFile.SelectSingleNode("/root/header/projectName");
 			Utils.ProjectName = projName.InnerText;
 
 			XmlNode xmlResources = Utils.ProjectFile.SelectSingleNode("/root/resources/folder");
+			XmlNode xmlLibrary = Utils.ProjectFile.SelectSingleNode("/root/library/folder");
 
 			TreeNode twResources = new TreeNode(Utils.ProjectName, 0, 0);
+			TreeNode twLibrary = new TreeNode(Utils.ProjectName, 0, 0);
 
-			readResourcesXMLElement(xmlResources, ref twResources);
+			readXMLNode(xmlResources, ref twResources);
+			readXMLNode(xmlLibrary, ref twLibrary);
 
 			res.init(twResources, (PanProperties)panels[5]);
+			lib.init(twLibrary);
+
 			saveToolStripMenuItem.Enabled = true;
 			saveAsToolStripMenuItem.Enabled = true;
 			exportToolStripMenuItem.Enabled = true;
 		}
 
-		private void readResourcesXMLElement(XmlNode _xmlNode, ref TreeNode _twNode)
+		private void readXMLNode(XmlNode _xmlNode, ref TreeNode _twNode)
 		{
+			_twNode = readXMLNodeHelper(_xmlNode);
+
 			if (_xmlNode.HasChildNodes)
 			{
-				XmlNodeList list = _xmlNode.ChildNodes;				
-
-				for (int i = 2; i < list.Count; i++)
+				foreach (XmlNode node in _xmlNode.ChildNodes)
 				{
-					if (list[i].Name == "image")
+					if (getTagType(node) == Utils.twTag.TYPE.FOLDER)
 					{
-						Utils.twTag tag = new Utils.twTag(Utils.twTag.TYPE.IMAGE);
-						
-						XmlNode imgShowName = list[i].SelectSingleNode("showname");
-						XmlNode imgRealName = list[i].SelectSingleNode("realname");
-						XmlNode imgModifiable = list[i].SelectSingleNode("modifiable");
-						XmlNode imgSize = list[i].SelectSingleNode("size");
-						XmlNode imgsizeX = list[i].SelectSingleNode("sizex");
-						XmlNode imgSizeY = list[i].SelectSingleNode("sizey");
-
-						tag.addAttribute(Utils.twTagAttribute.dataType.STRING, "realname", imgRealName.InnerText);
-						tag.addAttribute(Utils.twTagAttribute.dataType.BOOL, "modifiable", imgModifiable.InnerText == "false" ? false : true);
-						tag.addAttribute(Utils.twTagAttribute.dataType.FLOAT, "size", Convert.ToSingle(imgSize.InnerText));
-						tag.addAttribute(Utils.twTagAttribute.dataType.INT, "sizex", Convert.ToInt32(imgsizeX.InnerText));
-						tag.addAttribute(Utils.twTagAttribute.dataType.INT, "sizey", Convert.ToInt32(imgSizeY.InnerText));
-
-						TreeNode newNode = new TreeNode(imgShowName.InnerText, 1, 1);
-						newNode.Tag = tag;
-						_twNode.Nodes.Add(newNode);
-
+						TreeNode tn = new TreeNode();
+						readXMLNode(node, ref tn);
+						_twNode.Nodes.Add(tn);
 					}
-					else if (list[i].Name == "mesh")
+					else if(getTagType(node) == Utils.twTag.TYPE.IMAGE)
 					{
-						Utils.twTag tag = new Utils.twTag(Utils.twTag.TYPE.MESH);
-
-						TreeNode newNode = new TreeNode();
-						_twNode.Nodes.Add(newNode);
-
-						readResourcesXMLElement(list[i], ref newNode);
-					}
-					else if (list[i].Name == "sound")
-					{
-						Utils.twTag tag = new Utils.twTag(Utils.twTag.TYPE.SOUND);
-
-						TreeNode newNode = new TreeNode();
-						_twNode.Nodes.Add(newNode);
-
-						readResourcesXMLElement(list[i], ref newNode);
-					}
-					else if (list[i].Name == "folder")
-					{
-						Utils.twTag tag = new Utils.twTag(Utils.twTag.TYPE.FOLDER);
-
-						XmlNode folderMod = list[i].SelectSingleNode("modifiable");
-						XmlNode folderName = list[i].SelectSingleNode("name");
-
-						TreeNode newNode = new TreeNode(folderName.InnerText, 0, 0);
-
-						tag.addAttribute(Utils.twTagAttribute.dataType.BOOL, "modifiable", folderMod.InnerText == "false" ? false : true);
-
-						newNode.Tag = tag;
-
-						_twNode.Nodes.Add(newNode);
-
-						readResourcesXMLElement(list[i], ref newNode);
+						TreeNode tn = readXMLNodeHelper(node);
+						tn.ImageIndex = 1;
+						tn.SelectedImageIndex = 1;
+						_twNode.Nodes.Add(tn);
 					}
 				}
 			}
 			return;
 		}
 
-		private void readLibXML()
-		{ 
+		private TreeNode readXMLNodeHelper(XmlNode _xmlNode)
+		{
+			TreeNode res = new TreeNode(_xmlNode.SelectSingleNode("name").InnerText.Split('|')[1]);
+			Utils.twTag tag = new Utils.twTag(getTagType(_xmlNode));
+
+			XmlNodeList list = _xmlNode.ChildNodes;
+
+			for (int child = 0; child < list.Count; child++)
+			{
+				if (getTagType(list[child]) != Utils.twTag.TYPE.FOLDER)
+				{
+					string[] vals = list[child].InnerText.Split('|');
+
+					if (vals[0] == "b")
+					{
+ 						bool b = (vals[1] == "false" ? false : true);
+						tag.addAttribute(Utils.twTagAttribute.dataType.BOOL, list[child].Name, b);
+					}
+					else if (vals[0] == "c")
+					{
+						char c = vals[1].ToCharArray()[0];
+						tag.addAttribute(Utils.twTagAttribute.dataType.CHAR, list[child].Name, c);
+					}
+					else if (vals[0] == "f")
+					{
+						float f = Convert.ToSingle(vals[1], CultureInfo.CurrentCulture);
+						tag.addAttribute(Utils.twTagAttribute.dataType.FLOAT, list[child].Name, f);
+					}
+					else if (vals[0] == "i")
+					{
+						int i = Convert.ToInt32(vals[1], CultureInfo.CurrentCulture);
+						tag.addAttribute(Utils.twTagAttribute.dataType.INT, list[child].Name, i);
+					}
+					else if (vals[0] == "s")
+					{
+						tag.addAttribute(Utils.twTagAttribute.dataType.STRING, list[child].Name, vals[1]);
+					}
+				}
+			}
+
+			res.Tag = tag;
+
+			return res;
+		}
+
+		private Utils.twTag.TYPE getTagType(XmlNode _xmlNode)
+		{
+			if (_xmlNode.Name == "folder")
+			{
+				return Utils.twTag.TYPE.FOLDER;
+			}
+			else if (_xmlNode.Name == "image")
+			{
+				return Utils.twTag.TYPE.IMAGE;
+			}
+			else if (_xmlNode.Name == "mesh")
+			{
+				return Utils.twTag.TYPE.MESH;
+			}
+			else if (_xmlNode.Name == "sound")
+			{
+				return Utils.twTag.TYPE.SOUND;
+			}
+			else
+			{
+				return Utils.twTag.TYPE.UNDEFINED;
+			}
 		}
 
 		private void timerTick()
