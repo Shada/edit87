@@ -17,7 +17,7 @@ class Terrain
 {
 private:
 	uint width, height, maxDepth;
-	float step;
+	float step, normalizerHeight;
 	std::vector<elm::vec3> points;
 
 	std::vector<Vertex> vBuffer;
@@ -26,6 +26,7 @@ private:
 	elm::vec3 position;
 
 	void normalizeTerrain();
+	void normalizeBrushEffect(int startX, int startZ, int cond);
 
 	void createTerrainNormals(std::vector<Vertex> &vBuffer);
 
@@ -57,8 +58,11 @@ public:
 
 	elm::vec2 getDim() { return elm::vec2(position.x + width * step, position.z + height * step); }
 
+	void resetNormalizer() { normalizerHeight = -999999.f; }
 	void createTerrain(int w, int h, float pointStep, bool fromPerlinMap, int seed);
 
-	void applyBrush(float radius, float intensity, elm::vec2 origin, uint &startID, uint &amount);
+	void applyElevationBrush(float radius, float intensity, elm::vec2 origin);
+	void applyNormalizeBrush(float radius, float intensity, elm::vec2 origin);
+	void applyDefaultNormalizeBrush(float radius, float intensity, elm::vec2 origin);
 	void findMinMaxValues(std::vector<Quadnode*> &nodes);
 };

@@ -33,7 +33,6 @@
     <ClInclude Include="Camera.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-<<<<<<< HEAD
     <ClInclude Include="Mesh3D.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -55,17 +54,6 @@
     <ClInclude Include="ModelDefinitions.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-=======
-    <ClInclude Include="Engine.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-<<<<<<< HEAD
->>>>>>> terrain can be modified somewhat
-=======
-    <ClInclude Include="Quadnode.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
->>>>>>> Almost working quadtree
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="RenderDX11.cpp">
@@ -80,7 +68,6 @@
     <ClCompile Include="Camera.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-<<<<<<< HEAD
     <ClCompile Include="Mesh3D.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -93,17 +80,9 @@
     <ClCompile Include="Quadnode.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-<<<<<<< HEAD
     <ClCompile Include="Model.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-=======
-    <ClCompile Include="Engine.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
->>>>>>> terrain can be modified somewhat
-=======
->>>>>>> Almost working quadtree
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Interface\bin\Shaders\defaultPS.hlsl">

@@ -23,9 +23,6 @@ Camera::Camera(int width, int height, const Terrain *terrain, HWND hwnd)
 	this->height = height;
 	this->width = width;
 
-	this->height = height;
-	this->width = width;
-
 	elm::rotationAxis(mRot, elm::vec3(1, 0, 0), -ELM_PI / 4);
 	vLook = mRot * vLook;
 	vUp = mRot * vUp;

@@ -13,7 +13,8 @@ enum class Tools
 	ELEVATION = 0,
 	TEXTURING = 1,
 	OBJECTPLACER = 2,
-	SELECTOR = 3
+	SELECTOR = 3,
+	NORMALIZER = 4
 };
 
 class Engine : public EngineInterface
@@ -57,19 +58,20 @@ public:
 	void createTerrain(int width, int height, float pointStep, bool fromPerlinMap, int seed);
 
 	void setRect(RECT t);
-	void renderScene()						{ dx->renderScene(node); }
+	void renderScene()						{ dx->renderScene(); }
 	void move(float alongX, float alongZ);
 
 	/* Mouse calls */ // Maybe we want to handle mouse up and down entirely in c#. Discuss this with other ppl
-	void rightMouseDown();
-	void leftMouseDown();
-	void rightMouseUp()						{}
-	void leftMouseUp()						{}
+	void rightMouseDown(int brushSize, float brushIntensity);
+	void leftMouseDown(int brushSize, float brushIntensity);
+	void rightMouseUp();
+	void leftMouseUp();
 	void updateMouse(POINT mouse);
 
 	/* Tool calls */
-	void setElevationTool()					{ selectedTool = Tools::ELEVATION; }
-	void setTextureTool()					{ selectedTool = Tools::TEXTURING; }
-	void setObjectPlacerTool()				{ selectedTool = Tools::OBJECTPLACER; }
-	void setSelctorTool()					{ selectedTool = Tools::SELECTOR; }
+	void setTextureTool()					{ selectedTool = Tools::TEXTURING;		}
+	void setSelctorTool()					{ selectedTool = Tools::SELECTOR;		}
+	void setElevationTool()					{ selectedTool = Tools::ELEVATION;		}
+	void setNormalizerTool()				{ selectedTool = Tools::NORMALIZER;		}
+	void setObjectPlacerTool()				{ selectedTool = Tools::OBJECTPLACER;	}
 };

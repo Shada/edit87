@@ -33,26 +33,26 @@ namespace wrap
 	void GraphicsCommunicator::moveCamera(int xDir, int zDir)
 	{
 		gfx->move((float)xDir, (float)zDir);
-		//gfx->renderScene();
 	}
 
-	void GraphicsCommunicator::rightMouseDown()
+	void GraphicsCommunicator::rightMouseDown(int brushSize, int brushIntensity)
 	{
-		gfx->rightMouseDown();
+		gfx->rightMouseDown(brushSize, (float)brushIntensity / 100);
 	}
 
-	void GraphicsCommunicator::leftMouseDown()
+	void GraphicsCommunicator::leftMouseDown(int brushSize, int brushIntensity)
 	{
-		gfx->leftMouseDown();
+		gfx->leftMouseDown(brushSize, (float)brushIntensity / 100);
 	}
 
 	void GraphicsCommunicator::rightMouseUp()
 	{
-		
+		gfx->rightMouseUp();
 	}
 
 	void GraphicsCommunicator::leftMouseUp()
 	{
+		gfx->leftMouseUp();
 	}
 
 	void GraphicsCommunicator::updateMouse(int x, int y)
@@ -61,27 +61,6 @@ namespace wrap
 		p.x = x;
 		p.y = y;
 		gfx->updateMouse(p);
-	}
-
-	/* Tool calls */
-	void GraphicsCommunicator::setElevationTool()
-	{
-		gfx->setElevationTool();
-	}
-
-	void GraphicsCommunicator::setTextureTool()
-	{
-		gfx->setTextureTool();
-	}
-
-	void GraphicsCommunicator::setObjectPlacerTool()
-	{
-		gfx->setObjectPlacerTool();
-	}
-
-	void GraphicsCommunicator::setSelctorTool()
-	{
-		gfx->setSelctorTool();
 	}
 
 	GraphicsCommunicator::~GraphicsCommunicator()

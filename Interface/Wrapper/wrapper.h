@@ -20,16 +20,17 @@ namespace wrap
 		void moveCamera(int xDir, int zDir);
 
 		/* Mouse calls */
-		void rightMouseDown();
-		void leftMouseDown();
+		void rightMouseDown(int brushSize, int brushIntensity);
+		void leftMouseDown(int brushSize, int brushIntensity);
 		void rightMouseUp();
 		void leftMouseUp();
 		void updateMouse(int x, int y);
 
 		/* Tool calls */
-		void setElevationTool();
-		void setTextureTool();
-		void setObjectPlacerTool();
-		void setSelctorTool();
+		void setTextureTool()			{ gfx->setTextureTool();		}
+		void setSelctorTool()			{ gfx->setSelctorTool();		}
+		void setElevationTool()			{ gfx->setElevationTool();		}
+		void setNormalizerTool()		{ gfx->setNormalizerTool();		}
+		void setObjectPlacerTool()		{ gfx->setObjectPlacerTool();	}
 	};
 }

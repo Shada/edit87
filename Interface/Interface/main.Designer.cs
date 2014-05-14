@@ -85,6 +85,7 @@
             this.btn_save = new System.Windows.Forms.Button();
             this.btn_redo = new System.Windows.Forms.Button();
             this.btn_undo = new System.Windows.Forms.Button();
+            this.pb_scene = new System.Windows.Forms.PictureBox();
             this.bindingSource1 = new System.Windows.Forms.BindingSource(this.components);
             this.panel_Left = new System.Windows.Forms.Panel();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
@@ -92,6 +93,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.nud_BrushSize)).BeginInit();
             this.menuStrip.SuspendLayout();
             this.panel_Right.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pb_scene)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).BeginInit();
             this.panel_Left.SuspendLayout();
             this.SuspendLayout();
@@ -128,9 +130,19 @@
             // nud_brushIntensity
             // 
             this.nud_brushIntensity.Location = new System.Drawing.Point(64, 103);
+            this.nud_brushIntensity.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
             this.nud_brushIntensity.Name = "nud_brushIntensity";
             this.nud_brushIntensity.Size = new System.Drawing.Size(50, 20);
             this.nud_brushIntensity.TabIndex = 27;
+            this.nud_brushIntensity.Value = new decimal(new int[] {
+            60,
+            0,
+            0,
+            0});
             this.nud_brushIntensity.ValueChanged += new System.EventHandler(this.nud_brushIntensity_ValueChanged);
             // 
             // label4
@@ -207,6 +219,11 @@
             this.nud_BrushSize.Name = "nud_BrushSize";
             this.nud_BrushSize.Size = new System.Drawing.Size(50, 20);
             this.nud_BrushSize.TabIndex = 20;
+            this.nud_BrushSize.Value = new decimal(new int[] {
+            20,
+            0,
+            0,
+            0});
             this.nud_BrushSize.ValueChanged += new System.EventHandler(this.nud_BrushSize_ValueChanged);
             // 
             // lw_Brush
@@ -538,6 +555,16 @@
             this.btn_undo.UseVisualStyleBackColor = true;
             this.btn_undo.Click += new System.EventHandler(this.btn_undo_Click);
             // 
+            // pb_scene
+            // 
+            this.pb_scene.BackgroundImage = global::Interface.Properties.Resources.map_placeholder;
+            this.pb_scene.Location = new System.Drawing.Point(232, 58);
+            this.pb_scene.Name = "pb_scene";
+            this.pb_scene.Size = new System.Drawing.Size(816, 612);
+            this.pb_scene.TabIndex = 4;
+            this.pb_scene.TabStop = false;
+            this.pb_scene.Visible = false;
+            // 
             // panel_Left
             // 
             this.panel_Left.AutoScroll = true;
@@ -565,6 +592,7 @@
             this.Controls.Add(this.btn_save);
             this.Controls.Add(this.btn_redo);
             this.Controls.Add(this.btn_undo);
+            this.Controls.Add(this.pb_scene);
             this.Controls.Add(this.menuStrip);
             this.MainMenuStrip = this.menuStrip;
             this.MinimumSize = new System.Drawing.Size(1280, 720);
@@ -582,6 +610,7 @@
             this.menuStrip.PerformLayout();
             this.panel_Right.ResumeLayout(false);
             this.panel_Right.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pb_scene)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).EndInit();
             this.panel_Left.ResumeLayout(false);
             this.ResumeLayout(false);
@@ -594,7 +623,8 @@
         private System.Windows.Forms.MenuStrip menuStrip;
 		private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem editToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem helpToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem helpToolStripMenuItem;
+		private System.Windows.Forms.PictureBox pb_scene;
 		private System.Windows.Forms.TreeView tw_objects;
 		private System.Windows.Forms.Button btn_TerrainBrush;
 		private System.Windows.Forms.Button btn_TextureBrush;

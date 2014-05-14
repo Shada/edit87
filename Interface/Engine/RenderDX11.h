@@ -102,12 +102,13 @@ public:
 	RenderDX11(HWND hWnd);
 	~RenderDX11();
 
-	void renderScene(Quadnode *node);
+	void renderScene();
 	void setRect(RECT t);
 
 	void setTerrainIndexCount(int count)	{ terrainIndexCount = count; }
 	void setCamera(Camera *cam)				{ camera = cam; }
 
-	void updateTerrainBuffer(std::vector<Vertex> *vBuffer, uint startID, uint amount);
+	void updateTerrainBuffer(std::vector<Vertex> *vBuffer);
 	void createAndSetTerrainBuffers(std::vector<Vertex> *vBuffer, std::vector<uint> *iBuffer);
+
 };

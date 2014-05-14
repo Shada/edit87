@@ -5,9 +5,10 @@ Engine::Engine(HWND hwnd)
 {
 	hWnd = hwnd;
 
-	selectedTool = Tools::SELECTOR;
+	selectedTool = Tools::ELEVATION;
 
 	minmaxCalcDone = true;
+
 	camera = nullptr;
 	terrain = nullptr;
 
@@ -18,8 +19,6 @@ Engine::Engine(HWND hwnd)
 
 void Engine::init()
 {
-	unsigned int ref;
-	
 	// create ref struct
 	CModel<Object3D>* co = new CModel<Object3D>("test", dx->g_objects[0]);
 
@@ -58,16 +57,21 @@ void Engine::createTerrain(int width, int height, float pointStep, bool fromPerl
 	dx->setCamera(camera);
 }
 
-void Engine::leftMouseDown()
+void Engine::leftMouseDown(int brushSize, float brushIntensity)
 {
 	switch(selectedTool)
 	{
 	case Tools::ELEVATION:
+		terrain->applyElevationBrush((float)brushSize, brushIntensity, mouseWorldPos.xz);
+		dx->updateTerrainBuffer(terrain->getVBuffer());
+		break;
+	case Tools::NORMALIZER:
+		terrain->applyNormalizeBrush((float)brushSize, brushIntensity, mouseWorldPos.xz);
+		dx->updateTerrainBuffer(terrain->getVBuffer());
 		break;
 	}
 
-	uint start, amount;
-	terrain->applyBrush(100, 1, mouseWorldPos.xz, start, amount);
+	
 
 	if(minmaxCalcDone)
 	{
@@ -77,19 +81,23 @@ void Engine::leftMouseDown()
 
 	camera->move(elm::vec2(0));
 
-	dx->updateTerrainBuffer(terrain->getVBuffer(), start, amount);
+	
 }
 
-void Engine::rightMouseDown()
+void Engine::rightMouseDown(int brushSize, float brushIntensity)
 {
 	switch(selectedTool)
 	{
 	case Tools::ELEVATION:
+		terrain->applyElevationBrush((float)brushSize, -brushIntensity, mouseWorldPos.xz);
+		dx->updateTerrainBuffer(terrain->getVBuffer());
+		break;
+	case Tools::NORMALIZER:
+		terrain->applyDefaultNormalizeBrush((float)brushSize, brushIntensity, mouseWorldPos.xz);
+		dx->updateTerrainBuffer(terrain->getVBuffer());
 		break;
 	}
 
-	uint start, amount;
-	terrain->applyBrush(100, -1, mouseWorldPos.xz, start, amount);
 
 	if(minmaxCalcDone)
 	{
@@ -99,7 +107,30 @@ void Engine::rightMouseDown()
 
 	camera->move(elm::vec2(0));
 
-	dx->updateTerrainBuffer(terrain->getVBuffer(), start, amount);
+}
+
+void Engine::leftMouseUp()
+{
+	switch(selectedTool)
+	{
+	case Tools::ELEVATION:
+		break;
+	case Tools::NORMALIZER:
+		terrain->resetNormalizer();
+		break;
+	}
+}
+
+void Engine::rightMouseUp()
+{
+	switch(selectedTool)
+	{
+	case Tools::ELEVATION:
+		break;
+	case Tools::NORMALIZER:
+		terrain->resetNormalizer();
+		break;
+	}
 }
 
 void Engine::move(float alongX, float alongZ)

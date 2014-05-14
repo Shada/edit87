@@ -4,6 +4,7 @@
 
 Terrain::Terrain()
 {
+	normalizerHeight = -999999.f;
 	position = elm::vec3(0);
 }
 
@@ -82,16 +83,6 @@ void Terrain::fillIndexBuffer(int startX, int startY)
 		{
 			int index1 = x + y * width;
 			int index2 = x + (y + 1) * width;
-			if(x == width - 1 || y == height - 1)
-			{
-				iBuffer.at(ii++) = index1;
-				iBuffer.at(ii++) = index1;
-				iBuffer.at(ii++) = index1;
-				iBuffer.at(ii++) = index1;
-				iBuffer.at(ii++) = index1;
-				iBuffer.at(ii++) = index1;
-				continue;
-			}
 
 			if(x == width - 1 || y == height - 1)
 			{
@@ -256,19 +247,13 @@ float Terrain::getHeightAt(elm::vec2 pos) const
 	return points.at(index1 + index2).y;
 }
 
-void Terrain::applyBrush(float radius, float intensity, elm::vec2 origin, uint &startID, uint &amount)
+void Terrain::applyElevationBrush(float radius, float intensity, elm::vec2 origin)
 {
+	radius *= step / 2;
 	int startX = (int)((origin.x - radius) / step + 0.5);
 	int startZ = (int)((origin.y - radius) / step + 0.5);
 
 	int cond = (int)(radius / step + 0.5), index, _x = startX, _z = startZ;
-
-	if(_x < 0 || _x >= width)
-		_x = startX < 0 ? 0 : width - 1;
-	if(_z < 0 || _z >= height)
-		_z = startZ < 0 ? 0 : width - 1;
-
-	startID = _x + _z * width;
 
 	for(int y = 0; y < cond * 2; y++)
 	{
@@ -297,8 +282,64 @@ void Terrain::applyBrush(float radius, float intensity, elm::vec2 origin, uint &
 		}
 	}
 
-	amount = index - startID;
+	normalizeBrushEffect(startX, startZ, cond);
+}
 
+void Terrain::applyDefaultNormalizeBrush(float radius, float intensity, elm::vec2 origin)
+{
+	normalizerHeight = 0;
+	applyNormalizeBrush(radius, intensity, origin);
+}
+
+void Terrain::applyNormalizeBrush(float radius, float intensity, elm::vec2 origin)
+{
+	if(origin.x < position.x || origin.x > position.x + width * step)
+		if(origin.y < position.z || origin.y > position.z + height * step)
+			return;
+
+	if(normalizerHeight == -999999.f)
+		normalizerHeight = getHeightAt(origin);
+
+	radius *= step / 2;
+	int startX = (int)((origin.x - radius) / step + 0.5);
+	int startZ = (int)((origin.y - radius) / step + 0.5);
+
+	int cond = (int)(radius / step + 0.5), index, _x = startX, _z = startZ;
+
+	for(int y = 0; y < cond * 2; y++)
+	{
+		if(y + startZ < 0 || y + startZ >= (int)height)
+		{
+			if(y + startZ < 0)
+				continue;
+			else break;
+		}
+		for(int x = 0; x < cond * 2; x++)
+		{
+			if(x + startX < 0 || x + startX >= (int)width)
+			{
+				if(x + startX < 0)
+					continue;
+				else break;
+			}
+
+			index = x + startX + (y + startZ) * (int)width;
+			float len = elm::vecLength(-origin + points.at(index).xz);
+			if(len < radius)
+			{
+				float val = std::cos(pow(len / radius * 1.75f, 2)) + 1;
+				float diff = normalizerHeight - vBuffer.at(index).pos.y;
+				if(abs(diff) > 1) diff = diff < 0 ? -1 : 1;
+				vBuffer.at(index).pos.y = points.at(index).y += diff * intensity * val;
+			}
+		}
+	}
+
+	normalizeBrushEffect(startX, startZ, cond);
+}
+
+void Terrain::normalizeBrushEffect(int startX, int startZ, int cond)
+{
 	int index1, index2;
 	std::vector<elm::vec3> norms = std::vector<elm::vec3>(points.size());
 	elm::vec3 norm;

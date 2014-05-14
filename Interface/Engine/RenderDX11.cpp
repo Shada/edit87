@@ -545,8 +545,10 @@ void RenderDX11::createAndSetTerrainBuffers(std::vector<Vertex> *vBuffer, std::v
 
 	initData.pSysMem = &iBuffer->at(0);
 
+	bd.Usage = D3D11_USAGE_IMMUTABLE;
 	bd.BindFlags = D3D11_BIND_INDEX_BUFFER;
 	bd.ByteWidth = sizeof(unsigned int) * iBuffer->size();
+	bd.CPUAccessFlags = 0;
 
 	buffer = nullptr;
 	hr = g_device->CreateBuffer(&bd, &initData, &buffer);
@@ -565,7 +567,7 @@ void RenderDX11::createAndSetTerrainBuffers(std::vector<Vertex> *vBuffer, std::v
 	}
 }
 
-void RenderDX11::updateTerrainBuffer(std::vector<Vertex> *vBuffer, uint startID, uint amount)
+void RenderDX11::updateTerrainBuffer(std::vector<Vertex> *vBuffer)
 {
 	D3D11_MAPPED_SUBRESOURCE resource;
 	HRESULT hr = g_deviceContext->Map(g_buffers.at(terrainVertexBufferID), 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &resource);
@@ -579,7 +581,7 @@ void RenderDX11::updateTerrainBuffer(std::vector<Vertex> *vBuffer, uint startID,
 }
 
 const float color[4] = {0.f, 1.f, 1.f, 1.f};
-void RenderDX11::renderScene(Quadnode *node)
+void RenderDX11::renderScene()
 {
 	g_deviceContext->ClearRenderTargetView(g_renderTargetView, color);
 	g_deviceContext->ClearDepthStencilView(g_depthStencilView, D3D11_CLEAR_DEPTH, 1.f, 0);
