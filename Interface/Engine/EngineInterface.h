@@ -21,11 +21,14 @@ public:
 	virtual void leftMouseDown() = 0;
 	virtual void rightMouseUp() = 0;
 	virtual void leftMouseUp() = 0;
-	virtual void updateMouse(POINT mouse) = 0;
-
+	virtual void updateMouse(POINT mouse, float delta) = 0;
+	virtual void keyboardEvent(unsigned int _key, bool _isDown) = 0;
+	virtual void scroll() = 0;
 	/* Tool calls */
 	virtual void setElevationTool() = 0;
 	virtual void setTextureTool() = 0;
 	virtual void setObjectPlacerTool() = 0;
 	virtual void setSelctorTool() = 0;
+
+	virtual void placeObject(unsigned int _objectId) = 0;
 };

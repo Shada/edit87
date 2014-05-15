@@ -83,6 +83,7 @@
     <ClInclude Include="Engine.h" />
     <ClInclude Include="EngineFactory.h" />
     <ClInclude Include="EngineInterface.h" />
+    <ClInclude Include="KeyDefines.h" />
     <ClInclude Include="Mesh3D.h" />
     <ClInclude Include="Model.h" />
     <ClInclude Include="ModelDefinitions.h" />

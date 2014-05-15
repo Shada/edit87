@@ -124,8 +124,21 @@ bool Mesh3D::loadMesh(const char* filePath)
 			indices[j * scene->mMeshes[i]->mFaces->mNumIndices + tempPos + 2] = scene->mMeshes[i]->mFaces[j].mIndices[2]; 
 		}
 	}
+
+	
 	numVertices = vertices.size();
 	numIndices = indices.size();
+
+	for(int i = 0; i < numVertices; i++)
+	{
+		min.x = std::min<float>(min.x, vertices[i].x);
+		min.y = std::min<float>(min.y, vertices[i].y);
+		min.z = std::min<float>(min.z, vertices[i].z);
+
+		max.x = std::max<float>(max.x, vertices[i].x);
+		max.y = std::max<float>(max.y, vertices[i].y);
+		max.z = std::max<float>(max.z, vertices[i].z);
+	}
 
 	aiReleaseImport(scene);
 	return true;

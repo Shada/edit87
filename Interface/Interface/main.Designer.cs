@@ -549,6 +549,7 @@
             this.pb_scene.TabIndex = 4;
             this.pb_scene.TabStop = false;
             this.pb_scene.Visible = false;
+            this.pb_scene.MouseMove += new System.Windows.Forms.MouseEventHandler(this.pb_scene_MouseMove);
             // 
             // panel_Left
             // 
@@ -583,6 +584,7 @@
             this.MinimumSize = new System.Drawing.Size(1280, 720);
             this.Name = "MapEditor";
             this.Text = "Map Editor";
+            this.Scroll += new System.Windows.Forms.ScrollEventHandler(this.MapEditor_Scroll);
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.MapEditor_KeyDown);
             this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.MapEditor_KeyUp);
             this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.MapEditor_MouseDown);

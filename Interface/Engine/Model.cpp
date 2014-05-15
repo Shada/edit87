@@ -9,5 +9,5 @@ IModel::IModel()
 {}
 
 Composition::Composition()
-	: m_id(Lazy_Composition_Counter++)
+	: m_id(Lazy_Composition_Counter++), m_isSelected(false)
 {}

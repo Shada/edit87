@@ -308,7 +308,7 @@ HRESULT RenderDX11::init()
 
 	
 	Mesh3D *mesh = new Mesh3D();
-	if(!mesh->loadMesh("../Models/Collada/cube.dae"))
+	if(!mesh->loadMesh("../Models/Collada/duck.dae"))
 	{
 		MessageBoxA(hWnd, "Model load fail", "FAIL", 0);
 	}
@@ -633,9 +633,18 @@ void RenderDX11::renderScene(Quadnode *node)
 
 		if(!o)
 			continue;
+
+		if(g_comps[i].isSelected())
+			cb.highlight = elm::vec4(1,0.75,0.75,1);
+		else
+			cb.highlight = elm::vec4(1);
 		
 		cb.world = elm::translationMatrix(o->getPosition());
-		cb.world = elm::scalingMatrix(o->getScale()) * cb.world;
+		elm::mat4 rotate;
+		elm::yawPitchRoll(rotate, o->getRotation());
+		elm::mat4 scale		= elm::scalingMatrix(o->getScale());
+		elm::mat4 translate	= elm::translationMatrix(o->getPosition());
+		cb.world = scale * rotate * translate;
 		g_deviceContext->UpdateSubresource(g_buffers.at(cbOnChangeID), 0, NULL, &cb, 0, 0);
 
 		g_deviceContext->IASetVertexBuffers(0, 1, &g_buffers.at(g_meshes[o->getMeshID()]->getVertexBufferID()), &stride, &offset);

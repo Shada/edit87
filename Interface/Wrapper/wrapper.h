@@ -1,5 +1,11 @@
+#pragma once
+
 #include "stfdafx.h"
 #include "../Engine/EngineInterface.h"
+
+#include <windows.system.h>
+
+
 
 namespace wrap
 {
@@ -24,8 +30,10 @@ namespace wrap
 		void leftMouseDown();
 		void rightMouseUp();
 		void leftMouseUp();
-		void updateMouse(int x, int y);
-
+		void updateMouse(int x, int y, float delta);
+		void keyboardEvent(unsigned int _key, bool _isDown);
+		
+		
 		/* Tool calls */
 		void setElevationTool();
 		void setTextureTool();

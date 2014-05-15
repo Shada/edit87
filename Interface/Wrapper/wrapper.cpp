@@ -35,7 +35,7 @@ namespace wrap
 		gfx->move((float)xDir, (float)zDir);
 		gfx->renderScene();
 	}
-
+	
 	void GraphicsCommunicator::rightMouseDown()
 	{
 		gfx->rightMouseDown();
@@ -48,20 +48,25 @@ namespace wrap
 
 	void GraphicsCommunicator::rightMouseUp()
 	{
-
+		gfx->rightMouseUp();
 	}
 
 	void GraphicsCommunicator::leftMouseUp()
 	{
-		
+		gfx->leftMouseUp();
 	}
 
-	void GraphicsCommunicator::updateMouse(int x, int y)
+	void GraphicsCommunicator::updateMouse(int x, int y, float delta)
 	{
 		POINT p;
 		p.x = x;
 		p.y = y;
-		gfx->updateMouse(p);
+		gfx->updateMouse(p, delta);
+	}
+
+	void GraphicsCommunicator::keyboardEvent(unsigned int _key, bool _isDown)
+	{
+		gfx->keyboardEvent(_key, _isDown);
 	}
 
 	/* Tool calls */

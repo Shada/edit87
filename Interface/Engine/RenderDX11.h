@@ -28,6 +28,7 @@ struct CBOnChange
 {
 	elm::mat4 viewProj, world;
 	elm::vec4 position;
+	elm::vec4 highlight;
 };
 
 class RenderDX11

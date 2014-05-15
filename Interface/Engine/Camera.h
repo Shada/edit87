@@ -35,4 +35,6 @@ public:
 	std::vector<elm::vec4> getFrustum()	{ return frustum; }
 
 	elm::vec3 getWorldPos(int mousePosX, int mousePosY, Quadnode *node);
+
+	friend class Engine;
 };

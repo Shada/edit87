@@ -19,8 +19,10 @@ namespace LevelEditor
         private wrap.GraphicsCommunicator graphics;
         private int windowWidth, windowHeight;
         private bool forwardKey, backwardKey, leftKey, rightKey, leftMouseDown, rightMouseDown;
+        private bool RKey, TKey, MKey;
 
         private int mousePosX, mousePosY;
+        private float mouseDelta;
 
 		public MapEditor()
 		{
@@ -52,12 +54,12 @@ namespace LevelEditor
 
 		private void btn_TextureBrush_Click(object sender, EventArgs e)
 		{
-
+            graphics.setObjectPlacerTool();
 		}
 
 		private void lv_Textures_SelectedIndexChanged(object sender, EventArgs e)
 		{
-
+            
 		}
 
         private void toolsShortcutsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -229,6 +231,7 @@ namespace LevelEditor
 
 				tw_objects.Size = new Size(tw_objects.Size.Width, tw_objects.Size.Height + 34);
 				pb_scene.Size = new Size(pb_scene.Size.Width, pb_scene.Size.Height + 34);
+                
 			}
 			else
 			{
@@ -253,10 +256,16 @@ namespace LevelEditor
         {
             switch (e.KeyCode)
             {
-                case Keys.W:    forwardKey = true;      break;
+                case Keys.W:    forwardKey  = true;     break;
                 case Keys.S:    backwardKey = true;     break;
-                case Keys.A:    leftKey = true;         break;
-                case Keys.D:    rightKey = true;        break;
+                case Keys.A:    leftKey     = true;     break;
+                case Keys.D:    rightKey    = true;    break;
+                case Keys.R:
+                case Keys.M:
+                case Keys.N:
+                case Keys.T:
+                    graphics.keyboardEvent((uint)e.KeyCode, true);
+                        break;
             }
         }
 
@@ -266,6 +275,8 @@ namespace LevelEditor
             int zDir = rightKey ? 1 : leftKey ? -1 : 0;
             if (xDir != 0 || zDir != 0)
                 graphics.moveCamera(xDir, zDir);
+
+
 
             if (rightMouseDown)
                 graphics.rightMouseDown();
@@ -277,10 +288,16 @@ namespace LevelEditor
         {
             switch (e.KeyCode)
             {
-                case Keys.W:    forwardKey = false;     break;
+                case Keys.W:    forwardKey  = false;    break;
                 case Keys.S:    backwardKey = false;    break;
-                case Keys.A:    leftKey = false;        break;
-                case Keys.D:    rightKey = false;       break;
+                case Keys.A:    leftKey     = false;    break;
+                case Keys.D:    rightKey    = false;    break;
+                case Keys.R:
+                case Keys.M:
+                case Keys.N:
+                case Keys.T:
+                    graphics.keyboardEvent((uint)e.KeyCode, true);
+                    break;
             }
         }
 
@@ -322,7 +339,19 @@ namespace LevelEditor
         {
             mousePosX = e.X;
             mousePosY = e.Y;
-            graphics.updateMouse(mousePosX, mousePosY);
+
+            graphics.updateMouse(mousePosX, mousePosY, 0);
+        }
+
+        private void pb_scene_MouseMove(object sender, MouseEventArgs e)
+        {
+            mouseDelta = e.Delta;
+            graphics.updateMouse(mousePosX, mousePosY, mouseDelta);
+        }
+
+        private void MapEditor_Scroll(object sender, ScrollEventArgs e)
+        {
+            mouseDelta = e.NewValue;
         }
 	}
 }

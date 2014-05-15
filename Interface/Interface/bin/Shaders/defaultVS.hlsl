@@ -3,6 +3,7 @@ cbuffer onChanges : register(b0)
 	float4x4 viewProj;
 	float4x4 world;
 	float4 eyePos;
+	float4 highlightColor;
 };
 
 struct VS_Input

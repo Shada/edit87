@@ -122,8 +122,15 @@ public:
 	unsigned int getId()
 	{ return m_id; }
 
+	bool isSelected()
+	{ return m_isSelected; }
+
+	void setSelected(bool _toggle)
+	{ m_isSelected = _toggle; }
+
 private:
 	map< size_t, IModel* >	m_properties;
 	string					m_name;
 	unsigned int			m_id;
+	bool					m_isSelected;
 };

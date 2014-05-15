@@ -30,6 +30,9 @@ public:
 	int getTexDiffuseID() { return texDiffuseID; }
 	void setTexDiffuseID(int id) { texDiffuseID = id; }
 	
+	elm::vec3 getMinVertex() { return min; }
+	elm::vec3 getMaxVertex() { return max; }
+
 private:
 	int vertexBufferID;
 	int normalBufferID;
@@ -47,6 +50,8 @@ private:
 	std::string texDiffusePath;
 
 	int texDiffuseID;
+
+	elm::vec3 min, max;
 	// store all raw mesh data here?
 	// load the mesh here or from outside??
 	// start with here and then move it out...
