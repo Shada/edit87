@@ -41,6 +41,7 @@
 			this.lv_Textures.Location = new System.Drawing.Point(6, 32);
 			this.lv_Textures.Name = "lv_Textures";
 			this.lv_Textures.Size = new System.Drawing.Size(180, 141);
+			this.lv_Textures.SmallImageList = this.textureList;
 			this.lv_Textures.TabIndex = 31;
 			this.lv_Textures.UseCompatibleStateImageBehavior = false;
 			// 

@@ -9,6 +9,7 @@ using System.Drawing;
 using System.IO;
 using System.Xml;
 using System.Globalization;
+using WeifenLuo.WinFormsUI.Docking;
 
 namespace LevelEditor
 {
@@ -35,6 +36,62 @@ namespace LevelEditor
 		{ 
 			get { return projectDirectory; }
 			set { projectDirectory = value; }
+		}
+
+		public static class Panels
+		{
+			public struct PanelStruct
+			{
+				private DockContent m_panel;
+				private string m_name;
+
+				public PanelStruct(DockContent _panel, string _name)
+				{
+					m_panel = _panel;
+					m_name = _name;
+				}
+
+				public DockContent Panel
+				{
+					get { return m_panel; }
+					set { m_panel = value; }
+				}
+
+				public string Name
+				{
+					get { return m_name; }
+					set { m_name = value; }
+				}
+			}
+
+			private static List<PanelStruct> panels = new List<PanelStruct>();
+
+			public static void addPanel(DockContent _panel, string _name)
+			{
+				panels.Add(new PanelStruct(_panel, _name));
+			}
+
+			public static IDockContent getpanelByName(string _name)
+			{
+				foreach (PanelStruct p in panels)
+				{
+					if (p.Name == _name)
+					{
+						return p.Panel;
+					}
+				}
+
+				return null;
+			}
+
+			public static void destroy()
+			{
+				foreach (PanelStruct p in panels)
+				{
+					if (p.Panel != null)
+						p.Panel.Close();
+				}
+			}
 		}
 
 		public static string ProjectName

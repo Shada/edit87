@@ -29,12 +29,7 @@ namespace LevelEditor
         int windowWidth, windowHeight;
 
         DeserializeDockContent deserializeDockContent;
-        public TreeNode resourcesRoot = new TreeNode("Root", 0, 0);
-
-        DockContent[] panels    = new DockContent[10];
-        string[] panelStrings   = new string[10];       //the string names of the panel class types
-
-		
+        public TreeNode resourcesRoot = new TreeNode("Root", 0, 0);		
 
 		public MapEditor()
 		{
@@ -46,22 +41,19 @@ namespace LevelEditor
             windowWidth = Size.Width;
             windowHeight = Size.Height;
 
-            deserializeDockContent = new DeserializeDockContent(GetContentFromPersistString);
+            deserializeDockContent = new DeserializeDockContent(Utils.Panels.getpanelByName);
             mainDockPanel.LoadFromXml(activeLayoutName, deserializeDockContent);
 
             timer1.Interval = 20;
             timer1.Start();
-
-            //graphics = new GraphicsCommunicator(panels[3].Handle);
-            //graphics.createTerrain(256, 256, 5, false, 0);
 		}
 
 		public void initPanels()
 		{
-			PanResources res = (PanResources)panels[2];
-			res.init(new TreeNode(Utils.ProjectName, 0, 0), (PanProperties)panels[5]);
+			PanResources res = (PanResources)Utils.Panels.getpanelByName("LevelEditor.PanResources");
+			res.init(new TreeNode(Utils.ProjectName, 0, 0));
 
-			PanLibrary lib = (PanLibrary)panels[4];
+			PanLibrary lib = (PanLibrary)Utils.Panels.getpanelByName("LevelEditor.PanLibrary");
 			lib.init(new TreeNode(Utils.ProjectName, 0, 0));
 
 			saveToolStripMenuItem.Enabled = true;
@@ -71,23 +63,12 @@ namespace LevelEditor
 
         private void createStandardControls()
         {
-            panels[0] = new PanBrushes();
-            panelStrings[0] = typeof(PanBrushes).ToString();
-
-            panels[1] = new PanTextures();
-            panelStrings[1] = typeof(PanTextures).ToString();
-
-            panels[2] = new PanResources();
-            panelStrings[2] = typeof(PanResources).ToString();
-
-            panels[3] = new PanRender();
-            panelStrings[3] = typeof(PanRender).ToString();
-
-            panels[4] = new PanLibrary();
-            panelStrings[4] = typeof(PanLibrary).ToString();
-
-            panels[5] = new PanProperties();
-            panelStrings[5] = typeof(PanProperties).ToString();
+			Utils.Panels.addPanel(new PanBrushes(), typeof(PanBrushes).ToString());
+			Utils.Panels.addPanel(new PanTextures(), typeof(PanTextures).ToString());
+			Utils.Panels.addPanel(new PanResources(), typeof(PanResources).ToString());
+			Utils.Panels.addPanel(new PanRender(), typeof(PanRender).ToString());
+			Utils.Panels.addPanel(new PanLibrary(), typeof(PanLibrary).ToString());
+			Utils.Panels.addPanel(new PanProperties(), typeof(PanProperties).ToString());
         }
 
 		#region events
@@ -225,7 +206,7 @@ namespace LevelEditor
 
 		private void brushToolsToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			toggleDisplay(panels[0]);
+			toggleDisplay();
 		}
 
 		private void resetToDefaultToolStripMenuItem_Click(object sender, EventArgs e)
@@ -325,7 +306,7 @@ namespace LevelEditor
 
 		private void mapEditorLoad()
 		{
-			DeserializeDockContent ddc = new DeserializeDockContent(GetContentFromPersistString);
+			DeserializeDockContent ddc = new DeserializeDockContent(Utils.Panels.getpanelByName);
 			mainDockPanel.LoadFromXml(activeLayoutName, ddc);
 		}
 
@@ -360,12 +341,19 @@ namespace LevelEditor
 			mainDockPanel.DockRightPortion = 200;
 			mainDockPanel.DockLeftPortion = 215;
 
-			panels[0].Show(mainDockPanel, DockState.DockRight);
-			panels[1].Show(panels[0].Pane, DockAlignment.Bottom, 0.62);
-			panels[2].Show(panels[1].Pane, DockAlignment.Bottom, 0.50);
-			panels[3].Show(mainDockPanel, DockState.Document);
-			panels[4].Show(mainDockPanel, DockState.DockLeft);
-			panels[5].Show(panels[4].Pane, DockAlignment.Bottom, 0.50);
+			PanBrushes brush = (PanBrushes)Utils.Panels.getpanelByName("LevelEditor.PanBrushes");
+			PanTextures texture = (PanTextures)Utils.Panels.getpanelByName("LevelEditor.PanTextures");
+			PanResources resources = (PanResources)Utils.Panels.getpanelByName("LevelEditor.PanResources");
+			PanRender render = (PanRender)Utils.Panels.getpanelByName("LevelEditor.PanRender");
+			PanLibrary library = (PanLibrary)Utils.Panels.getpanelByName("LevelEditor.PanLibrary");
+			PanProperties properties = (PanProperties)Utils.Panels.getpanelByName("LevelEditor.PanProperties");
+
+			brush.Show(mainDockPanel, DockState.DockRight);
+			texture.Show(brush.Pane, DockAlignment.Bottom, 0.62);
+			resources.Show(texture.Pane, DockAlignment.Bottom, 0.50);
+			render.Show(mainDockPanel, DockState.Document);
+			library.Show(mainDockPanel, DockState.DockLeft);
+			properties.Show(library.Pane, DockAlignment.Bottom, 0.50);
 
 			mainDockPanel.ResumeLayout(true, true);
 		}
@@ -387,10 +375,10 @@ namespace LevelEditor
 
 		private void saveProject()
 		{
-			PanResources res = (PanResources)panels[2];
+			PanResources res = (PanResources)Utils.Panels.getpanelByName("LevelEditor.PanResources");
 			TreeNode tnRes = res.resourcesRoot;
-			
-			PanLibrary lib = (PanLibrary)panels[4];
+
+			PanLibrary lib = (PanLibrary)Utils.Panels.getpanelByName("LevelEditor.PanLibrary");
 			TreeNode tnLib = lib.libraryRoot;
 
 			XmlNode root = Utils.ProjectFile.DocumentElement;
@@ -500,8 +488,8 @@ namespace LevelEditor
 
 		private void readXML()
 		{
-			PanResources res = (PanResources)panels[2];
-			PanLibrary lib = (PanLibrary)panels[4];
+			PanResources res = (PanResources)Utils.Panels.getpanelByName("LevelEditor.PanResources");
+			PanLibrary lib = (PanLibrary)Utils.Panels.getpanelByName("LevelEditor.PanLibrary");
 
 			XmlNode projName = Utils.ProjectFile.SelectSingleNode("/root/header/projectName");
 			Utils.ProjectName = projName.InnerText;
@@ -515,7 +503,7 @@ namespace LevelEditor
 			readXMLNode(xmlResources, ref twResources);
 			readXMLNode(xmlLibrary, ref twLibrary);
 
-			res.init(twResources, (PanProperties)panels[5]);
+			res.init(twResources);
 			lib.init(twLibrary);
 
 			saveToolStripMenuItem.Enabled = true;
@@ -531,17 +519,33 @@ namespace LevelEditor
 			{
 				foreach (XmlNode node in _xmlNode.ChildNodes)
 				{
-					if (getTagType(node) == Utils.twTag.TYPE.FOLDER)
+					Utils.twTag.TYPE t = getTagType(node);
+
+					if (t == Utils.twTag.TYPE.FOLDER)
 					{
 						TreeNode tn = new TreeNode();
 						readXMLNode(node, ref tn);
 						_twNode.Nodes.Add(tn);
 					}
-					else if(getTagType(node) == Utils.twTag.TYPE.IMAGE)
+					else if(t == Utils.twTag.TYPE.IMAGE)
 					{
 						TreeNode tn = readXMLNodeHelper(node);
 						tn.ImageIndex = 1;
 						tn.SelectedImageIndex = 1;
+						_twNode.Nodes.Add(tn);
+					}
+					else if (t == Utils.twTag.TYPE.MESH)
+					{
+						TreeNode tn = readXMLNodeHelper(node);
+						tn.ImageIndex = 1;			//should be changed
+						tn.SelectedImageIndex = 1;	//should be changed
+						_twNode.Nodes.Add(tn);
+					}
+					else if (t == Utils.twTag.TYPE.SOUND)
+					{
+						TreeNode tn = readXMLNodeHelper(node);
+						tn.ImageIndex = 1;			//should be changed
+						tn.SelectedImageIndex = 1;	//should be changed
 						_twNode.Nodes.Add(tn);
 					}
 				}
@@ -684,8 +688,10 @@ namespace LevelEditor
             }
 		}
 
-        private void toggleDisplay(DockContent panel)
+        private void toggleDisplay()
         {
+			DockContent panel = (PanBrushes)Utils.Panels.getpanelByName("LevelEditor.PanBrushes");
+
             if (!panel.IsDisposed)
             {
                 if (panel.IsHidden)
@@ -711,20 +717,8 @@ namespace LevelEditor
             }
             else
             {
-                for (int i = 0; i < panels.Length; i++)
-                {
-                    if(panels[i] != null)
-                        panels[i].Close();
-                }
+				Utils.Panels.destroy();
             }
-        }
-
-        private IDockContent GetContentFromPersistString(string persistString)
-        {
-            for (uint i = 0; i < panels.Length; i++)
-                if (persistString == panelStrings[i])
-                    return panels[i];
-            return null;
         }
 
 		private void NO()

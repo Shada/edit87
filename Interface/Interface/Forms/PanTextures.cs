@@ -14,10 +14,19 @@ namespace LevelEditor
     public partial class PanTextures : DockContent
     {
         int lv_TexturesSizeDiff = 12;
+		List<Image> FullImages = new List<System.Drawing.Image>();
+
         public PanTextures()
         {
             InitializeComponent();
         }
+
+		public void addImages(Image _img)
+		{
+			FullImages.Add(_img);
+			textureList.Images.Add(_img);
+			lv_Textures.Update();
+		}
 
         private void PanTextures_SizeChanged(object sender, EventArgs e)
         {

@@ -17,16 +17,16 @@ namespace LevelEditor
 		string[] allowedmeshFormats = new string[] { "fbx", "obj" };
 		string fileRealName = "";
 		TreeNode copyPaste, newNode;
-        PanResources panRes;
+		PanResources res;
 
-        public ImportResource(PanResources _panRes)
+        public ImportResource()
 		{
 			InitializeComponent();
-            panRes = _panRes;
+			res = (PanResources)Utils.Panels.getpanelByName("LevelEditor.PanResources");
 
 			ofd_importResource.Title = "Import Resource";
 
-			tw_fileTree.Nodes.Add((TreeNode)panRes.resourcesRoot.Clone());
+			tw_fileTree.Nodes.Add((TreeNode)res.resourcesRoot.Clone());
             tw_fileTree.SelectedNode = tw_fileTree.Nodes[0];
 
             ToolStripMenuItem twMenuCreateFolder = new ToolStripMenuItem();
@@ -133,13 +133,25 @@ namespace LevelEditor
 
 		private void btn_import_Click(object sender, EventArgs e)
 		{
-			File.Copy(txb_input.Text, Utils.ProjectDirectory.FullName + "\\" + fileRealName);
+			try
+			{
+				File.Copy(txb_input.Text, Utils.ProjectDirectory.FullName + "\\" + fileRealName);
+			}
+			catch
+			{ 
+			}			
 
 			Utils.twTag t = (Utils.twTag)newNode.Tag;
 			t.addAttribute(Utils.twTagAttribute.dataType.STRING, "showname", txb_fileName.Text);
 			newNode.Tag = t;
 
-			panRes.updateTWRes(tw_fileTree.Nodes[0]);
+			if (t.Type == Utils.twTag.TYPE.IMAGE)
+			{
+				PanTextures tex = (PanTextures)Utils.Panels.getpanelByName("LevelEditor.PanTextures");
+				tex.addImages(Image.FromFile(Utils.ProjectDirectory.FullName + "\\" + fileRealName));
+			}
+
+			res.updateTWRes(tw_fileTree.Nodes[0]);
 			this.Close();
 		}
 
