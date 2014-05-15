@@ -34,7 +34,7 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Blendmap.h">
-	  <Filter>Header Files</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Engine.h">
       <Filter>Header Files</Filter>
@@ -65,12 +65,6 @@
       <Filter>Shaders</Filter>
     </FxCompile>
     <FxCompile Include="..\Interface\bin\Shaders\defaultVS.hlsl">
-      <Filter>Shaders</Filter>
-    </FxCompile>
-    <FxCompile Include="..\Interface\bin\Shaders\blendmapPS.hlsl">
-      <Filter>Shaders</Filter>
-    </FxCompile>
-    <FxCompile Include="..\Interface\bin\Shaders\blendmapVS.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
     <FxCompile Include="..\Interface\bin\Shaders\blendmapCS.hlsl">

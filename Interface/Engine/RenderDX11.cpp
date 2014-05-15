@@ -436,7 +436,9 @@ void RenderDX11::renderScene()
 	g_deviceContext->IASetInputLayout(g_layout);
 	
 	g_deviceContext->PSSetSamplers(0, 1, &g_wrap);
-	g_deviceContext->PSSetShaderResources(0, 1, &g_textures.at(0));
+	//g_deviceContext->PSSetShaderResources(0, 1, &g_textures.at(0));
+	blendmap->CSexec();
+
 	g_deviceContext->VSSetConstantBuffers(0, 1, &g_buffers.at(cbOnChangeID));
 
 	float blendFactor[4] = {0.f, 0.f, 0.f, 0.f};
@@ -450,6 +452,7 @@ void RenderDX11::renderScene()
 
 	g_deviceContext->VSSetShader(g_terrainVS, NULL, 0);
 	g_deviceContext->PSSetShader(g_terrainPS, NULL, 0);
+
 
 	g_deviceContext->DrawIndexed(terrainIndexCount, 0, 0);
 	
@@ -475,7 +478,7 @@ RenderDX11::~RenderDX11()
 	SAFE_RELEASE(g_depthStencilStateEnable);
 }
 
-void RenderDX11::blendmapBrush(float _radius, float _intensity, elm::vec2 _origin, char* _texture)
+void RenderDX11::blendmapBrush(float _radius, float _intensity, elm::vec2 _origin, char* _texture, float _step)
 {
-	blendmap->applayBrush(_radius,_intensity,_origin,_texture);
+	blendmap->applayBrush(_radius, _intensity, _origin, _texture, _step);
 }

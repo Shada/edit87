@@ -51,7 +51,7 @@ void Engine::leftMouseDown()
 	//dx->createAndSetTerrainBuffers(terrain->getVBuffer(), terrain->getIBuffer());
 	dx->updateTerrainBuffer(terrain->getVBuffer());
 
-	dx->blendmapBrush(100, 0.5, mouseWorldPos.xz, "..\\Textures\\grass.png");
+	dx->blendmapBrush(10, 1, mouseWorldPos.xz, "..\\Textures\\lava.jpg",terrain->getStep());
 
 	dx->renderScene();
 }

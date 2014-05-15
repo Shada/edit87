@@ -82,5 +82,5 @@ public:
 	void updateTerrainBuffer(std::vector<Vertex> *vBuffer);
 	void createAndSetTerrainBuffers(std::vector<Vertex> *vBuffer, std::vector<uint> *iBuffer);
 
-	void blendmapBrush(float _radius, float _intensity, elm::vec2 _origin, char* _texture);
+	void blendmapBrush(float _radius, float _intensity, elm::vec2 _origin, char* _texture, float _step);
 };

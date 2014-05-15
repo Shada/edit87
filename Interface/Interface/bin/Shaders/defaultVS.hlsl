@@ -36,6 +36,6 @@ VS_Output main(VS_Input input)
 
 	//128 = width / 2, 20 = pointStep
 	output.texBlend.x = (input.position.x + 256 * 5) / (256 * 5);
-	output.texBlend.y = (input.position.z - 256 * 5) / (-256 * 5);
+	output.texBlend.y = (input.position.z - 256 * 5) / (256 * 5);
 	return output;
 }

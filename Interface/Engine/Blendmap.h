@@ -13,7 +13,8 @@ public:
 	Blendmap();
 	~Blendmap();
 	void init(ID3D11Device *_g_device, ID3D11DeviceContext *_g_deviceContext, Terrain *_terrain, std::vector<ID3D11ShaderResourceView*> *_g_textures, HWND *_hWnd);
-	void applayBrush(float _radius, float _intensity, elm::vec2 _origin, char* _texture);
+	void applayBrush(float _radius, float _intensity, elm::vec2 _origin, char* _texture, float _step);
+	void CSexec();
 
 private:
 
@@ -27,7 +28,6 @@ private:
 	HRESULT compileShader(LPCSTR filePath, LPCSTR shaderType, ID3DBlob **shaderBlob);
 	void createTexture3D(unsigned int _width, unsigned int _height, unsigned int _depth);
 	void createShaderResourceView3D();
-	void CSexec();
 	void CSexecupdate();
 	int addTexture(const char *_texture);
 

@@ -35,16 +35,16 @@ void Blendmap::init(ID3D11Device *_g_device, ID3D11DeviceContext *_g_deviceConte
 
 }
 
-void Blendmap::applayBrush(float _radius, float _intensity, elm::vec2 _origin, char* _texture)
+void Blendmap::applayBrush(float _radius, float _intensity, elm::vec2 _origin, char* _texture, float _step)
 {
 	//--------------------------------------- set the constant buffer
 	int temp = addTexture(_texture);
 	
-	config.textureIndex.x = temp / 4;
+	config.textureIndex.x = (int)(temp / 4);
 	config.textureIndex.y = temp % 4;
 
 	config.intensity = _intensity;
-	config.origin = _origin;
+	config.origin = _origin / _step;
 	config.radius = _radius;
 	config.pad = elm::vec2(0, 0);
 
@@ -84,6 +84,8 @@ void Blendmap::createTexture2DArray(int _width, int _height)
 	addTexture("..\\Textures\\grass.png");
 	addTexture("..\\Textures\\lava.jpg");
 	addTexture("..\\Textures\\sand.jpg");
+	addTexture("..\\Textures\\lavag.jpg");
+	LoadTextureInToTextureArray("..\\Textures\\lava.jpg", 8);
 
 
 	//---------------------------------------------------------------------------- creating compute shader resources
@@ -179,16 +181,6 @@ int Blendmap::LoadTextureInToTextureArray(const char *pAddr, int Index)
 	}
 
 
-	//hr = D3DX11CreateTextureFromMemory(g_device, , FileSize, &ImageloadInfo, NULL, &pRes, NULL);
-
-	//tex->GetResource(&pRes);
-
-	if (FAILED(hr))
-	{
-		MessageBox(*hWnd, "Resource load made fail, lol", "fail in Blendmap, yo", 0);
-		return 0;
-	}
-
 	if (pRes)
 	{
 		ID3D11Texture2D* pTemp;
@@ -225,7 +217,7 @@ int Blendmap::LoadTextureInToTextureArray(const char *pAddr, int Index)
 
 	}
 
-
+	return 1;
 }
 
 void Blendmap::createUAVTexture2D(int _width, int _height)
@@ -283,8 +275,8 @@ void Blendmap::createUAVTextureView3D()
 	//desc.Texture3D.WSize = 0;
 	//desc.ViewDimension = D3D11_UAV_DIMENSION_TEXTURE3D;
 
-	result = g_device->CreateUnorderedAccessView(blendmapsTextures, &desc, &uavtd);
-	//result = g_device->CreateUnorderedAccessView(blendmapsTextures, NULL, &uavtd);
+	//result = g_device->CreateUnorderedAccessView(blendmapsTextures, &desc, &uavtd);
+	result = g_device->CreateUnorderedAccessView(blendmapsTextures, NULL, &uavtd);
 	if (FAILED(result))
 	{
 		MessageBox(NULL, "Failed to create UAV texture for the UAV texture..", "RenderDX11 Error", S_OK);
@@ -399,23 +391,23 @@ void Blendmap::createShaderResourceView3D()
 void Blendmap::CSexec()
 {
 	// write
-	g_deviceContext->CSSetUnorderedAccessViews(0, 1, &uav, NULL);
+	//g_deviceContext->CSSetUnorderedAccessViews(0, 1, &uav, NULL);
 
-	g_deviceContext->CSSetShaderResources(0, 1, &srvArray);
-	g_deviceContext->CSSetShaderResources(1, 1, &blendmapsSRV);
+	g_deviceContext->PSSetShaderResources(0, 1, &srvArray);
+	g_deviceContext->PSSetShaderResources(1, 1, &blendmapsSRV);
 
-	g_deviceContext->CSSetShader(computeShader, NULL, 0);
+	//g_deviceContext->CSSetShader(computeShader, NULL, 0);
 
-	g_deviceContext->Dispatch(45, 45, 1);
+	//g_deviceContext->Dispatch(45, 45, 1);
 
-	g_deviceContext->CSSetShader(NULL, NULL, 0);
+	//g_deviceContext->CSSetShader(NULL, NULL, 0);
 
-	ID3D11UnorderedAccessView* nullUAV[1] = { NULL };
-	g_deviceContext->CSSetUnorderedAccessViews(0, 1, nullUAV, NULL);
+	//ID3D11UnorderedAccessView* nullUAV[1] = { NULL };
+	//g_deviceContext->CSSetUnorderedAccessViews(0, 1, nullUAV, NULL);
 
-	ID3D11ShaderResourceView* nullSRV = NULL;
-	g_deviceContext->CSSetShaderResources(0, 1, &nullSRV);
-	g_deviceContext->CSSetShaderResources(1, 1, &nullSRV);
+	//ID3D11ShaderResourceView* nullSRV = NULL;
+	//g_deviceContext->CSSetShaderResources(0, 1, &nullSRV);
+	//g_deviceContext->CSSetShaderResources(1, 1, &nullSRV);
 
 }
 
