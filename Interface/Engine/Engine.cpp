@@ -12,7 +12,12 @@ Engine::Engine(HWND hwnd)
 	terrain = nullptr;
 
 	dx = new RenderDX11(hWnd);
-	m_composition = nullptr;
+
+	m_selectedObject	= nullptr;
+	m_defaultRotation	= elm::vec3(0);
+	m_defaultScale		= elm::vec3(1);
+
+
 	mouseWorldPos = elm::vec3(200, 0, 1000);
 }
 
@@ -65,6 +70,9 @@ void Engine::leftMouseDown()
 	switch(selectedTool)
 	{
 	case Tools::ELEVATION:
+			terrain->applyBrush(100, 1, mouseWorldPos.xz);
+			if(minmaxCalcDone)
+				findMinMaxValues();
 		break;
 	case Tools::SELECTOR:
 		
@@ -72,15 +80,12 @@ void Engine::leftMouseDown()
 			switch(m_currentKeyBinding.first)
 			{
 			case Key::STATE_MOVE:
-				if(m_composition != nullptr)
 				moveObject();
 				break;
 			case Key::STATE_ROTATE:
-				if(m_composition != nullptr)
 				rotateObject();
 				break;
 			case Key::STATE_SCALE:
-				if(m_composition != nullptr)
 				scaleObject();
 				break;
 			case Key::STATE_PLACE:
@@ -89,9 +94,6 @@ void Engine::leftMouseDown()
 			}
 		break;
 	}
-	//terrain->applyBrush(100, 1, mouseWorldPos.xz);
-	//if(minmaxCalcDone)
-	//	findMinMaxValues();
 
 	camera->move(elm::vec2(0));
 
@@ -104,12 +106,14 @@ void Engine::leftMouseDown()
 void Engine::leftMouseUp()
 {
 	if(m_currentKeyBinding.second == true)
+	{
 		switch(m_currentKeyBinding.first)
 		{
 		case Key::STATE_PLACE:
 			placeObject(0);
 			break;
 		}
+	}
 
 	switch(selectedTool)
 	{
@@ -130,11 +134,12 @@ void Engine::rightMouseDown()
 	switch(selectedTool)
 	{
 	case Tools::ELEVATION:
+		terrain->applyBrush(100, -1, mouseWorldPos.xz);
+		if(minmaxCalcDone)
+			findMinMaxValues();
 		break;
 	}
-	terrain->applyBrush(100, -1, mouseWorldPos.xz);
-	if(minmaxCalcDone)
-		findMinMaxValues();
+
 
 	camera->move(elm::vec2(0));
 
@@ -152,10 +157,10 @@ void Engine::rightMouseUp()
 		break;
 	}
 
-	if(m_composition)
+	if(m_selectedObject != nullptr)
 	{
-		m_composition->setSelected(false);
-		m_composition = nullptr;
+		m_selectedObject->setSelected(false);
+		m_selectedObject = nullptr;
 		dx->renderScene(node);
 	}
 
@@ -187,14 +192,55 @@ void Engine::keyboardEvent(unsigned int _key, bool _isDown)
 
 	m_currentKeyBinding = std::make_pair(_key, _isDown);
 	int i = 42;
-}
 
+	switch(m_currentKeyBinding.first)
+	{
+	case Key::STATE_ROTATE:
+	case Key::STATE_MOVE:
+	case Key::STATE_SCALE:		
+	case Key::STATE_PLACE:	
+		setSelctorTool();
+		break;
+
+	case Key::STATE_TERRAIN:
+		setElevationTool();
+		break;
+
+	default:
+		m_currentKeyBinding = std::make_pair( (unsigned int)Key::NO_STATE, true);
+		break;
+
+	 }
+}
 void Engine::findMinMaxValues()
 {
 	minmaxCalcDone = false;
 	minmaxCalc = std::thread(&Terrain::findMinMaxValues, terrain, std::ref(leafNodes));
 	minmaxCalc.detach();
 	minmaxCalcDone = true;
+}
+
+void Engine::pickRay(POINT _xy, elm::vec3& _outRayDir, elm::vec3& _outRayOrigin)
+{
+	// Compute the vector of the pick ray in screen space
+    elm::vec3 v;
+	v.x =  (((2.f * (float)_xy.x) / (float)dx->camera->width) - 1.f) /  dx->camera->mProj._11;
+	v.y = -(((2.f * (float)_xy.y) /  (float)dx->camera->height) - 1.f) /  dx->camera->mProj._22;
+    v.z =  1.f;
+
+    // Get the inverse view matrix
+    elm::mat4 m = elm::inverse( dx->camera->mView);
+
+	// Transform the screen space pick ray into 3D space
+    _outRayDir.x  = v.x * m._11 + v.y * m._21 + v.z * m._31;
+    _outRayDir.y  = v.x * m._12 + v.y * m._22 + v.z * m._32;
+    _outRayDir.z  = v.x * m._13 + v.y * m._23 + v.z * m._33;
+
+	_outRayDir = elm::normalize(_outRayDir);
+	_outRayOrigin = m.r[3].xyz;
+
+	// calc origin as intersection with near frustum
+	_outRayOrigin += _outRayDir;
 }
 
 bool rayVsAABB(elm::vec3 rayDirFrac, elm::vec3 rayOrig, elm::vec3 min, elm::vec3 max)
@@ -219,36 +265,11 @@ bool rayVsAABB(elm::vec3 rayDirFrac, elm::vec3 rayOrig, elm::vec3 min, elm::vec3
 
 void Engine::selectObject()
 {
-	if(m_composition)
-		return;
-
 	elm::vec3 vPickRayDir, vPickRayOrig;
-	// Compute the vector of the pick ray in screen space
-    elm::vec3 v;
-	v.x =  (((2.f * (float)mousePos.x) / (float)dx->camera->width) - 1.f) /  dx->camera->mProj._11;
-	v.y = -(((2.f * (float)mousePos.y) /  (float)dx->camera->height) - 1.f) /  dx->camera->mProj._22;
-    v.z =  1.f;
-
-    // Get the inverse view matrix
-    elm::mat4 m = elm::inverse( dx->camera->mView);
-
-	// Transform the screen space pick ray into 3D space
-    vPickRayDir.x  = v.x * m._11 + v.y * m._21 + v.z * m._31;
-    vPickRayDir.y  = v.x * m._12 + v.y * m._22 + v.z * m._32;
-    vPickRayDir.z  = v.x * m._13 + v.y * m._23 + v.z * m._33;
-
-	vPickRayDir = elm::normalize(vPickRayDir);
-	vPickRayOrig = m.r[3].xyz;
-    //vPickRayOrig.x = m._41;
-    //vPickRayOrig.y = m._42;
-    //vPickRayOrig.z = m._43;
-
-	// calc origin as intersection with near frustum
-	vPickRayOrig += vPickRayDir;
+	pickRay(mousePos, vPickRayDir, vPickRayOrig);
 
 	for( auto &c : dx->g_comps )
 	{
-		
 		Object3D* object = c.getProperty<Object3D>();
 
 		if(!object)
@@ -261,19 +282,7 @@ void Engine::selectObject()
 
 		if( rayVsAABB(1.f / vPickRayDir, vPickRayOrig, min, max) )
 		{
-			float xDiff, yDiff;
-			xDiff = mousePos.x - oldMousePos.x;
-			yDiff = mousePos.y - oldMousePos.y;
-
-			m_composition = &c;
-
-			//elm::vec3 dpos = elm::vec3(xDiff, 0, -yDiff);
-			//elm::vec3 npos = object->getPosition() + dpos;
-			//object->setPosition( npos );
-
-			//c.setSelected(true);
-			//selectedTool = Tools::OBJECTPLACER;
-			//break;
+			m_selectedObject = &c;
 		}
 		else
 		{
@@ -281,37 +290,19 @@ void Engine::selectObject()
 		}
 	}
 
-	if(m_composition)
-		m_composition->setSelected(true);
+	if(m_selectedObject != nullptr)
+		m_selectedObject->setSelected(true);
 }
 
 void Engine::scaleObject()
 {
+	if(!m_selectedObject)
+		return;
+
 	elm::vec3 vPickRayDir, vPickRayOrig;
-	// Compute the vector of the pick ray in screen space
-    elm::vec3 v;
-	v.x =  (((2.f * (float)mousePos.x) / (float)dx->camera->width) - 1.f) /  dx->camera->mProj._11;
-	v.y = -(((2.f * (float)mousePos.y) /  (float)dx->camera->height) - 1.f) /  dx->camera->mProj._22;
-    v.z =  1.f;
+	pickRay(mousePos, vPickRayDir, vPickRayOrig);
 
-    // Get the inverse view matrix
-    elm::mat4 m = elm::inverse( dx->camera->mView);
-
-	// Transform the screen space pick ray into 3D space
-    vPickRayDir.x  = v.x * m._11 + v.y * m._21 + v.z * m._31;
-    vPickRayDir.y  = v.x * m._12 + v.y * m._22 + v.z * m._32;
-    vPickRayDir.z  = v.x * m._13 + v.y * m._23 + v.z * m._33;
-
-	vPickRayDir = elm::normalize(vPickRayDir);
-	vPickRayOrig = m.r[3].xyz;
-    //vPickRayOrig.x = m._41;
-    //vPickRayOrig.y = m._42;
-    //vPickRayOrig.z = m._43;
-
-	// calc origin as intersection with near frustum
-	vPickRayOrig += vPickRayDir;
-
-	Object3D* object = m_composition->getProperty<Object3D>();
+	Object3D* object = m_selectedObject->getProperty<Object3D>();
 
 	if(!object)
 		return;
@@ -342,31 +333,13 @@ void Engine::scaleObject()
 
 void Engine::rotateObject()
 {
+	if(!m_selectedObject)
+		return;
+
 	elm::vec3 vPickRayDir, vPickRayOrig;
-	// Compute the vector of the pick ray in screen space
-    elm::vec3 v;
-	v.x =  (((2.f * (float)mousePos.x) / (float)dx->camera->width) - 1.f) /  dx->camera->mProj._11;
-	v.y = -(((2.f * (float)mousePos.y) /  (float)dx->camera->height) - 1.f) /  dx->camera->mProj._22;
-    v.z =  1.f;
+    pickRay(mousePos, vPickRayDir, vPickRayOrig);
 
-    // Get the inverse view matrix
-    elm::mat4 m = elm::inverse( dx->camera->mView);
-
-	// Transform the screen space pick ray into 3D space
-    vPickRayDir.x  = v.x * m._11 + v.y * m._21 + v.z * m._31;
-    vPickRayDir.y  = v.x * m._12 + v.y * m._22 + v.z * m._32;
-    vPickRayDir.z  = v.x * m._13 + v.y * m._23 + v.z * m._33;
-
-	vPickRayDir = elm::normalize(vPickRayDir);
-	vPickRayOrig = m.r[3].xyz;
-    //vPickRayOrig.x = m._41;
-    //vPickRayOrig.y = m._42;
-    //vPickRayOrig.z = m._43;
-
-	// calc origin as intersection with near frustum
-	vPickRayOrig += vPickRayDir;
-
-	Object3D* object = m_composition->getProperty<Object3D>();
+	Object3D* object = m_selectedObject->getProperty<Object3D>();
 
 	if(!object)
 		return;
@@ -393,53 +366,31 @@ void Engine::rotateObject()
 
 void Engine::moveObject()
 {
+	if(!m_selectedObject)
+		return;
+
 	elm::vec3 vPickRayDir, vPickRayOrig;
-	// Compute the vector of the pick ray in screen space
-    elm::vec3 v;
-	v.x =  (((2.f * (float)mousePos.x) / (float)dx->camera->width) - 1.f) /  dx->camera->mProj._11;
-	v.y = -(((2.f * (float)mousePos.y) /  (float)dx->camera->height) - 1.f) /  dx->camera->mProj._22;
-    v.z =  1.f;
+	pickRay(mousePos, vPickRayDir, vPickRayOrig);
 
-    // Get the inverse view matrix
-    elm::mat4 m = elm::inverse( dx->camera->mView);
+	Object3D* object = m_selectedObject->getProperty<Object3D>();
 
-	// Transform the screen space pick ray into 3D space
-    vPickRayDir.x  = v.x * m._11 + v.y * m._21 + v.z * m._31;
-    vPickRayDir.y  = v.x * m._12 + v.y * m._22 + v.z * m._32;
-    vPickRayDir.z  = v.x * m._13 + v.y * m._23 + v.z * m._33;
+	if(!object)
+		return;
 
-	vPickRayDir = elm::normalize(vPickRayDir);
-	vPickRayOrig = m.r[3].xyz;
-    //vPickRayOrig.x = m._41;
-    //vPickRayOrig.y = m._42;
-    //vPickRayOrig.z = m._43;
+	//min max to world
+	elm::vec3 min, max;
+	min = dx->g_meshes[object->getMeshID()]->getMinVertex() * object->getScale() + object->getPosition();
+	max = dx->g_meshes[object->getMeshID()]->getMaxVertex() * object->getScale() + object->getPosition();
 
-	// calc origin as intersection with near frustum
-	vPickRayOrig += vPickRayDir;
-
-	//for( auto &c : dx->g_comps )
+	if( rayVsAABB(1.f / vPickRayDir, vPickRayOrig, min, max) )
 	{
-		//m_composition = &c;
-		Object3D* object = m_composition->getProperty<Object3D>();
+		float xDiff, yDiff;
+		xDiff = mousePos.x - oldMousePos.x;
+		yDiff = mousePos.y - oldMousePos.y;
 
-		if(!object)
-			return;
-
-		// min max to world
-		elm::vec3 min, max;
-		min = dx->g_meshes[object->getMeshID()]->getMinVertex() * object->getScale() + object->getPosition();
-		max = dx->g_meshes[object->getMeshID()]->getMaxVertex() * object->getScale() + object->getPosition();
-
-		if( rayVsAABB(1.f / vPickRayDir, vPickRayOrig, min, max) )
-		{
-			float xDiff, yDiff;
-			xDiff = mousePos.x - oldMousePos.x;
-			yDiff = mousePos.y - oldMousePos.y;
-
-			elm::vec3 dpos = elm::vec3(xDiff, 0, -yDiff);
-			elm::vec3 npos = object->getPosition() + dpos;
-			object->setPosition( npos );
-		}
+		elm::vec3 dpos = elm::vec3(xDiff, 0, -yDiff);
+		elm::vec3 npos = object->getPosition() + dpos;
+		object->setPosition( npos );
 	}
 }
 
@@ -459,14 +410,16 @@ void Engine::placeObject(unsigned int _objectId)
 	CModel<Object3D>* co = new CModel<Object3D>("newObject", obj);
 
 	Composition c;
+	//dx->g_comps.push_back(Composition());
 	c.setName("test");
 	c.setProperty(co);
 	dx->g_comps.push_back(c);
 
-	if(m_composition)
-		m_composition->setSelected(false);
+	//if(m_selectedObject != nullptr)
+	//	m_selectedObject->setSelected(false);
 
-	m_composition = &c;
+	m_selectedObject = &dx->g_comps[ dx->g_comps.size() - 1 ];
+	m_selectedObject->setSelected(true);
 }
 
 Engine::~Engine()

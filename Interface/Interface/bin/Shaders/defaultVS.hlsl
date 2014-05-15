@@ -25,7 +25,7 @@ VS_Output main(VS_Input input)
 {
 	VS_Output output = (VS_Output)0;
 	//float4x4 worldviewproj = mul(proj, view);
-	output.position = mul(viewProj, float4(input.position, 1));
+	output.position = mul(viewProj, mul( world, float4(input.position, 1)));
 
 	float4 lightPos = float4(-4000, 1600, 1000, 1);
 	float3 s = normalize(lightPos - eyePos).xyz;

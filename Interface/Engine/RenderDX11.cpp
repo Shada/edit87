@@ -12,6 +12,7 @@ RenderDX11::RenderDX11(HWND hWnd)
 
 	camera = nullptr;
 	g_swapChain = nullptr;
+	specComp = new Composition();
 }
 
 void RenderDX11::setRect(RECT t)
@@ -348,10 +349,12 @@ HRESULT RenderDX11::init()
 
 	CModel<Object3D>* co = new CModel<Object3D>("test", obj);
 
+	// default object
 	Composition c;
 	c.setName("test");
 	c.setProperty(co);
 	g_comps.push_back(c);
+
 
 	if(g_meshes[0]->getTexDiffusePath().size() == 0)
 	{
@@ -563,6 +566,29 @@ void RenderDX11::createAndSetTerrainBuffers(std::vector<Vertex> *vBuffer, std::v
 		SAFE_RELEASE(g_buffers.at(terrainIndexBufferID));
 		g_buffers.at(terrainIndexBufferID) = buffer;
 	}
+
+	// 3d mini
+	
+	Mesh3D* m = new Mesh3D();
+	m->setVertexBufferID(terrainVertexBufferID);
+	m->setIndexBufferID(terrainIndexBufferID);
+	m->setMinMax( elm::vec3(-100), elm::vec3(100) );
+	g_meshes.push_back(m);
+
+	Object3D* mo = new Object3D();
+	mo->setMeshID(g_meshes.size() - 1);
+	mo->setScale(elm::vec3(0.25));
+	mo->setRotation(elm::vec3(0));
+	mo->setPosition(elm::vec3(200,100,200));
+	
+	g_objects.push_back(mo);
+
+	CModel<Object3D>* ct = new CModel<Object3D>("terrain_mini", mo);
+
+	specComp->setName("terrain_mini");
+	specComp->setProperty(ct);
+	g_comps.push_back(*specComp);
+	
 }
 
 void RenderDX11::updateTerrainBuffer(std::vector<Vertex> *vBuffer)
@@ -608,14 +634,25 @@ void RenderDX11::renderScene(Quadnode *node)
 	UINT stride = sizeof(Vertex);
 	UINT offset = 0;
 	g_deviceContext->IASetVertexBuffers(0, 1, &g_buffers.at(terrainVertexBufferID), &stride, &offset);
-	//g_deviceContext->IASetIndexBuffer(g_buffers.at(terrainIndexBufferID), DXGI_FORMAT_R32_UINT, offset);
+	g_deviceContext->IASetIndexBuffer(g_buffers.at(terrainIndexBufferID), DXGI_FORMAT_R32_UINT, offset);
 
 	g_deviceContext->VSSetShader(g_terrainVS, NULL, 0);
 	g_deviceContext->PSSetShader(g_terrainPS, NULL, 0);
 
-	//g_deviceContext->DrawIndexed(terrainIndexCount, 0, 0);
+	g_deviceContext->DrawIndexed(terrainIndexCount, 0, 0);
 
-	drawCulledTerrain(node);
+	//drawCulledTerrain(node);
+	Object3D* o = specComp->getProperty<Object3D>();
+
+	cb.world = elm::translationMatrix(o->getPosition());
+	elm::mat4 rotate;
+	elm::yawPitchRoll(rotate, o->getRotation());
+	elm::mat4 scale		= elm::scalingMatrix(o->getScale());
+	elm::mat4 translate	= elm::translationMatrix(o->getPosition());
+	cb.world = scale * rotate * translate;
+	g_deviceContext->UpdateSubresource(g_buffers.at(cbOnChangeID), 0, NULL, &cb, 0, 0);
+
+	g_deviceContext->DrawIndexed(terrainIndexCount, 0, 0);
 	
 	/************************************************************/
 	//						DRAWING A MESH						//
@@ -629,6 +666,9 @@ void RenderDX11::renderScene(Quadnode *node)
 	stride = sizeof(elm::vec3);
 	for(unsigned int i = 0; i < g_comps.size(); i++)
 	{
+		if(g_comps[i].getName() == "terrain_mini")
+			continue;
+
 		Object3D* o = g_comps[i].getProperty<Object3D>();
 
 		if(!o)

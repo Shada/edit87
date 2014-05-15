@@ -12,4 +12,5 @@ enum class Key
 	STATE_MOVE		= 'M',
 	STATE_SCALE		= 'T',
 	STATE_PLACE		= 'N',
+	STATE_TERRAIN	= 'Z',
 };

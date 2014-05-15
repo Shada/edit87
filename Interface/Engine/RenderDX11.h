@@ -82,6 +82,7 @@ private:
 
 	std::vector<Object3D*>		g_objects;
 	std::vector<Composition>	g_comps;
+	Composition* specComp;
 
 	void RenderDX11::drawCulledTerrain(Quadnode *node);
 

@@ -42,9 +42,13 @@ private:
 	float mouseDelta;
 	
 	void findMinMaxValues();
+	void pickRay(POINT _xy, elm::vec3& _outRayDir, elm::vec3& _outRayOrigin);
 
-	Composition*	m_composition;
+	Composition*	m_selectedObject;
 	KeyBinding		m_currentKeyBinding;
+
+	elm::vec3	m_defaultScale;
+	elm::vec3	m_defaultRotation;
 
 public:
 	Engine(HWND hwnd);

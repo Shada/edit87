@@ -260,10 +260,7 @@ namespace LevelEditor
                 case Keys.S:    backwardKey = true;     break;
                 case Keys.A:    leftKey     = true;     break;
                 case Keys.D:    rightKey    = true;    break;
-                case Keys.R:
-                case Keys.M:
-                case Keys.N:
-                case Keys.T:
+                default:
                     graphics.keyboardEvent((uint)e.KeyCode, true);
                         break;
             }

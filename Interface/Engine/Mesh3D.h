@@ -33,6 +33,8 @@ public:
 	elm::vec3 getMinVertex() { return min; }
 	elm::vec3 getMaxVertex() { return max; }
 
+	void setMinMax(elm::vec3 _min, elm::vec3 _max)
+	{ min = _min; max = _max; }
 private:
 	int vertexBufferID;
 	int normalBufferID;
