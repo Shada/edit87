@@ -29,19 +29,17 @@
 		private void InitializeComponent()
 		{
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.ListViewItem listViewItem7 = new System.Windows.Forms.ListViewItem(new string[] {
+            System.Windows.Forms.ListViewItem listViewItem1 = new System.Windows.Forms.ListViewItem(new string[] {
             "Dirt",
             "Test"}, 0);
-            System.Windows.Forms.ListViewItem listViewItem8 = new System.Windows.Forms.ListViewItem("Grass", 1);
-            System.Windows.Forms.ListViewItem listViewItem9 = new System.Windows.Forms.ListViewItem("Rock", 2);
+            System.Windows.Forms.ListViewItem listViewItem2 = new System.Windows.Forms.ListViewItem("Grass", 1);
+            System.Windows.Forms.ListViewItem listViewItem3 = new System.Windows.Forms.ListViewItem("Rock", 2);
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MapEditor));
-            System.Windows.Forms.ListViewItem listViewItem1 = new System.Windows.Forms.ListViewItem(new string[] {
+            System.Windows.Forms.ListViewItem listViewItem4 = new System.Windows.Forms.ListViewItem(new string[] {
             "B1",
             "Test"}, 0);
-            System.Windows.Forms.ListViewItem listViewItem2 = new System.Windows.Forms.ListViewItem("B2", 1);
-            System.Windows.Forms.ListViewItem listViewItem3 = new System.Windows.Forms.ListViewItem("B3", 2);
-            this.btn_importTexture = new System.Windows.Forms.Button();
-            this.btn_importBrush = new System.Windows.Forms.Button();
+            System.Windows.Forms.ListViewItem listViewItem5 = new System.Windows.Forms.ListViewItem("B2", 1);
+            System.Windows.Forms.ListViewItem listViewItem6 = new System.Windows.Forms.ListViewItem("B3", 2);
             this.label5 = new System.Windows.Forms.Label();
             this.nud_brushIntensity = new System.Windows.Forms.NumericUpDown();
             this.label4 = new System.Windows.Forms.Label();
@@ -95,26 +93,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).BeginInit();
             this.panel_Left.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // btn_importTexture
-            // 
-            this.btn_importTexture.Location = new System.Drawing.Point(98, 305);
-            this.btn_importTexture.Name = "btn_importTexture";
-            this.btn_importTexture.Size = new System.Drawing.Size(90, 23);
-            this.btn_importTexture.TabIndex = 30;
-            this.btn_importTexture.Text = "Import texture";
-            this.btn_importTexture.UseVisualStyleBackColor = true;
-            this.btn_importTexture.Click += new System.EventHandler(this.btn_importTexture_Click);
-            // 
-            // btn_importBrush
-            // 
-            this.btn_importBrush.Location = new System.Drawing.Point(98, 132);
-            this.btn_importBrush.Name = "btn_importBrush";
-            this.btn_importBrush.Size = new System.Drawing.Size(90, 23);
-            this.btn_importBrush.TabIndex = 29;
-            this.btn_importBrush.Text = "Import brush";
-            this.btn_importBrush.UseVisualStyleBackColor = true;
-            this.btn_importBrush.Click += new System.EventHandler(this.btn_importBrush_Click);
             // 
             // label5
             // 
@@ -172,9 +150,9 @@
             // lv_Textures
             // 
             this.lv_Textures.Items.AddRange(new System.Windows.Forms.ListViewItem[] {
-            listViewItem7,
-            listViewItem8,
-            listViewItem9});
+            listViewItem1,
+            listViewItem2,
+            listViewItem3});
             this.lv_Textures.LargeImageList = this.il_textures;
             this.lv_Textures.Location = new System.Drawing.Point(8, 334);
             this.lv_Textures.Name = "lv_Textures";
@@ -212,9 +190,9 @@
             // lw_Brush
             // 
             this.lw_Brush.Items.AddRange(new System.Windows.Forms.ListViewItem[] {
-            listViewItem1,
-            listViewItem2,
-            listViewItem3});
+            listViewItem4,
+            listViewItem5,
+            listViewItem6});
             this.lw_Brush.LargeImageList = this.il_terrainBrushes;
             this.lw_Brush.Location = new System.Drawing.Point(8, 158);
             this.lw_Brush.Name = "lw_Brush";
@@ -437,14 +415,12 @@
             this.panel_Right.AutoScroll = true;
             this.panel_Right.Controls.Add(this.label9);
             this.panel_Right.Controls.Add(this.btn_TextureBrush);
-            this.panel_Right.Controls.Add(this.btn_importTexture);
             this.panel_Right.Controls.Add(this.btn_TerrainBrush);
             this.panel_Right.Controls.Add(this.tw_resources);
             this.panel_Right.Controls.Add(this.lw_Brush);
             this.panel_Right.Controls.Add(this.nud_BrushSize);
             this.panel_Right.Controls.Add(this.btn_importResource);
             this.panel_Right.Controls.Add(this.label6);
-            this.panel_Right.Controls.Add(this.btn_importBrush);
             this.panel_Right.Controls.Add(this.lv_Textures);
             this.panel_Right.Controls.Add(this.label7);
             this.panel_Right.Controls.Add(this.label5);
@@ -625,8 +601,6 @@
         private System.Windows.Forms.ToolStripMenuItem toolsShortcutsToolStripMenuItem;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.NumericUpDown nud_brushIntensity;
-        private System.Windows.Forms.Button btn_importTexture;
-        private System.Windows.Forms.Button btn_importBrush;
         private System.Windows.Forms.ImageList il_textures;
         private System.Windows.Forms.ImageList il_icons;
         private System.Windows.Forms.Button btn_importResource;
