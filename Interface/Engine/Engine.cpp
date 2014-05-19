@@ -205,6 +205,10 @@ void Engine::keyboardEvent(unsigned int _key, bool _isDown)
 	case Key::STATE_TERRAIN:
 		setElevationTool();
 		break;
+		
+	case Key::STATE_FOLLOW_TERRAIN:
+		moveObjectToTerrainHeight(); // go back to previous state? Might be a good idea you know...
+		break;
 
 	default:
 		m_currentKeyBinding = std::make_pair( (unsigned int)Key::NO_STATE, true);
@@ -355,12 +359,8 @@ void Engine::rotateObject()
 		xDiff = mousePos.x - oldMousePos.x;
 		yDiff = mousePos.y - oldMousePos.y;
 
-		elm::vec3 nrot = elm::vec3(yDiff) / 10.f;
-		//nrot.y = 0;
-		nrot.z = 0;
+		elm::vec3 nrot = elm::vec3(xDiff, yDiff, 0) / 10.f;
 		object->setRotation( nrot + object->getRotation() );
-
-
 	}
 }
 
@@ -390,8 +390,28 @@ void Engine::moveObject()
 
 		elm::vec3 dpos = elm::vec3(xDiff, 0, -yDiff);
 		elm::vec3 npos = object->getPosition() + dpos;
+
+		if( object->getIsFollowingTerrain())
+			npos.y = terrain->getHeightAt(npos.xz);
 		object->setPosition( npos );
 	}
+}
+
+void Engine::moveObjectToTerrainHeight()
+{
+	if(!m_selectedObject)
+		return;
+
+	Object3D* object = m_selectedObject->getProperty<Object3D>();
+
+	elm::vec3 v = object->getPosition();
+	v.y = terrain->getHeightAt(object->getPosition().xz);
+	object->setPosition(v);
+	object->setIsFollowingTerrain(true);
+	// get terrainheight and set object to this height.
+	// maybe we need to set an object property so that it follows terrain when terrain is changed
+
+	renderScene();
 }
 
 void Engine::placeObject(unsigned int _objectId)

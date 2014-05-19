@@ -81,4 +81,5 @@ public:
 	void selectObject();
 	void scaleObject();
 	void rotateObject();
+	void moveObjectToTerrainHeight();
 };

@@ -17,12 +17,17 @@ public:
 	elm::vec3 getRotation()		{ return rotation; }
 	elm::vec3 getScale()		{ return scale; }
 
+	bool getIsFollowingTerrain() { return isFollowingTerrain; }
+	void setIsFollowingTerrain(bool value) { isFollowingTerrain = value; }
+
 	int getMeshID()				{ return meshID; }
 
 private:
 	elm::vec3 position;
 	elm::vec3 rotation;
 	elm::vec3 scale;
+
+	bool isFollowingTerrain;
 
 	int meshID;
 };

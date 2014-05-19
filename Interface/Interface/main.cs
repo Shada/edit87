@@ -293,6 +293,7 @@ namespace LevelEditor
                 case Keys.M:
                 case Keys.N:
                 case Keys.T:
+                case Keys.F:
                     graphics.keyboardEvent((uint)e.KeyCode, true);
                     break;
             }
