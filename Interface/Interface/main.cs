@@ -289,11 +289,13 @@ namespace LevelEditor
                 case Keys.S:    backwardKey = false;    break;
                 case Keys.A:    leftKey     = false;    break;
                 case Keys.D:    rightKey    = false;    break;
-                case Keys.R:
-                case Keys.M:
-                case Keys.N:
-                case Keys.T:
-                case Keys.F:
+                case Keys.R:    // Rotate
+                case Keys.M:    // Move
+                case Keys.N:    // New Object
+                case Keys.T:    // Scale
+                case Keys.F:    // Follow Terrain
+                case Keys.E:    // Elevate
+                case Keys.Q:    // Lower
                     graphics.keyboardEvent((uint)e.KeyCode, true);
                     break;
             }
