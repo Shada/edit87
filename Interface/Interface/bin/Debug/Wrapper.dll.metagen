@@ -6,7 +6,7 @@ Assembly mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934
 Assembly System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089: 
 	hash=None, flags=None
 Class wrap.GraphicsCommunicator: AutoLayout, AnsiClass, Class, Public, BeforeFieldInit
-    Void .ctor(IntPtr): PrivateScope, Public, HideBySig, SpecialName, RTSpecialName
+    Void .ctor(): PrivateScope, Public, HideBySig, SpecialName, RTSpecialName
   Interfaces:
     System.IDisposable
   Methods:
@@ -14,6 +14,7 @@ Class wrap.GraphicsCommunicator: AutoLayout, AnsiClass, Class, Public, BeforeFie
     renderScene(): PrivateScope, Public, HideBySig
     createTerrain(Int32, Int32, Single, Boolean(HasFieldMarshal), Int32): PrivateScope, Public, HideBySig
     moveCamera(Int32, Int32): PrivateScope, Public, HideBySig
+    setHandle(IntPtr, String): PrivateScope, Public, HideBySig
     rightMouseDown(): PrivateScope, Public, HideBySig
     leftMouseDown(): PrivateScope, Public, HideBySig
     rightMouseUp(): PrivateScope, Public, HideBySig

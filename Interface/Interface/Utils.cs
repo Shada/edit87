@@ -10,6 +10,7 @@ using System.IO;
 using System.Xml;
 using System.Globalization;
 using WeifenLuo.WinFormsUI.Docking;
+using wrap;
 
 namespace LevelEditor
 {
@@ -36,7 +37,7 @@ namespace LevelEditor
 		{ 
 			get { return projectDirectory; }
 			set { projectDirectory = value; }
-		}
+		}		
 
 		public static class Panels
 		{
@@ -91,6 +92,8 @@ namespace LevelEditor
 					if (p.Panel != null)
 						p.Panel.Close();
 				}
+
+				panels.Clear();
 			}
 		}
 
@@ -98,6 +101,26 @@ namespace LevelEditor
 		{
 			get { return projectName; }
 			set { projectName = value; }
+		}
+
+		public static class Graphics
+		{
+			private static wrap.GraphicsCommunicator graphics;
+
+			public static void Init()
+			{
+				graphics = new GraphicsCommunicator();
+			}
+
+			public static void Sethandle(IntPtr _handle, string _name)
+			{
+				graphics.setHandle(_handle, _name);
+			}
+
+			public static wrap.GraphicsCommunicator gfx
+			{
+				get { return graphics; }
+			}
 		}
 
 		public class twTagAttribute

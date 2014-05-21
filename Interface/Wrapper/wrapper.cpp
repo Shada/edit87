@@ -1,14 +1,12 @@
 #include "wrapper.h"
+#include <msclr\marshal_cppstd.h>
 #include "../Engine/EngineFactory.h"
 #include <Windows.h>
 
 namespace wrap
 {
-	GraphicsCommunicator::GraphicsCommunicator(System::IntPtr win)
+	GraphicsCommunicator::GraphicsCommunicator()
 	{
-		hWnd = (HWND)((void*)win);
-		gfx = EngineFactory::createEngine(hWnd);
-		setRenderArea(232, 58, 1048, 670);
 	}
 
 	void GraphicsCommunicator::setRenderArea(int x, int y, int width, int height)
@@ -20,6 +18,17 @@ namespace wrap
 		r.right = x + width;
 		gfx->setRect(r);
 		//gfx->createTerrain(256, 256, 5.f, false);
+	}
+
+	void GraphicsCommunicator::setHandle(System::IntPtr _handle, System::String^ _name)
+	{
+		HWND hWnd = (HWND)((void*)_handle);
+		gfx = EngineFactory::createEngine();
+		msclr::interop::marshal_context context;
+		std::string standardString = context.marshal_as<std::string>(_name);
+		gfx->addHandels(hWnd, standardString);
+
+		setRenderArea(232, 58, 1048, 670);
 	}
 
 	void GraphicsCommunicator::createTerrain(int width, int height, float pointStep, bool fromPerlinMap, int seed)

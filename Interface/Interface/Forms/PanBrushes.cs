@@ -14,6 +14,7 @@ namespace LevelEditor
     public partial class PanBrushes : DockContent
     {
         int lw_BrushSizeDiff = 12;
+
         public PanBrushes()
         {
             InitializeComponent();

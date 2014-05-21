@@ -2,6 +2,7 @@
 
 #include <D3D11.h>
 #include <vector>
+#include <string>
 #include "EngineInterface.h"
 #include "Terrain.h"
 #include "Camera.h"
@@ -18,6 +19,12 @@ struct CBOnChange
 {
 	elm::mat4 viewProj, world;
 	elm::vec4 position;
+};
+
+struct Handle
+{
+	HWND hwnd;
+	std::string name;
 };
 
 class RenderDX11
@@ -61,12 +68,14 @@ private:
 	std::vector<ID3D11Buffer*>	g_buffers;
 	std::vector<ID3D11ShaderResourceView*> g_textures;
 
+	std::vector<Handle>			handles;
+
 	HRESULT init();
 	HRESULT createSampleStates();
 	HRESULT compileShader(LPCSTR filePath, LPCSTR shaderType, ID3DBlob **shaderBlob);
 
 public:
-	RenderDX11(HWND hWnd);
+	RenderDX11();
 	~RenderDX11();
 
 	void renderScene();
@@ -79,4 +88,6 @@ public:
 	//HRESULT createTerrain(int width, int height, float pointStep, bool fromPerlinMap);
 
 	//void move(float alongX, float alongZ) { camera->move(elm::vec2(alongX, alongZ)); }
+
+	void addHandle(HWND _hWnd, std::string _name);
 };

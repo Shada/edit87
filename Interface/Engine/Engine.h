@@ -3,6 +3,7 @@
 #include "RenderDX11.h"
 #include "Terrain.h"
 #include "Camera.h"
+#include <vector>
 
 enum class Tools
 {
@@ -25,8 +26,9 @@ private:
 
 	HWND hWnd;
 	POINT mousePos;
+
 public:
-	Engine(HWND hwnd);
+	Engine();
 	~Engine();
 
 	void createTerrain(int width, int height, float pointStep, bool fromPerlinMap, int seed);
@@ -47,4 +49,5 @@ public:
 	void setTextureTool()					{ selectedTool = Tools::TEXTURING; }
 	void setObjectPlacerTool()				{ selectedTool = Tools::OBJECTPLACER; }
 	void setSelctorTool()					{ selectedTool = Tools::SELECTOR; }
+	void addHandels(HWND _hWnd, std::string _name);
 };

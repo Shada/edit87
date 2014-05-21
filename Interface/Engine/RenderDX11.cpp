@@ -3,13 +3,13 @@
 #include <D3DX11async.h>
 #include <d3dcompiler.h>
 
-RenderDX11::RenderDX11(HWND hWnd)
+RenderDX11::RenderDX11()
 {
-	this->hWnd = hWnd;
 	terrainVertexBufferID = terrainIndexBufferID = -1;
 
 	camera = nullptr;
 	g_swapChain = nullptr;
+	hWnd = nullptr;
 }
 
 void RenderDX11::setRect(RECT t)
@@ -18,6 +18,17 @@ void RenderDX11::setRect(RECT t)
 
 	if(!g_swapChain)
 		init();
+}
+
+void RenderDX11::addHandle(HWND _hWnd, std::string _name)
+{
+	Handle h;
+	h.hwnd = _hWnd;
+	h.name = _name;
+	handles.push_back(h);
+
+	if(!hWnd)
+		hWnd = _hWnd;
 }
 
 HRESULT RenderDX11::init()

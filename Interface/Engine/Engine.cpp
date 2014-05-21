@@ -1,18 +1,25 @@
 #include "Engine.h"
 
 
-Engine::Engine(HWND hwnd)
+Engine::Engine()
 {
-	hWnd = hwnd;
-
 	selectedTool = Tools::SELECTOR;
 
 	camera = nullptr;
 	terrain = nullptr;
+	dx = nullptr;
 
-	dx = new RenderDX11(hWnd);
+	//dx = new RenderDX11(hWnd);
 
 	mouseWorldPos = elm::vec2(200, 1000);
+}
+
+void Engine::addHandels(HWND _hWnd, std::string _name)
+{
+	if(!dx)
+		dx = new RenderDX11();
+	
+	dx->addHandle(_hWnd, _name);
 }
 
 void Engine::createTerrain(int width, int height, float pointStep, bool fromPerlinMap, int seed)

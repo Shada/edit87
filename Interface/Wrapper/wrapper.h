@@ -6,10 +6,9 @@ namespace wrap
 	public ref class GraphicsCommunicator
 	{
 	private:
-		HWND hWnd;
 		EngineInterface *gfx;
 	public:
-		GraphicsCommunicator(System::IntPtr win);
+		GraphicsCommunicator();
 		~GraphicsCommunicator();
 
 		void setRenderArea(int x, int y, int width, int height);
@@ -18,6 +17,8 @@ namespace wrap
 		void createTerrain(int width, int height, float pointStep, bool fromPerlinMap, int seed);
 
 		void moveCamera(int xDir, int zDir);
+
+		void setHandle(System::IntPtr _handle, System::String^ _name);
 
 		/* Mouse calls */
 		void rightMouseDown();

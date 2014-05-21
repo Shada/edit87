@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;
 using System.Xml;
+using System.Diagnostics;
 using WeifenLuo.WinFormsUI.Docking;
 using System.Globalization;
 
@@ -24,8 +25,6 @@ namespace LevelEditor
         private bool forwardKey, backwardKey, leftKey, rightKey, leftMouseDown, rightMouseDown;
 
         private int mousePosX, mousePosY;
-
-        public wrap.GraphicsCommunicator graphics;
         int windowWidth, windowHeight;
 
         DeserializeDockContent deserializeDockContent;
@@ -66,7 +65,7 @@ namespace LevelEditor
 			Utils.Panels.addPanel(new PanBrushes(), typeof(PanBrushes).ToString());
 			Utils.Panels.addPanel(new PanTextures(), typeof(PanTextures).ToString());
 			Utils.Panels.addPanel(new PanResources(), typeof(PanResources).ToString());
-			Utils.Panels.addPanel(new PanRender(), typeof(PanRender).ToString());
+			Utils.Panels.addPanel(new PanRender(this), typeof(PanRender).ToString());
 			Utils.Panels.addPanel(new PanLibrary(), typeof(PanLibrary).ToString());
 			Utils.Panels.addPanel(new PanProperties(), typeof(PanProperties).ToString());
         }
@@ -626,13 +625,13 @@ namespace LevelEditor
 		{
 			int xDir = forwardKey ? 1 : backwardKey ? -1 : 0;
 			int zDir = rightKey ? 1 : leftKey ? -1 : 0;
-			//if (xDir != 0 || zDir != 0)
-			//graphics.moveCamera(xDir, zDir);
+			if (xDir != 0 || zDir != 0)
+				Utils.Graphics.gfx.moveCamera(xDir, zDir);
 
-			//if (rightMouseDown)
-			//    graphics.rightMouseDown();
-			//if (leftMouseDown)
-			//    graphics.leftMouseDown();
+			if (rightMouseDown)
+				Utils.Graphics.gfx.rightMouseDown();
+			if (leftMouseDown)
+				Utils.Graphics.gfx.leftMouseDown();
 		}        
 
 		private void resizeWindow()
@@ -724,6 +723,12 @@ namespace LevelEditor
 		private void NO()
 		{
 			MessageBox.Show("This is not yet implemented you tool!", "FUCK FACE!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+		}		
+
+		private void MapEditor_Move(object sender, EventArgs e)
+		{
+			PanRender render = (PanRender)Utils.Panels.getpanelByName("LevelEditor.PanRender");
+			render.resizeRenderPanel();
 		}
 
 		#endregion
