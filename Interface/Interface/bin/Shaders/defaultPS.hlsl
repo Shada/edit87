@@ -1,7 +1,7 @@
 //Texture2D<float4> txBlendTer : register(t0);
 
 Texture2DArray<float4>	blendmapArray	: register(t0);
-Texture3D<float4>	blendmaps	: register(t1);
+Texture2DArray<float4>	blendmaps	: register(t1);
 
 #define max3DTextures 20
 
@@ -40,7 +40,6 @@ float4 main(PS_Input input) : SV_TARGET0
 		outputColor += blendmapArray.Sample(samLinear, float3(input.texBlend, 3 + i * 4)) * blendmaps.Sample(samLinear, float3(input.texBlend, i)).w;
 
 
-
 	/*	outputColor += blendmapArray[float3(threadID.x / 2, threadID.y / 2, 0 + i * 4)] * blendmaps[float3(float3(threadID.x / 2, threadID.y / 2, i))].x;
 		outputColor += blendmapArray[float3(threadID.x / 2, threadID.y / 2, 1 + i * 4)] * blendmaps[float3(float3(threadID.x / 2, threadID.y / 2, i))].y;
 		outputColor += blendmapArray[float3(threadID.x / 2, threadID.y / 2, 2 + i * 4)] * blendmaps[float3(float3(threadID.x / 2, threadID.y / 2, i))].z;
@@ -53,7 +52,14 @@ float4 main(PS_Input input) : SV_TARGET0
 	//outputColor += blendmapArray.Sample(samLinear, float3(input.texBlend, 3));
 	//outputColor += blendmapArray.Sample(samLinear, float3(input.texBlend, 4));
 
-	saturate(outputColor);
+
+	//outputColor += blendmaps.Sample(samLinear, float3(input.texBlend, 0));
+	//outputColor = blendmaps.Sample(samLinear, float3(input.texBlend, 1));
+	//outputColor += blendmaps.Sample(samLinear, float3(input.texBlend, 2));
+	//outputColor += blendmaps.Sample(samLinear, float3(input.texBlend, 3));
+	//outputColor = blendmaps.Sample(samLinear, float3(input.texBlend, 4));
+
+	//saturate(outputColor);
 
 	//return outputColor;
 

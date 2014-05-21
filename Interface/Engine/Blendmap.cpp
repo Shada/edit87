@@ -122,9 +122,14 @@ void Blendmap::createTexture2DArray(int _width, int _height)
 
 	//------------------------------------------------------------------------- create 3d textures
 
-	createTexture3D(256,256,5);
-	createShaderResourceView3D();
-	createUAVTextureView3D();
+	//createTexture3D(256,256,5);
+	createUAVBlendTexture2D(256,256);
+
+	//createShaderResourceView3D();
+	createShaderResourceViewArray();
+
+	//createUAVTextureView3D();
+	createUAVTextureViewArray();
 
 	//------------------------------------------------------------------------- first compile
 
@@ -134,7 +139,7 @@ void Blendmap::createTexture2DArray(int _width, int _height)
 
 	CSexec();
 
-	g_textures->at(0) = uavSRV;
+	//g_textures->at(0) = uavSRV;
 
 }
 
@@ -230,7 +235,7 @@ void Blendmap::createUAVTexture2D(int _width, int _height)
 	texDesc.Width = _width;
 	texDesc.Height = _height;
 	texDesc.MipLevels = 1;
-	texDesc.ArraySize = 1;
+	texDesc.ArraySize = 5;
 	texDesc.SampleDesc.Count = 1;
 	texDesc.SampleDesc.Quality = 0;
 	texDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
@@ -242,6 +247,34 @@ void Blendmap::createUAVTexture2D(int _width, int _height)
 
 
 	result = g_device->CreateTexture2D(&texDesc, NULL, &uavTexture);
+	if (FAILED(result))
+	{
+		MessageBox(NULL, "Failed to create texture for UAV.", "RenderDX11 Error", S_OK);
+
+	}
+
+}
+
+void Blendmap::createUAVBlendTexture2D(int _width, int _height)
+{
+	HRESULT result = S_OK;
+
+	D3D11_TEXTURE2D_DESC texDesc;
+	ZeroMemory(&texDesc, sizeof(texDesc));
+	texDesc.Width = _width;
+	texDesc.Height = _height;
+	texDesc.MipLevels = 1;
+	texDesc.ArraySize = 5;
+	texDesc.SampleDesc.Count = 1;
+	texDesc.SampleDesc.Quality = 0;
+	texDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+	texDesc.Usage = D3D11_USAGE_DEFAULT;
+	texDesc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_UNORDERED_ACCESS;
+	texDesc.MiscFlags = 0;
+
+
+
+	result = g_device->CreateTexture2D(&texDesc, NULL, &blendmapsTexturesArray);
 	if (FAILED(result))
 	{
 		MessageBox(NULL, "Failed to create texture for UAV.", "RenderDX11 Error", S_OK);
@@ -264,19 +297,33 @@ void Blendmap::createUAVTextureView()
 
 }
 
+void Blendmap::createUAVTextureViewArray()
+{
+	HRESULT result = S_OK;
+
+	result = g_device->CreateUnorderedAccessView(blendmapsTexturesArray, NULL, &uavtdArray);
+
+	if (FAILED(result))
+	{
+		MessageBox(NULL, "Failed to create UAV texture for the UAV texture..", "RenderDX11 Error", S_OK);
+
+	}
+
+}
+
 void Blendmap::createUAVTextureView3D()
 {
 	HRESULT result = S_OK;
 	D3D11_UNORDERED_ACCESS_VIEW_DESC desc;
 	ZeroMemory(&desc, sizeof(desc));
-	//desc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
-	//desc.Texture3D.FirstWSlice = 0;
-	//desc.Texture3D.MipSlice = 0;
-	//desc.Texture3D.WSize = 0;
-	//desc.ViewDimension = D3D11_UAV_DIMENSION_TEXTURE3D;
+	desc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+	desc.Texture3D.FirstWSlice = 0;
+	desc.Texture3D.MipSlice = 0;
+	desc.Texture3D.WSize = 5;
+	desc.ViewDimension = D3D11_UAV_DIMENSION_TEXTURE3D;
 
-	//result = g_device->CreateUnorderedAccessView(blendmapsTextures, &desc, &uavtd);
-	result = g_device->CreateUnorderedAccessView(blendmapsTextures, NULL, &uavtd);
+	result = g_device->CreateUnorderedAccessView(blendmapsTextures, &desc, &uavtd);
+	//result = g_device->CreateUnorderedAccessView(blendmapsTextures, NULL, &uavtd);
 	if (FAILED(result))
 	{
 		MessageBox(NULL, "Failed to create UAV texture for the UAV texture..", "RenderDX11 Error", S_OK);
@@ -308,6 +355,29 @@ void Blendmap::createShaderResourceView()
 	}
 
 }
+
+void Blendmap::createShaderResourceViewArray()
+{
+	HRESULT result = S_OK;
+
+	D3D11_SHADER_RESOURCE_VIEW_DESC dsvDesc;
+	ZeroMemory(&dsvDesc, sizeof(dsvDesc));
+
+	dsvDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+	dsvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2DARRAY;
+	dsvDesc.Texture2DArray.FirstArraySlice = 0;
+	dsvDesc.Texture2DArray.ArraySize = 5;
+	dsvDesc.Texture2DArray.MipLevels = 1;
+	dsvDesc.Texture2DArray.MostDetailedMip = 0;
+
+
+	result = g_device->CreateShaderResourceView(blendmapsTexturesArray, &dsvDesc, &blendmapsSRVArray);
+	if (FAILED(result))
+	{
+		MessageBox(NULL, "Failed to create shader recource view", "RenderDX11 Error", S_OK);
+	}
+}
+
 
 HRESULT Blendmap::compileShader(LPCSTR filePath, LPCSTR shaderType, ID3DBlob **shaderBlob)
 {
@@ -357,7 +427,7 @@ void Blendmap::createTexture3D(unsigned int _width, unsigned int _height, unsign
 		MessageBox(NULL, "Failed to create 3D texture.", "RenderDX11 Error", S_OK);
 	}
 
-	blendmapsTexturesRead = blendmapsTextures;
+	//blendmapsTexturesRead = blendmapsTextures;
 }
 
 void Blendmap::createShaderResourceView3D()
@@ -390,33 +460,21 @@ void Blendmap::createShaderResourceView3D()
 
 void Blendmap::CSexec()
 {
-	// write
-	//g_deviceContext->CSSetUnorderedAccessViews(0, 1, &uav, NULL);
+	g_deviceContext->PSSetShaderResources(0, 1, &srvArray); // korekt rör ej
 
-	g_deviceContext->PSSetShaderResources(0, 1, &srvArray);
-	g_deviceContext->PSSetShaderResources(1, 1, &blendmapsSRV);
-
-	//g_deviceContext->CSSetShader(computeShader, NULL, 0);
-
-	//g_deviceContext->Dispatch(45, 45, 1);
-
-	//g_deviceContext->CSSetShader(NULL, NULL, 0);
-
-	//ID3D11UnorderedAccessView* nullUAV[1] = { NULL };
-	//g_deviceContext->CSSetUnorderedAccessViews(0, 1, nullUAV, NULL);
-
-	//ID3D11ShaderResourceView* nullSRV = NULL;
-	//g_deviceContext->CSSetShaderResources(0, 1, &nullSRV);
-	//g_deviceContext->CSSetShaderResources(1, 1, &nullSRV);
+	//g_deviceContext->PSSetShaderResources(1, 1, &blendmapsSRV); // 3d map
+	g_deviceContext->PSSetShaderResources(1, 1, &blendmapsSRVArray); // 2d array
 
 }
 
 void Blendmap::CSexecupdate()
 {
-	// write
-	g_deviceContext->CSSetUnorderedAccessViews(0, 1, &uavtd, NULL);
+	ID3D11ShaderResourceView* nullARV[1] = { NULL };
+	g_deviceContext->PSSetShaderResources(1, 1, nullARV); // 3d map
 
-	//g_deviceContext->CSSetShaderResources(0, 1, &blendmapsReadSRV);
+	// write
+	//g_deviceContext->CSSetUnorderedAccessViews(0, 1, &uavtd, NULL); // 3d map
+	g_deviceContext->CSSetUnorderedAccessViews(0, 1, &uavtdArray, NULL); // 2d array
 
 	g_deviceContext->CSSetConstantBuffers(0, 1, &cbuffer);
 

@@ -21,9 +21,12 @@ private:
 	void createTexture2DArray(int _width, int _height);
 	int LoadTextureInToTextureArray(const char *pAddr, int Index);
 	void createUAVTexture2D(int _width, int _height);
+	void createUAVBlendTexture2D(int _width, int _height);
 	void createUAVTextureView();
+	void createUAVTextureViewArray();
 	void createUAVTextureView3D();
 	void createShaderResourceView();
+	void createShaderResourceViewArray();
 	void createComputeShader(std::string _CSshaderName);
 	HRESULT compileShader(LPCSTR filePath, LPCSTR shaderType, ID3DBlob **shaderBlob);
 	void createTexture3D(unsigned int _width, unsigned int _height, unsigned int _depth);
@@ -61,9 +64,11 @@ private:
 	ID3D11ShaderResourceView* srvArray;
 
 	ID3D11Texture3D* blendmapsTextures;
-	ID3D11Texture3D* blendmapsTexturesRead;
+	ID3D11Texture2D* blendmapsTexturesArray;
 	ID3D11UnorderedAccessView* uavtd;
+	ID3D11UnorderedAccessView* uavtdArray;
 	ID3D11ShaderResourceView* blendmapsSRV;
+	ID3D11ShaderResourceView* blendmapsSRVArray;
 	//ID3D11ShaderResourceView* blendmapsReadSRV;
 
 	ID3D11Texture2D *uavTexture;
