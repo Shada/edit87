@@ -5,13 +5,13 @@
 #include "..\DirectXTex\DirectXTex.h"
 #include "Utility.h"
 
-RenderDX11::RenderDX11(HWND hWnd)
+RenderDX11::RenderDX11()
 {
-	this->hWnd = hWnd;
 	terrainVertexBufferID = terrainIndexBufferID = -1;
 
 	camera = nullptr;
 	g_swapChain = nullptr;
+	hWnd = nullptr;
 }
 
 void RenderDX11::setRect(RECT t)
@@ -20,6 +20,17 @@ void RenderDX11::setRect(RECT t)
 
 	if(!g_swapChain)
 		init();
+}
+
+void RenderDX11::addHandle(HWND _hWnd, std::string _name)
+{
+	Handle h;
+	h.hwnd = _hWnd;
+	h.name = _name;
+	handles.push_back(h);
+
+	if(!hWnd)
+		hWnd = _hWnd;
 }
 
 HRESULT RenderDX11::init()
@@ -72,7 +83,7 @@ HRESULT RenderDX11::init()
     if(FAILED(hr))
 	{
 		MessageBox(this->hWnd, "Swapchain made fail, lol", "fail, yo", 0);
-        return hr;
+        	return hr;
 	}
 
 	 // Create a render target view
@@ -81,7 +92,7 @@ HRESULT RenderDX11::init()
     if(FAILED(hr))
 	{
 		MessageBox(this->hWnd, "Backbuffer made fail, lol", "fail, yo", 0);
-        return hr;
+        	return hr;
 	}
 
     hr = g_device->CreateRenderTargetView(pBackBuffer, NULL, &g_renderTargetView);
@@ -89,7 +100,7 @@ HRESULT RenderDX11::init()
     if(FAILED(hr))
 	{
 		MessageBox(this->hWnd, "Rendertargetview made fail, lol", "fail, yo", 0);
-        return hr;
+        	return hr;
 	}
 
     // Create depth stencil texture
@@ -112,7 +123,7 @@ HRESULT RenderDX11::init()
     if(FAILED(hr))
 	{
 		MessageBox(this->hWnd, "depthstencil made fail, lol", "fail, yo", 0);
-        return hr;
+		return hr;
 	}
 
     // Create the depth stencil view
@@ -125,7 +136,7 @@ HRESULT RenderDX11::init()
     if(FAILED(hr))
 	{
 		MessageBox(this->hWnd, "depthstencilview made fail, lol", "fail, yo", 0);
-        return hr;
+        	return hr;
 	}
 
 	SAFE_RELEASE(depthStencil);
@@ -135,7 +146,7 @@ HRESULT RenderDX11::init()
 	D3D11_RASTERIZER_DESC rasterDesc;
 
 	rasterDesc.AntialiasedLineEnable = false;
-	rasterDesc.CullMode = D3D11_CULL_NONE;
+	rasterDesc.CullMode = D3D11_CULL_BACK;
 	rasterDesc.DepthBias = 0;
 	rasterDesc.DepthBiasClamp = 0.f;
 	rasterDesc.DepthClipEnable = true;
@@ -150,7 +161,7 @@ HRESULT RenderDX11::init()
     if(FAILED(hr))
 	{
 		MessageBox(this->hWnd, "rasterizerstate made fail, lol", "fail, yo", 0);
-        return hr;
+        	return hr;
 	}
 
 	// Now set the rasterizer state.
@@ -171,17 +182,18 @@ HRESULT RenderDX11::init()
 	ZeroMemory(&blendDesc,sizeof(blendDesc));
 	blendDesc.RenderTarget[0].BlendEnable = TRUE;
 	blendDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_ONE;
-    blendDesc.RenderTarget[0].DestBlend = D3D11_BLEND_ONE;
-    blendDesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
-    blendDesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
-    blendDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
-    blendDesc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
-    blendDesc.RenderTarget[0].RenderTargetWriteMask = 0x0f;
+    	blendDesc.RenderTarget[0].DestBlend = D3D11_BLEND_ONE;
+    	blendDesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+    	blendDesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
+    	blendDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
+    	blendDesc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
+    	blendDesc.RenderTarget[0].RenderTargetWriteMask = 0x0f;
 	hr = g_device->CreateBlendState(&blendDesc, &g_blendEnable);
+	
     if(FAILED(hr))
 	{
 		MessageBox(this->hWnd, "blendenable made fail, lol", "fail, yo", 0);
-        return hr;
+        	return hr;
 	}
 
 	blendDesc.RenderTarget[0].BlendEnable = FALSE;
@@ -189,7 +201,7 @@ HRESULT RenderDX11::init()
     if(FAILED(hr))
 	{
 		MessageBox(this->hWnd, "blenddisable made fail, lol", "fail, yo", 0);
-        return hr;
+		return hr;
 	}
 
 	blendDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
@@ -200,7 +212,7 @@ HRESULT RenderDX11::init()
     if(FAILED(hr))
 	{
 		MessageBox(this->hWnd, "blendalpha made fail, lol", "fail, yo", 0);
-        return hr;
+		return hr;
 	}
 
 	//create depthstencil states
@@ -223,7 +235,7 @@ HRESULT RenderDX11::init()
     if(FAILED(hr))
 	{
 		MessageBox(this->hWnd, "g_depthStencilStateEnable made fail, lol", "fail, yo", 0);
-        return hr;
+		return hr;
 	}
 
 	depthDesc.DepthEnable = FALSE;
@@ -231,7 +243,7 @@ HRESULT RenderDX11::init()
 	if(FAILED(hr))
 	{
 		MessageBox(this->hWnd, "g_depthStencilStateDisable made fail, lol", "fail, yo", 0);
-        return hr;
+        	return hr;
 	}
 
 	//create constant buffers
@@ -377,57 +389,6 @@ HRESULT RenderDX11::init()
     return S_OK;
 }
 
-HRESULT RenderDX11::compileShader(LPCSTR filePath, LPCSTR shaderType, ID3DBlob **shaderBlob)
-{
-	UINT flags = D3DCOMPILE_ENABLE_STRICTNESS;
-#if defined( DEBUG ) || defined( _DEBUG )
-    flags |= D3DCOMPILE_DEBUG;
-#else
-	flags |= D3DCOMPILE_OPTIMIZATION_LEVEL3;
-#endif
-
-    ID3DBlob* errorBlob = nullptr;
-	HRESULT hr = D3DX11CompileFromFile(filePath, NULL, NULL, "main", shaderType, flags, 0, NULL, shaderBlob, &errorBlob, NULL);
-	if(FAILED(hr))
-    {
-        if(errorBlob != NULL)
-            OutputDebugStringA((char*)errorBlob->GetBufferPointer());
-        SAFE_RELEASE( errorBlob );
-        return hr;
-    }
-    SAFE_RELEASE(errorBlob);
-
-	return hr;
-}
-
-HRESULT RenderDX11::createSampleStates()
-{
-	D3D11_SAMPLER_DESC sampDesc;
-	ZeroMemory( &sampDesc, sizeof(sampDesc));
-	sampDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
-	sampDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
-	sampDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
-	sampDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
-	sampDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
-	sampDesc.MinLOD = 0;
-	sampDesc.MaxLOD = D3D11_FLOAT32_MAX;
-
-	HRESULT hr;
-	hr = g_device->CreateSamplerState(&sampDesc, &g_wrap);
-	if(FAILED(hr))
-		MessageBox(hWnd, "Error creating sampler state", "ERROR", MB_OK);
-
-	sampDesc.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP;
-	sampDesc.AddressV = D3D11_TEXTURE_ADDRESS_CLAMP;
-	sampDesc.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP;
-
-	hr = g_device->CreateSamplerState(&sampDesc, &g_clamp);
-	if(FAILED(hr))
-		MessageBox(hWnd, "Error creating sampler state", "ERROR", MB_OK);
-
-	return hr;
-}
-
 HRESULT RenderDX11::createBuffer(void *data, int numElements, int bytesPerElement, int &bufferID)
 {
 	D3D11_SUBRESOURCE_DATA initData;
@@ -488,6 +449,57 @@ HRESULT RenderDX11::createIndexBuffer(void* data, int numElements, int &bufferID
 	m_buffers[bufferID] = buffer;
 
 	return S_OK;
+}
+
+HRESULT RenderDX11::compileShader(LPCSTR filePath, LPCSTR shaderType, ID3DBlob **shaderBlob)
+{
+	UINT flags = D3DCOMPILE_ENABLE_STRICTNESS;
+#if defined( DEBUG ) || defined( _DEBUG )
+    flags |= D3DCOMPILE_DEBUG;
+#else
+	flags |= D3DCOMPILE_OPTIMIZATION_LEVEL3;
+#endif
+
+    ID3DBlob* errorBlob = nullptr;
+	HRESULT hr = D3DX11CompileFromFile(filePath, NULL, NULL, "main", shaderType, flags, 0, NULL, shaderBlob, &errorBlob, NULL);
+	if(FAILED(hr))
+    {
+        if(errorBlob != NULL)
+            OutputDebugStringA((char*)errorBlob->GetBufferPointer());
+        SAFE_RELEASE( errorBlob );
+        return hr;
+    }
+    SAFE_RELEASE(errorBlob);
+
+	return hr;
+}
+
+HRESULT RenderDX11::createSampleStates()
+{
+	D3D11_SAMPLER_DESC sampDesc;
+	ZeroMemory( &sampDesc, sizeof(sampDesc));
+	sampDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+	sampDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+	sampDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+	sampDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+	sampDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
+	sampDesc.MinLOD = 0;
+	sampDesc.MaxLOD = D3D11_FLOAT32_MAX;
+
+	HRESULT hr;
+	hr = g_device->CreateSamplerState(&sampDesc, &g_wrap);
+	if(FAILED(hr))
+		MessageBox(hWnd, "Error creating sampler state", "ERROR", MB_OK);
+
+	sampDesc.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP;
+	sampDesc.AddressV = D3D11_TEXTURE_ADDRESS_CLAMP;
+	sampDesc.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP;
+
+	hr = g_device->CreateSamplerState(&sampDesc, &g_clamp);
+	if(FAILED(hr))
+		MessageBox(hWnd, "Error creating sampler state", "ERROR", MB_OK);
+
+	return hr;
 }
 
 HRESULT RenderDX11::createSRV(unsigned int& _outId, string _fileName)
@@ -592,12 +604,12 @@ void RenderDX11::renderScene()
 	cb.world = elm::mat4();
 	g_deviceContext->UpdateSubresource(g_buffers.at(cbOnChangeID), 0, NULL, &cb, 0, 0);
 
-	/* ************************************************** 
-						Terrain
-	*  ************************************************** */
+	// Terrain
 	g_deviceContext->OMSetDepthStencilState(g_depthStencilStateEnable, 0);
 	g_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	g_deviceContext->IASetInputLayout(g_layout);
+	
+	g_deviceContext->PSSetSamplers(0, 1, &g_wrap);
 	
 	g_deviceContext->PSSetSamplers(0, 1, &g_wrap);
 	g_deviceContext->PSSetShaderResources(0, 1, &g_textures.at(0));

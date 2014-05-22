@@ -1,18 +1,16 @@
 #include "Engine.h"
 
 
-Engine::Engine(HWND hwnd)
+Engine::Engine()
 {
-	hWnd = hwnd;
-
-	selectedTool = Tools::ELEVATION;
-
+	selectedTool = Tools::SELECTOR;
 	minmaxCalcDone = true;
 
 	camera = nullptr;
 	terrain = nullptr;
+	dx = nullptr;
 
-	dx = new RenderDX11(hWnd);
+	//dx = new RenderDX11(hWnd);
 
 	mouseWorldPos = elm::vec3(200, 0, 1000);
 }
@@ -35,6 +33,16 @@ void Engine::setRect(RECT t)
 		camera->resizeWindow(r.right - r.left, r.bottom - r.top);
 }
 
+void Engine::addHandels(HWND _hWnd, std::string _name)
+{
+	if(!dx)
+		dx = new RenderDX11();
+	
+	dx->addHandle(_hWnd, _name);
+}
+
+
+
 void Engine::createTerrain(int width, int height, float pointStep, bool fromPerlinMap, int seed)
 {
 	if(!terrain)
@@ -51,7 +59,7 @@ void Engine::createTerrain(int width, int height, float pointStep, bool fromPerl
 	dx->createAndSetTerrainBuffers(terrain->getVBuffer(), terrain->getIBuffer());
 
 	if(!camera)
-		camera = new Camera(r.right - r.left, r.bottom - r.top, terrain, hWnd);
+		camera = new Camera(width, height, terrain);
 
 	dx->setTerrainIndexCount(terrain->getIndexCount());
 	dx->setCamera(camera);
@@ -69,9 +77,7 @@ void Engine::leftMouseDown(int brushSize, float brushIntensity)
 		terrain->applyNormalizeBrush((float)brushSize, brushIntensity, mouseWorldPos.xz);
 		dx->updateTerrainBuffer(terrain->getVBuffer());
 		break;
-	}
-
-	
+	}	
 
 	if(minmaxCalcDone)
 	{

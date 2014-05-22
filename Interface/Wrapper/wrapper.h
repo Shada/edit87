@@ -9,7 +9,7 @@ namespace wrap
 		HWND hWnd;
 		EngineInterface *gfx;
 	public:
-		GraphicsCommunicator(System::IntPtr win);
+		GraphicsCommunicator();
 		~GraphicsCommunicator();
 
 		void setRenderArea(int x, int y, int width, int height);
@@ -32,5 +32,7 @@ namespace wrap
 		void setElevationTool()			{ gfx->setElevationTool();		}
 		void setNormalizerTool()		{ gfx->setNormalizerTool();		}
 		void setObjectPlacerTool()		{ gfx->setObjectPlacerTool();	}
+
+		void setHandle(System::IntPtr _handle, System::String^ _name);
 	};
 }

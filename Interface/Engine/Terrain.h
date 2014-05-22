@@ -46,7 +46,7 @@ public:
 	unsigned int getSize() const				{ return points.size(); }
 	unsigned int getIndexCount() const			{ return width * height * 6; }
 
-	float getHeightAt(elm::vec2 pos) const;
+	const float getHeightAt(elm::vec2 pos) const;
 
 	int getTreeDepth() { return maxDepth; }
 

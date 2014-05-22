@@ -7,6 +7,7 @@
 #include "Camera.h"
 #include "Quadnode.h"
 #include "ModelDefinitions.h"
+#include <vector>
 
 enum class Tools
 {
@@ -51,7 +52,7 @@ private:
 	map< unsigned int, Composition* >	m_compositions;
 
 public:
-	Engine(HWND hwnd);
+	Engine();
 	~Engine();
 
 	void init();
@@ -74,4 +75,5 @@ public:
 	void setElevationTool()					{ selectedTool = Tools::ELEVATION;		}
 	void setNormalizerTool()				{ selectedTool = Tools::NORMALIZER;		}
 	void setObjectPlacerTool()				{ selectedTool = Tools::OBJECTPLACER;	}
+	void addHandels(HWND _hWnd, std::string _name);
 };

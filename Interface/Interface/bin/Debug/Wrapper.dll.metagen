@@ -1,0 +1,36 @@
+ImageRuntimeVersion: v4.0.30319
+Assembly Wrapper, Version=0.0.*, Culture=Invariant Language (Invariant Country): 
+	hash=SHA1, flags=PublicKey
+Assembly mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089: 
+	hash=None, flags=None
+Assembly System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089: 
+	hash=None, flags=None
+Class wrap.GraphicsCommunicator: AutoLayout, AnsiClass, Class, Public, BeforeFieldInit
+    Void .ctor(): PrivateScope, Public, HideBySig, SpecialName, RTSpecialName
+  Interfaces:
+    System.IDisposable
+  Methods:
+    setRenderArea(Int32, Int32, Int32, Int32): PrivateScope, Public, HideBySig
+    renderScene(): PrivateScope, Public, HideBySig
+    createTerrain(Int32, Int32, Single, Boolean(HasFieldMarshal), Int32): PrivateScope, Public, HideBySig
+    moveCamera(Int32, Int32): PrivateScope, Public, HideBySig
+    rightMouseDown(Int32, Int32): PrivateScope, Public, HideBySig
+    leftMouseDown(Int32, Int32): PrivateScope, Public, HideBySig
+    rightMouseUp(): PrivateScope, Public, HideBySig
+    leftMouseUp(): PrivateScope, Public, HideBySig
+    updateMouse(Int32, Int32): PrivateScope, Public, HideBySig
+    setTextureTool(): PrivateScope, Public, HideBySig
+    setSelctorTool(): PrivateScope, Public, HideBySig
+    setElevationTool(): PrivateScope, Public, HideBySig
+    setNormalizerTool(): PrivateScope, Public, HideBySig
+    setObjectPlacerTool(): PrivateScope, Public, HideBySig
+    setHandle(IntPtr, String): PrivateScope, Public, HideBySig
+    Dispose(): PrivateScope, Public, Final, Virtual, HideBySig
+Struct wrap.MouseKeyType: AutoLayout, AnsiClass, Class, Public, Sealed, BeforeFieldInit
+  :System.Enum
+  Fields:
+    Int32 value__ : Public, SpecialName, RTSpecialName
+Struct wrap.MoveDirection: AutoLayout, AnsiClass, Class, Public, Sealed, BeforeFieldInit
+  :System.Enum
+  Fields:
+    Int32 value__ : Public, SpecialName, RTSpecialName

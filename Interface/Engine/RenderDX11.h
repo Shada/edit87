@@ -4,6 +4,7 @@
 #include <map>
 #include <vector>
 #include <string>
+#include "EngineInterface.h"
 
 #include "EngineInterface.h"
 #include "Terrain.h"
@@ -28,6 +29,12 @@ struct CBOnChange
 {
 	elm::mat4 viewProj, world;
 	elm::vec4 position;
+};
+
+struct Handle
+{
+	HWND hwnd;
+	std::string name;
 };
 
 class RenderDX11
@@ -76,6 +83,8 @@ private:
 	ID3D11PixelShader			*g_modelPS;
 
 	std::vector<ID3D11Buffer*>	g_buffers;
+	std::vector<Handle>			handles;
+
 	std::vector<ID3D11ShaderResourceView*> g_textures;
 
 	std::vector<Mesh3D*>		g_meshes;
@@ -99,7 +108,7 @@ private:
 	map< unsigned int, ID3D11ShaderResourceView*>	m_SRVs;
 
 public:
-	RenderDX11(HWND hWnd);
+	RenderDX11();
 	~RenderDX11();
 
 	void renderScene();
@@ -110,5 +119,5 @@ public:
 
 	void updateTerrainBuffer(std::vector<Vertex> *vBuffer);
 	void createAndSetTerrainBuffers(std::vector<Vertex> *vBuffer, std::vector<uint> *iBuffer);
-
+	void addHandle(HWND _hWnd, std::string _name);
 };

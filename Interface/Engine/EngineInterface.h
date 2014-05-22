@@ -1,5 +1,5 @@
 #pragma once
-
+#include <string>
 #include <Windows.h>
 
 class EngineInterface
@@ -25,8 +25,9 @@ public:
 
 	/* Tool calls */
 	virtual void setTextureTool() = 0;
-	virtual void setSelctorTool() = 0;
 	virtual void setElevationTool() = 0;
 	virtual void setNormalizerTool() = 0;
 	virtual void setObjectPlacerTool() = 0;
+	virtual void setSelctorTool() = 0;
+	virtual void addHandels(HWND _hWnd, std::string _name) = 0;
 };
