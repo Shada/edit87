@@ -13,6 +13,8 @@
 
 #include "ModelDefinitions.h"
 
+#include "Blendmap.h"
+
 #define SAFE_RELEASE(x) if( x ) { (x)->Release(); (x) = nullptr; }
 #define SAFE_DELETE(x) if( x ) { delete(x); (x) = nullptr; }
 
@@ -44,6 +46,7 @@ private:
 	HWND hWnd;
 
 	Camera *camera;
+	Blendmap *blendmap;
 
 	D3D_DRIVER_TYPE				g_driverType;
 	D3D_FEATURE_LEVEL			g_featureLevel;
@@ -110,5 +113,7 @@ public:
 
 	void updateTerrainBuffer(std::vector<Vertex> *vBuffer);
 	void createAndSetTerrainBuffers(std::vector<Vertex> *vBuffer, std::vector<uint> *iBuffer);
+
+	void blendmapBrush(float _radius, float _intensity, elm::vec2 _origin, char* _texture, float _step);
 
 };

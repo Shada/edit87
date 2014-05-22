@@ -96,6 +96,9 @@ void Engine::rightMouseDown(int brushSize, float brushIntensity)
 		terrain->applyDefaultNormalizeBrush((float)brushSize, brushIntensity, mouseWorldPos.xz);
 		dx->updateTerrainBuffer(terrain->getVBuffer());
 		break;
+	case Tools::TEXTURING:
+		dx->blendmapBrush((float)brushSize, brushIntensity, mouseWorldPos.xz, "..\\Textures\\lavag.jpg", terrain->getStep());
+		break;
 	}
 
 
