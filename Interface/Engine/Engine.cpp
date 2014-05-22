@@ -67,12 +67,12 @@ void Engine::createTerrain(int width, int height, float pointStep, bool fromPerl
 
 	objectTool		= new ObjectTool(dx);
 	m_objectRadial	= new ObjectRadial(objectTool);
-	m_objectRadial->init(4, 100, 20, dx->width, dx->height, dx);
+	m_objectRadial->init(4, 50, 25, dx->width, dx->height, dx);
 
 	dx->setRadial(m_objectRadial);
 
 	m_terrainRadial = new TerrainRadial(&selectedTool);
-	m_terrainRadial->init(6, 100, 20, dx->width, dx->height, dx);
+	m_terrainRadial->init(6, 10, 20, dx->width, dx->height, dx);
 
 	m_currentRadial = m_terrainRadial;
 }

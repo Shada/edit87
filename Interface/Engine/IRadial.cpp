@@ -18,53 +18,49 @@ void IRadial::init(unsigned int _numIcons, float _radius, elm::vec2 _iconDimensi
 	screenWidth		= _width;
 	screenHeight	= _height;
 	float rad		= 360.f / _numIcons * 0.0174532925f;
-	m_iconSize		= _iconDimension;
+	m_iconSize		= elm::vec2(_iconDimension.x / screenWidth * 2, _iconDimension.y / screenHeight * 2);
 	m_numIcons		= _numIcons;
 	radius			= _radius;
 	m_origin		= elm::vec2(0);
 
 	m_selectedToolFunction	= -1;
-}
-
-void IRadial::setSpawn(elm::vec2 _origin)
-{
-	m_origin = _origin;
-}
-
-void IRadial::select(elm::vec2 _mouse)
-{
-	if(m_state != RState::SELECT)
-		return;
-
-	m_mouse		= _mouse;
-	float rad	= 360.f / m_numIcons * 0.0174532925f;
-
 	m_icons.clear();
 
 	for(int i = 0; i < m_numIcons; i++)
 	{
 		elm::vec2 p( (int)(radius * std::sin(i * rad)), (int)(radius * std::cos(i * rad)));
-		
-		Icon icon;
+		float x = p.x / screenWidth * 2.f;
+		float y = p.y / screenHeight * 2.f;
+		elm::vec2 scrnp = elm::vec2(x,y);
+		IIcon icon(scrnp, m_iconSize, radius, i % 2);
 
-		icon.m_pos	= elm::vec2((p.x + m_origin.x) / screenWidth * 2 - 1, -((p.y + m_origin.y) / screenHeight * 2 - 1));
-		icon.m_size	= elm::vec2(m_iconSize.x / screenWidth * 2, m_iconSize.y / screenHeight * 2);
+		m_icons.push_back(icon);
+	}
+}
 
-		elm::vec2 m = elm::vec2(m_mouse.x / screenWidth * 2 - 1, m_mouse.y / screenHeight * 2 - 1);
-		if(	m.x > (icon.m_pos.x - icon.m_size.x) && m.x < (icon.m_pos.x + icon.m_size.x) &&
-			-m.y > (icon.m_pos.y - icon.m_size.y) && -m.y < (icon.m_pos.y + icon.m_size.y) )
-		{
-			icon.m_color = m_defColor;
-			m_selectedToolFunction = i;
-		}
-		else icon.m_color = elm::vec4(1);
+void IRadial::setSpawn(elm::vec2 _origin)
+{
+	m_origin = elm::vec2(_origin.x / screenWidth * 2 - 1, _origin.y / screenHeight * 2 - 1);
+}
 
-		m_icons.push_back( icon );
+void IRadial::select(elm::vec2 _mouse)
+{
+	elm::vec2 scrnm = elm::vec2(_mouse.x / screenWidth * 2 - 1, _mouse.y / screenHeight * 2 - 1);
+	elm::vec2 scrno = m_origin;
+
+	bool selected;
+	for(IIcon& icon : m_icons)
+	{
+		selected = icon.collide(scrnm, scrno);
+		//if(selected)
+		//	break;
 	}
 
+	//update quad buffer
 	if(m_toolBufferId == -1)
 	{
-		dxPtr->createBuffer((void**)&m_icons[0], m_icons.size(), sizeof(Icon), m_toolBufferId, true);
+		elm::vec4 p(m_origin.x, m_origin.y, m_iconSize.x, m_iconSize.y);
+		dxPtr->createBuffer((void**)&p, m_icons.size(), sizeof(IIcon), m_toolBufferId, true);
 	}
 	else
 	{
@@ -74,7 +70,8 @@ void IRadial::select(elm::vec2 _mouse)
 		if(FAILED(hr))
 			MessageBox(NULL, "Could not update terrain buffer", "ERROR", S_OK);
 
-		memcpy(resource.pData, (void**)&m_icons[0], sizeof(Icon) * m_icons.size());
+		elm::vec4 p(m_origin.x, m_origin.y, m_iconSize.x, m_iconSize.y);
+		memcpy(resource.pData, (void**)&p, sizeof(IIcon));
 
 		dxPtr->g_deviceContext->Unmap(dxPtr->g_buffers.at(m_toolBufferId), 0);
 	}
@@ -82,24 +79,28 @@ void IRadial::select(elm::vec2 _mouse)
 
 void IRadial::draw()
 {
-	if(m_state != RState::HIDE && m_toolBufferId != -1)
+	if(m_state == RState::HIDE || m_toolBufferId == -1)
+		return;
+
+	dxPtr->g_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
+
+	unsigned int stride = sizeof(IIcon);
+	unsigned int offset = 0;
+	
+	dxPtr->g_deviceContext->VSSetShader(dxPtr->g_toolVS, NULL, 0);
+	dxPtr->g_deviceContext->GSSetShader(dxPtr->g_toolGS, NULL, 0);
+	dxPtr->g_deviceContext->PSSetShader(dxPtr->g_toolPS, NULL, 0);
+	dxPtr->g_deviceContext->IASetInputLayout(dxPtr->g_billboardlayout);
+
+	dxPtr->g_deviceContext->IASetVertexBuffers(0, 1, &dxPtr->g_buffers.at(m_toolBufferId), &stride, &offset);
+
+	for(IIcon& icon : m_icons)
 	{
-		dxPtr->g_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
-
-		unsigned int stride = sizeof(Icon);
-		unsigned int offset = 0;
-
-		dxPtr->g_deviceContext->VSSetShader(dxPtr->g_toolVS, NULL, 0);
-		dxPtr->g_deviceContext->GSSetShader(dxPtr->g_toolGS, NULL, 0);
-		dxPtr->g_deviceContext->PSSetShader(dxPtr->g_toolPS, NULL, 0);
-		dxPtr->g_deviceContext->IASetInputLayout(dxPtr->g_billboardlayout);
-
-		dxPtr->g_deviceContext->IASetVertexBuffers(0, 1, &dxPtr->g_buffers.at(m_toolBufferId), &stride, &offset);
-
-		dxPtr->g_deviceContext->Draw(m_icons.size(), 0);
-
-		dxPtr->g_deviceContext->GSSetShader(NULL, NULL, 0);
+		icon.updateShader(dxPtr);
+		dxPtr->g_deviceContext->Draw(1, 0);
 	}
+
+	dxPtr->g_deviceContext->GSSetShader(NULL, NULL, 0);
 }
 
 void IRadial::setState(RState _state)
@@ -115,6 +116,9 @@ ObjectRadial::ObjectRadial(ObjectTool* _tool)
 
 void ObjectRadial::update()
 {
+	// check for icon selection
+	select(m_mouse);
+
 	switch(m_selectedToolFunction)
 	{
 	case 0:

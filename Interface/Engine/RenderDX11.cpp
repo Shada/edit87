@@ -269,6 +269,15 @@ HRESULT RenderDX11::init()
 	cbOnChangeID = g_buffers.size();
 	g_buffers.push_back(b);
 
+	bd.ByteWidth = sizeof(CBIcon);
+	b = nullptr;
+	hr = g_device->CreateBuffer(&bd, NULL, &b);
+	iconCBufferId = g_buffers.size();
+	g_buffers.push_back(b);
+
+	if(FAILED(hr))
+		return hr;
+
 	D3D11_INPUT_ELEMENT_DESC standardLayout[] =
 	{
 		{ "POSITION",	0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
@@ -286,8 +295,7 @@ HRESULT RenderDX11::init()
 	D3D11_INPUT_ELEMENT_DESC billboardLayout[] = 
 	{
 		{	"POSITION",	0,	DXGI_FORMAT_R32G32_FLOAT,	0,	0,					D3D11_INPUT_PER_VERTEX_DATA,	0 },
-		{	"DIMENSION",0,	DXGI_FORMAT_R32G32_FLOAT,	0,	sizeof(float) * 2,	D3D11_INPUT_PER_VERTEX_DATA,	0 },
-		{	"COLOR",	0,	DXGI_FORMAT_R32G32B32A32_FLOAT,	0, sizeof(elm::vec4),	D3D11_INPUT_PER_VERTEX_DATA,	0 },
+		{	"DIMENSION",0,	DXGI_FORMAT_R32G32_FLOAT,	0,	sizeof(float) * 2,	D3D11_INPUT_PER_VERTEX_DATA,	0 }
 	};
 
 	/* Create shaders */

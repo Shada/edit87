@@ -33,11 +33,20 @@ struct CBOnChange
 	elm::vec4 highlight;
 };
 
+struct CBIcon
+{
+	elm::vec4 color;
+	elm::vec4 positonOffset;
+	elm::vec4 flag1;
+	elm::vec4 flag2;
+
+};
+
 class RenderDX11
 {
 private:
 	int terrainVertexBufferID, terrainIndexBufferID, modelID, cbOnceID, cbOnChangeID, terrainIndexCount;
-
+	int iconCBufferId;
 	elm::vec3 terrainPos;
 
 	std::vector<uint> *iBuffer;
@@ -141,4 +150,5 @@ public:
 	friend class Engine;
 	friend class ObjectTool;
 	friend class IRadial;
+	friend class IIcon;
 };

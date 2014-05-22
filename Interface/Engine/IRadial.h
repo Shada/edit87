@@ -8,6 +8,8 @@ using std::vector;
 #include "ObjectTool.h"
 #include "RenderDX11.h"
 
+#include "IIcon.h"
+
 enum class Tools;
 
 enum class RState
@@ -46,7 +48,7 @@ public:
 
 protected:
 	int				m_toolBufferId;
-	vector<Icon>	m_icons;
+	vector<IIcon>	m_icons;
 	elm::vec2		m_iconSize;
 	elm::vec2		m_origin;
 

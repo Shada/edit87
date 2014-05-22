@@ -63,6 +63,9 @@
     <ClInclude Include="IRadial.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="IIcon.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="RenderDX11.cpp">
@@ -96,6 +99,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="IRadial.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="IIcon.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

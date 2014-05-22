@@ -83,6 +83,7 @@
     <ClInclude Include="Engine.h" />
     <ClInclude Include="EngineFactory.h" />
     <ClInclude Include="EngineInterface.h" />
+    <ClInclude Include="IIcon.h" />
     <ClInclude Include="IRadial.h" />
     <ClInclude Include="KeyDefines.h" />
     <ClInclude Include="Mesh3D.h" />
@@ -99,6 +100,7 @@
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Engine.cpp" />
     <ClCompile Include="EngineFactory.cpp" />
+    <ClCompile Include="IIcon.cpp" />
     <ClCompile Include="IRadial.cpp" />
     <ClCompile Include="Mesh3D.cpp" />
     <ClCompile Include="Model.cpp" />
