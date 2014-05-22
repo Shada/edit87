@@ -16,7 +16,8 @@ Engine::Engine(HWND hwnd)
 	m_selectedObject	= nullptr;
 	m_defaultRotation	= elm::vec3(0);
 	m_defaultScale		= elm::vec3(1);
-
+	m_currentRadial		= nullptr;
+	dx->m_currentRadial	= m_currentRadial;
 
 	mouseWorldPos = elm::vec3(200, 0, 1000);
 }
@@ -63,6 +64,17 @@ void Engine::createTerrain(int width, int height, float pointStep, bool fromPerl
 
 	dx->setTerrainIndexCount(terrain->getIndexCount());
 	dx->setCamera(camera);
+
+	objectTool		= new ObjectTool(dx);
+	m_objectRadial	= new ObjectRadial(objectTool);
+	m_objectRadial->init(4, 100, 20, dx->width, dx->height, dx);
+
+	dx->setRadial(m_objectRadial);
+
+	m_terrainRadial = new TerrainRadial(&selectedTool);
+	m_terrainRadial->init(6, 100, 20, dx->width, dx->height, dx);
+
+	m_currentRadial = m_terrainRadial;
 }
 
 void Engine::leftMouseDown()
@@ -75,28 +87,21 @@ void Engine::leftMouseDown()
 				findMinMaxValues();
 		break;
 	case Tools::SELECTOR:
-		
-		if(m_currentKeyBinding.second == true)
-			switch(m_currentKeyBinding.first)
-			{
-			case Key::STATE_MOVE:
-				moveObject();
-				break;
-			case Key::STATE_ROTATE:
-				rotateObject();
-				break;
-			case Key::STATE_SCALE:
-				scaleObject();
-				break;
-			case Key::STATE_PLACE:
-				m_currentKeyBinding = std::make_pair((unsigned int)Key::STATE_PLACE,true);
-				break;
-			}
+		{
+			if(m_selectedObject != nullptr)
+				objectTool->update(m_selectedObject, elm::vec2(mousePos.x, mousePos.y), elm::vec2(oldMousePos.x, oldMousePos.y));			
+
+			m_terrainRadial->update();
+		}
+		break;
+
+	default:
+
 		break;
 	}
 
 	camera->move(elm::vec2(0));
-
+		dx->setMousePoint(mousePos);
 
 	oldMousePos = mousePos;
 	dx->updateTerrainBuffer(terrain->getVBuffer());
@@ -117,12 +122,13 @@ void Engine::leftMouseUp()
 
 	switch(selectedTool)
 	{
-	case Tools::OBJECTPLACER:
-
+	case Tools::ELEVATION:
+		
 		break;
 	case Tools::SELECTOR:
 		selectObject();
-		
+		m_objectRadial->update();
+
 		break;
 	}
 
@@ -161,9 +167,12 @@ void Engine::rightMouseUp()
 	{
 		m_selectedObject->setSelected(false);
 		m_selectedObject = nullptr;
+		
 		dx->renderScene(node);
 	}
 
+	m_currentRadial->setState(RState::HIDE);
+	selectedTool = Tools::SELECTOR;
 	m_currentKeyBinding = std::make_pair( (unsigned int)Key::NO_STATE, true);
 }
 
@@ -175,6 +184,8 @@ void Engine::move(float alongX, float alongZ)
 {
 	camera->move(elm::vec2(alongX, alongZ));
 	mouseWorldPos = camera->getWorldPos(mousePos.x, mousePos.y, node);
+	m_terrainRadial->setWorldPos(mouseWorldPos);
+	
 }
 
 void Engine::updateMouse(POINT mouse, float delta)
@@ -183,6 +194,8 @@ void Engine::updateMouse(POINT mouse, float delta)
 	mousePos = mouse;
 	mouseDelta = delta;
 	mouseWorldPos = camera->getWorldPos(mousePos.x, mousePos.y, node);
+	m_currentRadial->select(elm::vec2(mousePos.x, mousePos.y));
+	dx->renderScene(node);
 }
 
 void Engine::keyboardEvent(unsigned int _key, bool _isDown)
@@ -199,11 +212,18 @@ void Engine::keyboardEvent(unsigned int _key, bool _isDown)
 	case Key::STATE_MOVE:
 	case Key::STATE_SCALE:		
 	case Key::STATE_PLACE:	
-		setSelctorTool();
+		//setSelctorTool();
 		break;
 
 	case Key::STATE_TERRAIN:
-		setElevationTool();
+		m_terrainRadial->setState(RState::SELECT);
+		m_terrainRadial->setSpawn(elm::vec2(mousePos.x, mousePos.y));
+		m_currentRadial = m_terrainRadial;
+		dx->setRadial(m_currentRadial);
+		if(m_selectedObject != nullptr)
+			m_selectedObject->setSelected(false);
+		m_selectedObject = nullptr;
+		//setElevationTool();
 		break;
 
 	default:
@@ -265,6 +285,8 @@ bool rayVsAABB(elm::vec3 rayDirFrac, elm::vec3 rayOrig, elm::vec3 min, elm::vec3
 
 void Engine::selectObject()
 {
+	dx->setMousePoint(mousePos);
+
 	elm::vec3 vPickRayDir, vPickRayOrig;
 	pickRay(mousePos, vPickRayDir, vPickRayOrig);
 
@@ -280,9 +302,15 @@ void Engine::selectObject()
 		min = dx->g_meshes[object->getMeshID()]->getMinVertex() * object->getScale() + object->getPosition();
 		max = dx->g_meshes[object->getMeshID()]->getMaxVertex() * object->getScale() + object->getPosition();
 
+		
+
 		if( rayVsAABB(1.f / vPickRayDir, vPickRayOrig, min, max) )
 		{
 			m_selectedObject = &c;
+			m_currentRadial = m_objectRadial;
+			m_objectRadial->setSpawn(elm::vec2(mousePos.x, mousePos.y));
+			m_objectRadial->setState(RState::SELECT);
+			dx->setRadial(m_currentRadial);
 		}
 		else
 		{
@@ -291,106 +319,15 @@ void Engine::selectObject()
 	}
 
 	if(m_selectedObject != nullptr)
+	{
 		m_selectedObject->setSelected(true);
-}
-
-void Engine::scaleObject()
-{
-	if(!m_selectedObject)
-		return;
-
-	elm::vec3 vPickRayDir, vPickRayOrig;
-	pickRay(mousePos, vPickRayDir, vPickRayOrig);
-
-	Object3D* object = m_selectedObject->getProperty<Object3D>();
-
-	if(!object)
-		return;
-
-	//min max to world
-	elm::vec3 min, max;
-	min = dx->g_meshes[object->getMeshID()]->getMinVertex() * object->getScale() + object->getPosition();
-	max = dx->g_meshes[object->getMeshID()]->getMaxVertex() * object->getScale() + object->getPosition();
-
-	if( rayVsAABB(1.f / vPickRayDir, vPickRayOrig, min, max) )
-	{
-		float xDiff, yDiff;
-		xDiff = mousePos.x - oldMousePos.x;
-		yDiff = mousePos.y - oldMousePos.y;
-
-		elm::vec3 nscale = elm::vec3( (xDiff + yDiff) / 10.f ) + object->getScale();
-
-		float min = 0.1f;
-		float max = 5.0f;
-		if(nscale.x > max || nscale.y > max ||nscale.z > max)
-			nscale = elm::vec3(max);
-		if(nscale.x < min || nscale.y < min || nscale.z < min)
-			nscale = elm::vec3(min);
-
-		object->setScale( nscale );
-	}
-}
-
-void Engine::rotateObject()
-{
-	if(!m_selectedObject)
-		return;
-
-	elm::vec3 vPickRayDir, vPickRayOrig;
-    pickRay(mousePos, vPickRayDir, vPickRayOrig);
-
-	Object3D* object = m_selectedObject->getProperty<Object3D>();
-
-	if(!object)
-		return;
-
-	//min max to world
-	elm::vec3 min, max;
-	min = dx->g_meshes[object->getMeshID()]->getMinVertex() * object->getScale() + object->getPosition();
-	max = dx->g_meshes[object->getMeshID()]->getMaxVertex() * object->getScale() + object->getPosition();
-
-	//if( rayVsAABB(1.f / vPickRayDir, vPickRayOrig, min, max) )
-	{
-		float xDiff, yDiff;
-		xDiff = mousePos.x - oldMousePos.x;
-		yDiff = mousePos.y - oldMousePos.y;
-
-		elm::vec3 nrot = elm::vec3(yDiff) / 10.f;
-		//nrot.y = 0;
-		nrot.z = 0;
-		object->setRotation( nrot + object->getRotation() );
 
 
 	}
-}
-
-void Engine::moveObject()
-{
-	if(!m_selectedObject)
-		return;
-
-	elm::vec3 vPickRayDir, vPickRayOrig;
-	pickRay(mousePos, vPickRayDir, vPickRayOrig);
-
-	Object3D* object = m_selectedObject->getProperty<Object3D>();
-
-	if(!object)
-		return;
-
-	//min max to world
-	elm::vec3 min, max;
-	min = dx->g_meshes[object->getMeshID()]->getMinVertex() * object->getScale() + object->getPosition();
-	max = dx->g_meshes[object->getMeshID()]->getMaxVertex() * object->getScale() + object->getPosition();
-
-	if( rayVsAABB(1.f / vPickRayDir, vPickRayOrig, min, max) )
+	else
 	{
-		float xDiff, yDiff;
-		xDiff = mousePos.x - oldMousePos.x;
-		yDiff = mousePos.y - oldMousePos.y;
 
-		elm::vec3 dpos = elm::vec3(xDiff, 0, -yDiff);
-		elm::vec3 npos = object->getPosition() + dpos;
-		object->setPosition( npos );
+
 	}
 }
 
@@ -415,7 +352,7 @@ void Engine::placeObject(unsigned int _objectId)
 	c.setProperty(co);
 	dx->g_comps.push_back(c);
 
-	//if(m_selectedObject != nullptr)
+	//if(m_selectedObject != nullptr)		// this cause crash after 2-3 new objects being placed for some reason
 	//	m_selectedObject->setSelected(false);
 
 	m_selectedObject = &dx->g_comps[ dx->g_comps.size() - 1 ];

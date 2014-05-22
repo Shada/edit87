@@ -4,15 +4,19 @@
 #include <d3dcompiler.h>
 #include "..\DirectXTex\DirectXTex.h"
 #include "Utility.h"
+#include "IRadial.h"
 
 RenderDX11::RenderDX11(HWND hWnd)
 {
 	this->hWnd = hWnd;
 	terrainVertexBufferID = terrainIndexBufferID = -1;
 
-	camera = nullptr;
-	g_swapChain = nullptr;
-	specComp = new Composition();
+	camera			= nullptr;
+	g_swapChain		= nullptr;
+	specComp		= new Composition();
+	toolIsActive	= true;
+	toolBufferId	= -1;
+	m_currentRadial	= nullptr;
 }
 
 void RenderDX11::setRect(RECT t)
@@ -23,12 +27,17 @@ void RenderDX11::setRect(RECT t)
 		init();
 }
 
+void RenderDX11::setRadial(IRadial* _radial)
+{
+	m_currentRadial = _radial;
+}
+
 HRESULT RenderDX11::init()
 {
 	HRESULT hr = S_OK;
 	
-    UINT width = r.right - r.left;
-    UINT height = r.bottom - r.top;
+    width = r.right - r.left;
+    height = r.bottom - r.top;
 
 	UINT createDeviceFlags = 0;
 
@@ -274,8 +283,17 @@ HRESULT RenderDX11::init()
 		{ "TEXCOORD",	0, DXGI_FORMAT_R32G32_FLOAT,	2, 0, D3D11_INPUT_PER_VERTEX_DATA, 0}
 	};
 
+	D3D11_INPUT_ELEMENT_DESC billboardLayout[] = 
+	{
+		{	"POSITION",	0,	DXGI_FORMAT_R32G32_FLOAT,	0,	0,					D3D11_INPUT_PER_VERTEX_DATA,	0 },
+		{	"DIMENSION",0,	DXGI_FORMAT_R32G32_FLOAT,	0,	sizeof(float) * 2,	D3D11_INPUT_PER_VERTEX_DATA,	0 },
+		{	"COLOR",	0,	DXGI_FORMAT_R32G32B32A32_FLOAT,	0, sizeof(elm::vec4),	D3D11_INPUT_PER_VERTEX_DATA,	0 },
+	};
+
 	/* Create shaders */
 	ID3DBlob *shaderBlob;
+
+	// Default
 	compileShader("..\\Shaders\\defaultVS.hlsl", "vs_4_0", &shaderBlob);
 	g_device->CreateVertexShader(shaderBlob->GetBufferPointer(), shaderBlob->GetBufferSize(), NULL, &g_terrainVS);
 	g_device->CreateInputLayout(standardLayout, ARRAYSIZE(standardLayout), shaderBlob->GetBufferPointer(), shaderBlob->GetBufferSize(), &g_layout);
@@ -286,6 +304,7 @@ HRESULT RenderDX11::init()
 
 	shaderBlob->Release();
 
+	// Model
 	hr = compileShader("..\\Shaders\\modelVS.hlsl", "vs_4_0", &shaderBlob);
 	hr = g_device->CreateVertexShader(shaderBlob->GetBufferPointer(), shaderBlob->GetBufferSize(), NULL, &g_modelVS);
 	hr = g_device->CreateInputLayout(aLittleLessStandardLayout, ARRAYSIZE(aLittleLessStandardLayout), shaderBlob->GetBufferPointer(), shaderBlob->GetBufferSize(), &g_otherlayout);
@@ -293,6 +312,21 @@ HRESULT RenderDX11::init()
 
 	hr = compileShader("..\\Shaders\\modelPS.hlsl", "ps_4_0", &shaderBlob);
 	g_device->CreatePixelShader(shaderBlob->GetBufferPointer(), shaderBlob->GetBufferSize(), NULL, &g_modelPS);
+
+	shaderBlob->Release();
+
+	// Billboard
+	hr	= compileShader("../Shaders/ToolBillboardVS.hlsl", "vs_4_0", &shaderBlob);
+	hr	= g_device->CreateVertexShader(shaderBlob->GetBufferPointer(), shaderBlob->GetBufferSize(), NULL, &g_toolVS);
+	hr	= g_device->CreateInputLayout(billboardLayout, ARRAYSIZE(billboardLayout), shaderBlob->GetBufferPointer(), shaderBlob->GetBufferSize(), &g_billboardlayout);
+	shaderBlob->Release();
+
+	hr	= compileShader("../Shaders/ToolBillboardGS.hlsl", "gs_4_0", &shaderBlob);
+	hr	= g_device->CreateGeometryShader(shaderBlob->GetBufferPointer(), shaderBlob->GetBufferSize(), NULL, &g_toolGS);
+	shaderBlob->Release();
+
+	hr	= compileShader("../Shaders/ToolBillboardPS.hlsl", "ps_4_0", &shaderBlob);
+	g_device->CreatePixelShader(shaderBlob->GetBufferPointer(), shaderBlob->GetBufferSize(), NULL, &g_toolPS);
 
 	shaderBlob->Release();
 
@@ -307,7 +341,7 @@ HRESULT RenderDX11::init()
 	g_textures.push_back(tex);
 	createSampleStates();
 
-	
+	// default mesh
 	Mesh3D *mesh = new Mesh3D();
 	if(!mesh->loadMesh("../Models/Collada/duck.dae"))
 	{
@@ -340,6 +374,18 @@ HRESULT RenderDX11::init()
 	}
 	g_meshes[0]->setIndexBufferID(id);
 
+	//elm::vec2 quad[2] = 
+	//{
+	//	elm::vec2(0,0), elm::vec2(100.f / (float)width, 100.f / (float)height),
+	//};
+
+	//if( FAILED(createBuffer((void*)quad, 1, sizeof(elm::vec2) * 2, toolBufferId, true)) )
+	//{
+	//	MessageBox(this->hWnd, "VertexBuffer (Billboard) load made fail, lol", "fail, yo", 0);
+	//	return hr;
+	//}
+
+	// default object + composition
 	Object3D *obj = new Object3D();
 	obj->setMeshID(g_meshes.size()-1);
 	obj->setPosition(elm::vec3(200,100,200));
@@ -377,6 +423,10 @@ HRESULT RenderDX11::init()
 	g_textures.push_back(tex);
 
 	g_meshes[0]->setTexDiffuseID(g_textures.size() - 1);
+
+	createMenu(20,100, 0.1);
+
+
     return S_OK;
 }
 
@@ -431,7 +481,7 @@ HRESULT RenderDX11::createSampleStates()
 	return hr;
 }
 
-HRESULT RenderDX11::createBuffer(void *data, int numElements, int bytesPerElement, int &bufferID)
+HRESULT RenderDX11::createBuffer(void *data, int numElements, int bytesPerElement, int &bufferID, bool isDynamic)
 {
 	D3D11_SUBRESOURCE_DATA initData;
 	initData.pSysMem = data;
@@ -440,10 +490,19 @@ HRESULT RenderDX11::createBuffer(void *data, int numElements, int bytesPerElemen
 
 	D3D11_BUFFER_DESC bd;
 	ZeroMemory(&bd, sizeof(bd));
-	bd.Usage = D3D11_USAGE_IMMUTABLE;
+	if(isDynamic)
+	{
+		bd.Usage = D3D11_USAGE_DYNAMIC;
+		bd.CPUAccessFlags	= D3D11_CPU_ACCESS_WRITE;
+	}
+	else
+	{
+		bd.Usage = D3D11_USAGE_IMMUTABLE;
+		    bd.CPUAccessFlags = 0;
+	}
     bd.ByteWidth = bytesPerElement * numElements;
     bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-    bd.CPUAccessFlags = 0;
+
 	bd.MiscFlags      = 0;
 
 	ID3D11Buffer *buffer = nullptr;
@@ -457,8 +516,7 @@ HRESULT RenderDX11::createBuffer(void *data, int numElements, int bytesPerElemen
 	bufferID = g_buffers.size();
 	g_buffers.push_back(buffer);
 
-	m_buffers[bufferID] = buffer;
-
+	
 	return S_OK;
 }
 
@@ -569,25 +627,25 @@ void RenderDX11::createAndSetTerrainBuffers(std::vector<Vertex> *vBuffer, std::v
 
 	// 3d mini
 	
-	Mesh3D* m = new Mesh3D();
-	m->setVertexBufferID(terrainVertexBufferID);
-	m->setIndexBufferID(terrainIndexBufferID);
-	m->setMinMax( elm::vec3(-100), elm::vec3(100) );
-	g_meshes.push_back(m);
+	//Mesh3D* m = new Mesh3D();
+	//m->setVertexBufferID(terrainVertexBufferID);
+	//m->setIndexBufferID(terrainIndexBufferID);
+	//m->setMinMax( elm::vec3(-100), elm::vec3(100) );
+	//g_meshes.push_back(m);
 
-	Object3D* mo = new Object3D();
-	mo->setMeshID(g_meshes.size() - 1);
-	mo->setScale(elm::vec3(0.25));
-	mo->setRotation(elm::vec3(0));
-	mo->setPosition(elm::vec3(200,100,200));
-	
-	g_objects.push_back(mo);
+	//Object3D* mo = new Object3D();
+	//mo->setMeshID(g_meshes.size() - 1);
+	//mo->setScale(elm::vec3(0.25));
+	//mo->setRotation(elm::vec3(0));
+	//mo->setPosition(elm::vec3(200,100,200));
+	//
+	//g_objects.push_back(mo);
 
-	CModel<Object3D>* ct = new CModel<Object3D>("terrain_mini", mo);
+	//CModel<Object3D>* ct = new CModel<Object3D>("terrain_mini", mo);
 
-	specComp->setName("terrain_mini");
-	specComp->setProperty(ct);
-	g_comps.push_back(*specComp);
+	//specComp->setName("terrain_mini");
+	//specComp->setProperty(ct);
+	//g_comps.push_back(*specComp);
 	
 }
 
@@ -642,17 +700,18 @@ void RenderDX11::renderScene(Quadnode *node)
 	g_deviceContext->DrawIndexed(terrainIndexCount, 0, 0);
 
 	//drawCulledTerrain(node);
-	Object3D* o = specComp->getProperty<Object3D>();
+	// draw mini terrain
+	//Object3D* o = specComp->getProperty<Object3D>();
 
-	cb.world = elm::translationMatrix(o->getPosition());
-	elm::mat4 rotate;
-	elm::yawPitchRoll(rotate, o->getRotation());
-	elm::mat4 scale		= elm::scalingMatrix(o->getScale());
-	elm::mat4 translate	= elm::translationMatrix(o->getPosition());
-	cb.world = scale * rotate * translate;
-	g_deviceContext->UpdateSubresource(g_buffers.at(cbOnChangeID), 0, NULL, &cb, 0, 0);
+	//cb.world = elm::translationMatrix(o->getPosition());
+	//elm::mat4 rotate;
+	//elm::yawPitchRoll(rotate, o->getRotation());
+	//elm::mat4 scale		= elm::scalingMatrix(o->getScale());
+	//elm::mat4 translate	= elm::translationMatrix(o->getPosition());
+	//cb.world = scale * rotate * translate;
+	//g_deviceContext->UpdateSubresource(g_buffers.at(cbOnChangeID), 0, NULL, &cb, 0, 0);
 
-	g_deviceContext->DrawIndexed(terrainIndexCount, 0, 0);
+	//g_deviceContext->DrawIndexed(terrainIndexCount, 0, 0);
 	
 	/************************************************************/
 	//						DRAWING A MESH						//
@@ -675,7 +734,9 @@ void RenderDX11::renderScene(Quadnode *node)
 			continue;
 
 		if(g_comps[i].isSelected())
+		{
 			cb.highlight = elm::vec4(1,0.75,0.75,1);
+		}
 		else
 			cb.highlight = elm::vec4(1);
 		
@@ -698,6 +759,28 @@ void RenderDX11::renderScene(Quadnode *node)
 		g_deviceContext->DrawIndexed(g_meshes[o->getMeshID()]->getNumIndices(), 0, 0);
 	}
 
+	/******************************
+		DRAW TOOL BILLBOARD
+	*******************************/
+	if(m_currentRadial != nullptr)
+		m_currentRadial->draw();
+	////if(toolIsActive)
+	//{
+	//	g_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
+
+	//	stride = sizeof(elm::vec2) * 2;
+
+	//	g_deviceContext->VSSetShader(g_toolVS, NULL, 0);
+	//	g_deviceContext->GSSetShader(g_toolGS, NULL, 0);
+	//	g_deviceContext->PSSetShader(g_toolPS, NULL, 0);
+	//	g_deviceContext->IASetInputLayout(g_billboardlayout);
+
+	//	g_deviceContext->IASetVertexBuffers(0, 1, &g_buffers.at(toolBufferId), &stride, &offset);
+
+	//	g_deviceContext->Draw(20, 0);
+
+	//	g_deviceContext->GSSetShader(NULL, NULL, 0);
+	//}
 	g_swapChain->Present(0, 0);
 }
 
@@ -776,4 +859,64 @@ RenderDX11::~RenderDX11()
 		SAFE_DELETE(g_meshes[i]);
 	}
 	g_meshes.clear();
+}
+
+void RenderDX11::setMousePoint(POINT _mousePoint)
+{
+	mousePoint = _mousePoint;
+
+	elm::vec2 quad[2] = 
+	{
+		elm::vec2((float)_mousePoint.x / (float)width * 2 - 1, -((float)_mousePoint.y / (float)height * 2 - 1)), elm::vec2(100.f / (float)width, 100.f / (float)height),
+	};
+	createMenu(8,100, 10);
+	//D3D11_MAPPED_SUBRESOURCE resource;
+	//HRESULT hr = g_deviceContext->Map(g_buffers.at(toolBufferId), 0, D3D11_MAP_WRITE_DISCARD, 0, &resource);
+
+	//if(FAILED(hr))
+	//	MessageBox(NULL, "Could not update terrain buffer", "ERROR", S_OK);
+
+	//memcpy(resource.pData, (void**)&quad[0], sizeof(elm::vec2)* 2);
+
+	//g_deviceContext->Unmap(g_buffers.at(toolBufferId), 0);
+
+	
+}
+
+void RenderDX11::toggleTool(bool _arg)
+{
+	if(toolIsActive)
+		toolIsActive = false;
+	else 
+		toolIsActive = true;
+}
+
+void RenderDX11::createMenu(unsigned int _numIcons, float _radius, elm::vec2 _iconDimension)
+{
+	float rad = 360.f / _numIcons * 0.0174532925f;
+
+	std::vector<elm::vec4> quads;
+
+	for(int i = 0; i < _numIcons; i++)
+	{
+		elm::vec2 p( (int)(_radius * std::sin(i * rad)), (int)(_radius * std::cos(i * rad)));
+		
+		quads.push_back( elm::vec4((p.x + (float)mousePoint.x) / (float)width * 2 - 1, -((p.y + (float)mousePoint.y) / (float)height * 2 - 1), _iconDimension.x / (float)width * 2, _iconDimension.y / (float)height * 2) );
+	}
+	if(toolBufferId == -1)
+	{
+		createBuffer((void**)&quads[0], quads.size(), sizeof(elm::vec4), toolBufferId, true);
+	}
+	else
+	{
+		D3D11_MAPPED_SUBRESOURCE resource;
+		HRESULT hr = g_deviceContext->Map(g_buffers.at(toolBufferId), 0, D3D11_MAP_WRITE_DISCARD, 0, &resource);
+
+		if(FAILED(hr))
+			MessageBox(NULL, "Could not update terrain buffer", "ERROR", S_OK);
+
+		memcpy(resource.pData, (void**)&quads[0], sizeof(elm::vec4)* quads.size());
+
+		g_deviceContext->Unmap(g_buffers.at(toolBufferId), 0);
+	}
 }

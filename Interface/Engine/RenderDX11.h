@@ -19,6 +19,8 @@
 using std::map;
 using std::string;
 
+class IRadial;
+
 struct CBOnce
 {
 	elm::mat4 crap;
@@ -68,12 +70,17 @@ private:
 
 	ID3D11InputLayout			*g_layout;
 	ID3D11InputLayout			*g_otherlayout;
+	ID3D11InputLayout			*g_billboardlayout;
 
 	ID3D11VertexShader			*g_terrainVS;
 	ID3D11PixelShader			*g_terrainPS;
 
 	ID3D11VertexShader			*g_modelVS;
 	ID3D11PixelShader			*g_modelPS;
+
+	ID3D11VertexShader			*g_toolVS;
+	ID3D11GeometryShader		*g_toolGS;
+	ID3D11PixelShader			*g_toolPS;
 
 	std::vector<ID3D11Buffer*>	g_buffers;
 	std::vector<ID3D11ShaderResourceView*> g_textures;
@@ -90,10 +97,19 @@ private:
 	HRESULT createSampleStates();
 	HRESULT compileShader(LPCSTR filePath, LPCSTR shaderType, ID3DBlob **shaderBlob);
 
-	HRESULT createBuffer(void* data, int numElements, int bytesPerElement, int &bufferID);
+	HRESULT createBuffer(void* data, int numElements, int bytesPerElement, int &bufferID, bool isDynamic = false);
 	HRESULT createIndexBuffer(void* data, int numElements, int &bufferID);
 
 	HRESULT createSRV(unsigned int& _outId, string _fileName);
+
+	int toolBufferId;
+	elm::vec2 toolPosition;
+
+	POINT	mousePoint;
+	bool	toolIsActive;
+
+	UINT width ;
+	UINT height;
 	/********************************** 
 		Internal Data Representation
 	***********************************/
@@ -101,18 +117,28 @@ private:
 	map< unsigned int, ID3D11Buffer*>				m_buffers;
 	map< unsigned int, ID3D11ShaderResourceView*>	m_SRVs;
 
+	IRadial		*m_currentRadial;
+
 public:
 	RenderDX11(HWND hWnd);
 	~RenderDX11();
 
 	void renderScene(Quadnode *node);
 	void setRect(RECT t);
+	void setMousePoint(POINT _mousePoint);
 
 	void setTerrainIndexCount(int count)	{ terrainIndexCount = count; }
 	void setCamera(Camera *cam)				{ camera = cam; }
 
 	void updateTerrainBuffer(std::vector<Vertex> *vBuffer);
 	void createAndSetTerrainBuffers(std::vector<Vertex> *vBuffer, std::vector<uint> *iBuffer);
+	void toggleTool(bool _arg = false);
+
+	void createMenu(unsigned int _numIcons, float _radius, elm::vec2 _iconDimension);
+
+	void setRadial(IRadial* _radial);
 
 	friend class Engine;
+	friend class ObjectTool;
+	friend class IRadial;
 };

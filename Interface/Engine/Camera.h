@@ -1,6 +1,7 @@
 #pragma once
 #include "Terrain.h"
 #include "Quadnode.h"
+#include <Windows.h>
 
 class Camera
 {
@@ -37,4 +38,5 @@ public:
 	elm::vec3 getWorldPos(int mousePosX, int mousePosY, Quadnode *node);
 
 	friend class Engine;
+	friend class ObjectTool;
 };

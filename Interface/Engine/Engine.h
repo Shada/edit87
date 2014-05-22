@@ -8,6 +8,9 @@
 #include "Quadnode.h"
 #include "ModelDefinitions.h"
 #include "KeyDefines.h"
+#include "ObjectTool.h"
+
+#include "IRadial.h"
 
 enum class Tools
 {
@@ -20,6 +23,12 @@ enum class Tools
 class Engine : public EngineInterface
 {
 private:
+	ObjectTool	*objectTool;
+
+	IRadial			*m_currentRadial;
+	TerrainRadial	*m_terrainRadial;
+	ObjectRadial	*m_objectRadial;
+
 	RenderDX11	*dx;
 	Terrain		*terrain;
 	Camera		*camera;
@@ -49,6 +58,7 @@ private:
 
 	elm::vec3	m_defaultScale;
 	elm::vec3	m_defaultRotation;
+
 
 public:
 	Engine(HWND hwnd);
@@ -81,4 +91,6 @@ public:
 	void selectObject();
 	void scaleObject();
 	void rotateObject();
+
+
 };

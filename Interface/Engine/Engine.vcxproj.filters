@@ -57,6 +57,12 @@
     <ClInclude Include="KeyDefines.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ObjectTool.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="IRadial.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="RenderDX11.cpp">
@@ -84,6 +90,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Model.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ObjectTool.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="IRadial.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

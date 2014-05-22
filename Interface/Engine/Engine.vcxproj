@@ -83,11 +83,13 @@
     <ClInclude Include="Engine.h" />
     <ClInclude Include="EngineFactory.h" />
     <ClInclude Include="EngineInterface.h" />
+    <ClInclude Include="IRadial.h" />
     <ClInclude Include="KeyDefines.h" />
     <ClInclude Include="Mesh3D.h" />
     <ClInclude Include="Model.h" />
     <ClInclude Include="ModelDefinitions.h" />
     <ClInclude Include="Object3D.h" />
+    <ClInclude Include="ObjectTool.h" />
     <ClInclude Include="Quadnode.h" />
     <ClInclude Include="RenderDX11.h" />
     <ClInclude Include="Terrain.h" />
@@ -97,9 +99,11 @@
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Engine.cpp" />
     <ClCompile Include="EngineFactory.cpp" />
+    <ClCompile Include="IRadial.cpp" />
     <ClCompile Include="Mesh3D.cpp" />
     <ClCompile Include="Model.cpp" />
     <ClCompile Include="Object3D.cpp" />
+    <ClCompile Include="ObjectTool.cpp" />
     <ClCompile Include="Quadnode.cpp" />
     <ClCompile Include="RenderDX11.cpp" />
     <ClCompile Include="Terrain.cpp" />
