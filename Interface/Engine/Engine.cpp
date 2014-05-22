@@ -82,9 +82,10 @@ void Engine::leftMouseDown()
 	switch(selectedTool)
 	{
 	case Tools::ELEVATION:
-			terrain->applyBrush(100, 1, mouseWorldPos.xz);
-			if(minmaxCalcDone)
-				findMinMaxValues();
+		terrain->applyBrush(100, 1, mouseWorldPos.xz);
+		if(minmaxCalcDone)
+			findMinMaxValues();
+		updateFollowTerrainObjects();
 		break;
 	case Tools::SELECTOR:
 		{
@@ -101,10 +102,12 @@ void Engine::leftMouseDown()
 	}
 
 	camera->move(elm::vec2(0));
-		dx->setMousePoint(mousePos);
+
+	dx->setMousePoint(mousePos);
+
+	dx->updateTerrainBuffer(terrain->getVBuffer()); 
 
 	oldMousePos = mousePos;
-	dx->updateTerrainBuffer(terrain->getVBuffer());
 	dx->renderScene(node);
 }
 
@@ -143,13 +146,14 @@ void Engine::rightMouseDown()
 		terrain->applyBrush(100, -1, mouseWorldPos.xz);
 		if(minmaxCalcDone)
 			findMinMaxValues();
+
+		updateFollowTerrainObjects();
 		break;
 	}
 
+	dx->updateTerrainBuffer(terrain->getVBuffer());
 
 	camera->move(elm::vec2(0));
-
-	dx->updateTerrainBuffer(terrain->getVBuffer());
 	dx->renderScene(node);
 }
 
@@ -224,6 +228,18 @@ void Engine::keyboardEvent(unsigned int _key, bool _isDown)
 			m_selectedObject->setSelected(false);
 		m_selectedObject = nullptr;
 		//setElevationTool();
+		break;
+		
+	case Key::STATE_FOLLOW_TERRAIN:
+		moveObjectToTerrainHeight(); // go back to previous state? Might be a good idea you know...
+		break;
+
+	case Key::STATE_ELEVATE:
+		elevateObject();
+		break;
+
+	case Key::STATE_LOWER:
+		lowerObject();
 		break;
 
 	default:
@@ -326,9 +342,70 @@ void Engine::selectObject()
 	}
 	else
 	{
+		float xDiff, yDiff;
+		xDiff = mousePos.x - oldMousePos.x;
+		yDiff = mousePos.y - oldMousePos.y;
 
-
+		elm::vec3 nrot = elm::vec3(xDiff, yDiff, 0) / 10.f;
+		//object->setRotation( nrot + object->getRotation() );
 	}
+}
+
+void Engine::elevateObject()
+{
+	if(!m_selectedObject)
+		return;
+
+	Object3D* object = m_selectedObject->getProperty<Object3D>();
+
+	if(!object)
+		return;
+	
+	object->setIsFollowingTerrain(false);
+
+	elm::vec3 pos = object->getPosition();
+	pos.y += 1;
+
+	object->setPosition(pos);
+
+	renderScene();
+}
+
+void Engine::lowerObject()
+{
+	if(!m_selectedObject)
+		return;
+
+	Object3D* object = m_selectedObject->getProperty<Object3D>();
+
+	if(!object)
+		return;
+
+	object->setIsFollowingTerrain(false);
+
+	elm::vec3 pos = object->getPosition();
+	pos.y -= 1;
+
+	object->setPosition(pos);
+
+	renderScene();
+}
+
+void Engine::moveObjectToTerrainHeight()
+{
+	if(!m_selectedObject)
+		return;
+
+	Object3D* object = m_selectedObject->getProperty<Object3D>();
+
+	elm::vec3 v = object->getPosition();
+	v.y = terrain->getHeightAt(object->getPosition().xz);
+	object->setPosition(v);
+	object->setIsFollowingTerrain(true);
+	// get terrainheight and set object to this height.
+	// maybe we need to set an object property so that it follows terrain when terrain is changed
+
+	renderScene();
 }
 
 void Engine::placeObject(unsigned int _objectId)
@@ -357,6 +434,25 @@ void Engine::placeObject(unsigned int _objectId)
 
 	m_selectedObject = &dx->g_comps[ dx->g_comps.size() - 1 ];
 	m_selectedObject->setSelected(true);
+}
+
+void Engine::updateFollowTerrainObjects()
+{
+	
+	for( auto &c : dx->g_comps )
+	{
+		Object3D* object = c.getProperty<Object3D>();
+
+		if(!object)
+			continue;
+
+		if(object->getIsFollowingTerrain())
+		{
+			elm::vec3 pos = object->getPosition();
+			pos.y = terrain->getHeightAt(object->getPosition().xz);
+			object->setPosition(pos);
+		}
+	}
 }
 
 Engine::~Engine()

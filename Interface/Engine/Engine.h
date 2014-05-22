@@ -92,5 +92,9 @@ public:
 	void scaleObject();
 	void rotateObject();
 
+	void moveObjectToTerrainHeight();
+	void elevateObject();
+	void lowerObject();
 
+	void updateFollowTerrainObjects();
 };

@@ -13,4 +13,7 @@ enum class Key
 	STATE_SCALE		= 'T',
 	STATE_PLACE		= 'N',
 	STATE_TERRAIN	= 'Z',
+	STATE_FOLLOW_TERRAIN = 'F',
+	STATE_ELEVATE = 'E',
+	STATE_LOWER = 'Q',
 };
