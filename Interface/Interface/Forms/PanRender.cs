@@ -14,8 +14,6 @@ namespace LevelEditor
 {
     public partial class PanRender : DockContent
     {
-		private bool renderWindowActivated = true;
-
 		MapEditor editor;
 
 		public PanRender(MapEditor _editor)
@@ -25,26 +23,10 @@ namespace LevelEditor
 		
 			resizeRenderPanel();
 
-			//if (drawSurface.IsHandleCreated)
-			//{
 			Utils.Graphics.Init();
 			Utils.Graphics.Sethandle(drawSurface.Handle, "main");
-			//}
-			//else
-			//{
-			//	renderWindowActivated = false;
-			//}
-
-			if (renderWindowActivated)
-			{
-				Utils.Graphics.gfx.createTerrain(256, 256, 5, false, 0);
-			}
+			Utils.Graphics.gfx.createTerrain(256, 256, 5, false, 0);
         }
-
-		public bool RenderActive
-		{
-			get { return renderWindowActivated; }
-		}
 
 		public void resizeRenderPanel()
 		{
@@ -66,5 +48,10 @@ namespace LevelEditor
         {
 			resizeRenderPanel();
         }
+
+		private void PanRender_DockStateChanged(object sender, EventArgs e)
+		{
+			//Utils.Graphics.Sethandle(drawSurface.Handle, "main");
+		}
     }
 }
