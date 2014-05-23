@@ -3,14 +3,12 @@
 #include <thread>
 #include "Camera.h"
 
-Camera::Camera(int width, int height, const Terrain *terrain, HWND hwnd)
+Camera::Camera(int width, int height, const Terrain *terrain)
 {
 	vEye		= elm::vec3(100, 300, 100);
 	vRight		= elm::vec3(1, 0, 0);
 	vUp			= elm::vec3(0, 1, 0);
 	vLook		= elm::vec3(0, 0, 1);
-
-	hWnd = hwnd;
 
 	this->terrain = terrain;
 	terrainPos = terrain->getPosition();

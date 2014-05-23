@@ -5,8 +5,6 @@
 class Camera
 {
 private:
-	HWND hWnd;
-
 	int width, height;
 
 	const Terrain *terrain;
@@ -16,11 +14,11 @@ private:
 	std::vector<elm::vec4> frustum;
 
 	elm::mat4 mProj, mView, mRot;
-	
+
 	elm::vec3 terrainPos;
 	elm::vec3 vEye, vLook, vUp, vRight;
 public:
-	Camera(int width, int height, const Terrain *terrain, HWND hwnd);
+	Camera(int width, int height, const Terrain *terrain);
 	~Camera();
 
 	void move(elm::vec2 direction);

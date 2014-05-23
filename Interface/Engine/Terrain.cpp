@@ -233,7 +233,7 @@ void Terrain::normalizeTerrain()
 		points.at(i).y -= min;
 }
 
-float Terrain::getHeightAt(elm::vec2 pos) const
+const float Terrain::getHeightAt(elm::vec2 pos) const
 {
 	uint index1 = (int)((pos.y - position.z + step / 2) / step) * width;
 	uint index2 = (int)((pos.x - position.x + step / 2) / step);

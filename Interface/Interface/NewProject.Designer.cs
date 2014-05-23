@@ -93,7 +93,7 @@
 			this.txb_workingDirectory.Name = "txb_workingDirectory";
 			this.txb_workingDirectory.Size = new System.Drawing.Size(176, 20);
 			this.txb_workingDirectory.TabIndex = 5;
-			this.txb_workingDirectory.Text = "C:\\Users\\Ossian\'\\Desktop";
+			this.txb_workingDirectory.Text = "\\\\storage10.student.bth.se\\profile\\ospe10\\Desktop";
 			// 
 			// label3
 			// 
