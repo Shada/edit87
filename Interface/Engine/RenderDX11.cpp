@@ -9,6 +9,8 @@ RenderDX11::RenderDX11()
 {
 	terrainVertexBufferID = terrainIndexBufferID = -1;
 
+	blendmap = new Blendmap();
+
 	camera = nullptr;
 	g_swapChain = nullptr;
 	hWnd = nullptr;
@@ -386,6 +388,9 @@ HRESULT RenderDX11::init()
 	g_textures.push_back(tex);
 
 	g_meshes[0]->setTexDiffuseID(g_textures.size() - 1);
+
+	blendmap->init(g_device, g_deviceContext, &g_textures, &this->hWnd);
+
     return S_OK;
 }
 
@@ -612,7 +617,9 @@ void RenderDX11::renderScene()
 	g_deviceContext->PSSetSamplers(0, 1, &g_wrap);
 	
 	g_deviceContext->PSSetSamplers(0, 1, &g_wrap);
-	g_deviceContext->PSSetShaderResources(0, 1, &g_textures.at(0));
+	//g_deviceContext->PSSetShaderResources(0, 1, &g_textures.at(0));
+	blendmap->CSexec();
+
 	g_deviceContext->VSSetConstantBuffers(0, 1, &g_buffers.at(cbOnChangeID));
 
 	float blendFactor[4] = {0.f, 0.f, 0.f, 0.f};
@@ -710,4 +717,9 @@ RenderDX11::~RenderDX11()
 		SAFE_DELETE(g_meshes[i]);
 	}
 	g_meshes.clear();
+}
+
+void RenderDX11::blendmapBrush(float _radius, float _intensity, elm::vec2 _origin, char* _texture, float _step)
+{
+	blendmap->applayBrush(_radius, _intensity, _origin, _texture, _step);
 }
