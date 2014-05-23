@@ -341,6 +341,16 @@ HRESULT RenderDX11::init()
 	ID3D11ShaderResourceView *tex;
 
 	hr = D3DX11CreateShaderResourceViewFromFile(g_device, "..\\Textures\\grass.png", NULL, NULL, &tex, NULL);
+
+	if(FAILED(hr))
+	{
+		MessageBox(this->hWnd, "Image load made fail, lol", "fail, yo", 0);
+		return hr;
+	}
+	g_textures.push_back(tex);
+	tex = nullptr;
+	hr = D3DX11CreateShaderResourceViewFromFile(g_device, "..\\Textures\\redIcon.png", NULL, NULL, &tex, NULL);
+
 	if(FAILED(hr))
 	{
 		MessageBox(this->hWnd, "Image load made fail, lol", "fail, yo", 0);

@@ -37,7 +37,7 @@ struct CBIcon
 {
 	elm::vec4 color;
 	elm::vec4 positonOffset;
-	elm::vec4 flag1;
+	elm::vec4 dimension;
 	elm::vec4 flag2;
 
 };
@@ -150,5 +150,7 @@ public:
 	friend class Engine;
 	friend class ObjectTool;
 	friend class IRadial;
+	friend class ObjectRadial;
+	friend class TerrainRadial;
 	friend class IIcon;
 };

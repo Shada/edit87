@@ -135,14 +135,11 @@ void ObjectTool::translate(elm::vec2 _mouse, elm::vec2 _oldMouse, Object3D* _obj
 	elm::vec3 min, max;
 	min = _mesh->getMinVertex() * _object->getScale() + _object->getPosition();
 	max = _mesh->getMaxVertex() * _object->getScale() + _object->getPosition();
+	elm::vec3 diff;
 
-	elm::vec3 diff = vPickRayOrig - _object->getPosition();
+	diff = elm::vec3(_mouse.x - _oldMouse.x, _mouse.y - _oldMouse.y, vPickRayOrig.z) * _axis * (vPickRayDir);
 
 	float len = elm::vecLength(diff);
-
-	float y = _object->getPosition().y;
-	_object->setPosition(vPickRayOrig + (vPickRayDir * len));
-	elm::vec3 np = _object->getPosition();
-	np.y = y;
-	_object->setPosition(np);
+	_object->setPosition((diff) + _object->getPosition());
+	//_object->setPosition(vPickRayOrig + (vPickRayDir* len));
 }

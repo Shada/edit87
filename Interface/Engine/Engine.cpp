@@ -67,18 +67,19 @@ void Engine::createTerrain(int width, int height, float pointStep, bool fromPerl
 
 	objectTool		= new ObjectTool(dx);
 	m_objectRadial	= new ObjectRadial(objectTool);
-	m_objectRadial->init(4, 50, 25, dx->width, dx->height, dx);
+	m_objectRadial->init(4, 50, 25, dx);
 
 	dx->setRadial(m_objectRadial);
 
 	m_terrainRadial = new TerrainRadial(&selectedTool);
-	m_terrainRadial->init(6, 10, 20, dx->width, dx->height, dx);
+	m_terrainRadial->init(5, 50, 35, dx);
 
 	m_currentRadial = m_terrainRadial;
 }
 
 void Engine::leftMouseDown()
 {
+	leftMouseIsDown = true;
 	switch(selectedTool)
 	{
 	case Tools::ELEVATION:
@@ -92,7 +93,7 @@ void Engine::leftMouseDown()
 			if(m_selectedObject != nullptr)
 				objectTool->update(m_selectedObject, elm::vec2(mousePos.x, mousePos.y), elm::vec2(oldMousePos.x, oldMousePos.y));			
 
-			m_terrainRadial->update();
+			m_terrainRadial->update(leftMouseIsDown);
 		}
 		break;
 
@@ -113,6 +114,7 @@ void Engine::leftMouseDown()
 
 void Engine::leftMouseUp()
 {
+	leftMouseIsDown = false;
 	if(m_currentKeyBinding.second == true)
 	{
 		switch(m_currentKeyBinding.first)
@@ -130,7 +132,7 @@ void Engine::leftMouseUp()
 		break;
 	case Tools::SELECTOR:
 		selectObject();
-		m_objectRadial->update();
+		m_objectRadial->update(leftMouseIsDown);
 
 		break;
 	}
@@ -172,10 +174,11 @@ void Engine::rightMouseUp()
 		m_selectedObject->setSelected(false);
 		m_selectedObject = nullptr;
 		
+		m_currentRadial->setState( RState::HIDE);
+
 		dx->renderScene(node);
 	}
 
-	m_currentRadial->setState(RState::HIDE);
 	selectedTool = Tools::SELECTOR;
 	m_currentKeyBinding = std::make_pair( (unsigned int)Key::NO_STATE, true);
 }
@@ -198,7 +201,7 @@ void Engine::updateMouse(POINT mouse, float delta)
 	mousePos = mouse;
 	mouseDelta = delta;
 	mouseWorldPos = camera->getWorldPos(mousePos.x, mousePos.y, node);
-	m_currentRadial->select(elm::vec2(mousePos.x, mousePos.y));
+	m_currentRadial->select(elm::vec2(mousePos.x, mousePos.y), leftMouseIsDown);
 	dx->renderScene(node);
 }
 
@@ -325,6 +328,7 @@ void Engine::selectObject()
 			m_selectedObject = &c;
 			m_currentRadial = m_objectRadial;
 			m_objectRadial->setSpawn(elm::vec2(mousePos.x, mousePos.y));
+
 			m_objectRadial->setState(RState::SELECT);
 			dx->setRadial(m_currentRadial);
 		}
@@ -337,8 +341,6 @@ void Engine::selectObject()
 	if(m_selectedObject != nullptr)
 	{
 		m_selectedObject->setSelected(true);
-
-
 	}
 	else
 	{

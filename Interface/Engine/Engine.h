@@ -97,4 +97,6 @@ public:
 	void lowerObject();
 
 	void updateFollowTerrainObjects();
+
+	bool leftMouseIsDown;
 };
