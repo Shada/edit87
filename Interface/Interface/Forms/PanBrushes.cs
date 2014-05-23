@@ -24,10 +24,6 @@ namespace LevelEditor
             InitializeComponent();
         }
 
-        private void PanBrushes_Load(object sender, EventArgs e)
-        {
-        }
-
         private void PanBrushes_SizeChanged(object sender, EventArgs e)
         {
             resizeWindow();
@@ -48,5 +44,10 @@ namespace LevelEditor
 			NumericUpDown send = (NumericUpDown)sender;
 			brushIntensity = (int)send.Value;
 		}
+
+        private void PanBrushes_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            Utils.Panels.removePanel("LevelEditor.PanBrushes");
+        }
     }
 }

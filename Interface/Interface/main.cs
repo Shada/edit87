@@ -45,6 +45,7 @@ namespace LevelEditor
 			windowHeight = Size.Height;
 
             deserializeDockContent = new DeserializeDockContent(Utils.Panels.getpanelByName);
+
             mainDockPanel.LoadFromXml(activeLayoutName, deserializeDockContent);
 
             timer1.Interval = 20;
@@ -208,7 +209,7 @@ namespace LevelEditor
 
 		private void brushToolsToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			toggleDisplay();
+            toggleDisplayBrushes();
 		}
 
 		private void resetToDefaultToolStripMenuItem_Click(object sender, EventArgs e)
@@ -688,10 +689,13 @@ namespace LevelEditor
             }
 		}
 
-        private void toggleDisplay()
+        private void toggleDisplayBrushes()
         {
 			DockContent panel = (PanBrushes)Utils.Panels.getpanelByName("LevelEditor.PanBrushes");
+            if (panel == null)
+            {
 
+            }
             if (!panel.IsDisposed)
             {
                 if (panel.IsHidden)
@@ -701,9 +705,9 @@ namespace LevelEditor
             }
             else
             {
-                panel = new PanBrushes();
                 panel.Show(mainDockPanel, DockState.Float);
                 panel.DockHandler.FloatPane.DockTo(mainDockPanel.DockWindows[DockState.DockRight]);
+                Utils.Panels.addPanel(panel, typeof(PanBrushes).ToString());
             }
             
         }

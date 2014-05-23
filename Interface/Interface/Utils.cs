@@ -90,7 +90,16 @@ namespace LevelEditor
 				return null;
 			}
 
-			public static void destroy()
+            public static void removePanel(string _name)
+            {
+                for (int i = 0; i < panels.Count; i++)
+                {
+                    if (_name == panels[i].Name)
+                        panels.RemoveAt(i);
+                }
+            }
+
+            public static void destroy()
 			{
 				foreach (PanelStruct p in panels)
 				{
