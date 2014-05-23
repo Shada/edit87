@@ -38,8 +38,6 @@
 			this.drawSurface.Name = "drawSurface";
 			this.drawSurface.Size = new System.Drawing.Size(672, 483);
 			this.drawSurface.TabIndex = 0;
-			this.drawSurface.MouseDown += new System.Windows.Forms.MouseEventHandler(this.drawSurface_MouseDown);
-			this.drawSurface.MouseUp += new System.Windows.Forms.MouseEventHandler(this.drawSurface_MouseUp);
 			// 
 			// PanRender
 			// 
@@ -55,8 +53,6 @@
 			this.DockStateChanged += new System.EventHandler(this.PanRender_DockStateChanged);
 			this.Load += new System.EventHandler(this.PanRender_Load);
 			this.SizeChanged += new System.EventHandler(this.PanRender_SizeChanged);
-			this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.PanRender_MouseDown);
-			this.MouseUp += new System.Windows.Forms.MouseEventHandler(this.PanRender_MouseUp);
 			this.ResumeLayout(false);
 
         }

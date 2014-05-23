@@ -22,9 +22,11 @@ namespace LevelEditor
         public PanBrushes()
         {
             InitializeComponent();
+			Utils.Graphics.gfx.setBrushIntensity((int)nud_brushIntensity.Value);
+			Utils.Graphics.gfx.setBrushSize((int)nud_BrushSize.Value);
         }
 
-        private void PanBrushes_Load(object sender, EventArgs e)
+	    private void PanBrushes_Load(object sender, EventArgs e)
         {
         }
 

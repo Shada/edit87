@@ -19,6 +19,7 @@ namespace LevelEditor
 			Utils.Graphics.Init();
 			Utils.Graphics.Sethandle(drawSurface.Handle, "main");
 			Utils.Graphics.gfx.createTerrain(256, 256, 5, false, 0);
+			Utils.Graphics.gfx.resizeWindow(this.Size.Width, this.Size.Height);
         }
 
 		public void resizeRenderPanel()
@@ -29,6 +30,9 @@ namespace LevelEditor
 													editor.Bounds.Y + this.Bounds.Y + 55,
 													this.Bounds.Width + 1,
 													this.Bounds.Height - 6);
+
+				if (Utils.Graphics.gfx != null)
+				Utils.Graphics.gfx.resizeWindow(this.Size.Width, this.Size.Height);
 			}
 		}
 
@@ -45,26 +49,6 @@ namespace LevelEditor
 		private void PanRender_DockStateChanged(object sender, EventArgs e)
 		{
 			//Utils.Graphics.Sethandle(drawSurface.Handle, "main");
-		}
-
-		protected void drawSurface_MouseUp(object sender, MouseEventArgs e)
-		{
-			int i = 0;
-		}
-
-		protected void drawSurface_MouseDown(object sender, MouseEventArgs e)
-		{
-			int i = 0;
-		}
-
-		protected void PanRender_MouseUp(object sender, MouseEventArgs e)
-		{
-			int i = 0;
-		}
-
-		protected void PanRender_MouseDown(object sender, MouseEventArgs e)
-		{
-			int i = 0;
 		}
     }
 }

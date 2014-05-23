@@ -84,9 +84,19 @@
 			// nud_BrushSize
 			// 
 			this.nud_BrushSize.Location = new System.Drawing.Point(62, 77);
+			this.nud_BrushSize.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
 			this.nud_BrushSize.Name = "nud_BrushSize";
 			this.nud_BrushSize.Size = new System.Drawing.Size(50, 20);
 			this.nud_BrushSize.TabIndex = 33;
+			this.nud_BrushSize.Value = new decimal(new int[] {
+            50,
+            0,
+            0,
+            0});
 			this.nud_BrushSize.ValueChanged += new System.EventHandler(this.nud_BrushSize_ValueChanged);
 			// 
 			// label6
@@ -137,9 +147,19 @@
 			// nud_brushIntensity
 			// 
 			this.nud_brushIntensity.Location = new System.Drawing.Point(62, 103);
+			this.nud_brushIntensity.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
 			this.nud_brushIntensity.Name = "nud_brushIntensity";
 			this.nud_brushIntensity.Size = new System.Drawing.Size(50, 20);
 			this.nud_brushIntensity.TabIndex = 38;
+			this.nud_brushIntensity.Value = new decimal(new int[] {
+            100,
+            0,
+            0,
+            0});
 			this.nud_brushIntensity.ValueChanged += new System.EventHandler(this.nud_brushIntensity_ValueChanged);
 			// 
 			// label4

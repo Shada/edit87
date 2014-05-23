@@ -19,12 +19,11 @@ namespace wrap
 
 		void moveCamera(int xDir, int zDir);
 
+		void setBrushIntensity(int _val);
+		void setBrushSize(int _val);
+
 		/* Mouse calls */
-		void rightMouseDown(int brushSize, int brushIntensity);
-		void leftMouseDown(int brushSize, int brushIntensity);
-		void rightMouseUp();
-		void leftMouseUp();
-		void updateMouse(int x, int y);
+		void updateMouse();
 
 		/* Tool calls */
 		void setTextureTool()			{ gfx->setTextureTool();		}
@@ -33,6 +32,7 @@ namespace wrap
 		void setNormalizerTool()		{ gfx->setNormalizerTool();		}
 		void setObjectPlacerTool()		{ gfx->setObjectPlacerTool();	}
 
+		void resizeWindow(int width, int height);
 		void setHandle(System::IntPtr _handle, System::String^ _name);
 	};
 }

@@ -617,8 +617,8 @@ void RenderDX11::renderScene()
 	g_deviceContext->PSSetSamplers(0, 1, &g_wrap);
 	
 	g_deviceContext->PSSetSamplers(0, 1, &g_wrap);
-	//g_deviceContext->PSSetShaderResources(0, 1, &g_textures.at(0));
-	blendmap->CSexec();
+	g_deviceContext->PSSetShaderResources(0, 1, &g_textures.at(0));
+	//blendmap->CSexec();
 
 	g_deviceContext->VSSetConstantBuffers(0, 1, &g_buffers.at(cbOnChangeID));
 

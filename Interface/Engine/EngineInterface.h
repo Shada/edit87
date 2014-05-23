@@ -16,12 +16,12 @@ public:
 
 	virtual void move(float alongX, float alongZ) = 0;
 
+	virtual void setBrushIntensity(int _val) = 0;
+	virtual void setBrushSize(int _val) = 0;
+
 	/* Mouse calls */
-	virtual void rightMouseDown(int brushSize, float brushIntensity) = 0;
-	virtual void leftMouseDown(int brushSize, float brushIntensity) = 0;
-	virtual void rightMouseUp() = 0;
-	virtual void leftMouseUp() = 0;
-	virtual void updateMouse(POINT mouse) = 0;
+	virtual void updateMouse() = 0;
+	virtual void resizeWindow(int width, int height) = 0;
 
 	/* Tool calls */
 	virtual void setTextureTool() = 0;

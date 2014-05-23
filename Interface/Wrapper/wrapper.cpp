@@ -17,7 +17,6 @@ namespace wrap
 		r.bottom = y + height;
 		r.right = x + width;
 		gfx->setRect(r);
-		//gfx->createTerrain(256, 256, 5.f, false);
 	}
 
 	void GraphicsCommunicator::setHandle(System::IntPtr _handle, System::String^ _name)
@@ -28,7 +27,11 @@ namespace wrap
 		std::string standardString = context.marshal_as<std::string>(_name);
 		gfx->addHandels(hWnd, standardString);
 
-		setRenderArea(232, 58, 1048, 670);
+		setRenderArea(0, 0, 850, 600);
+	}
+	void GraphicsCommunicator::resizeWindow(int width, int height)
+	{
+		gfx->resizeWindow(width, height);
 	}
 
 	void GraphicsCommunicator::createTerrain(int width, int height, float pointStep, bool fromPerlinMap, int seed)
@@ -46,32 +49,19 @@ namespace wrap
 		gfx->move((float)xDir, (float)zDir);
 	}
 
-	void GraphicsCommunicator::rightMouseDown(int brushSize, int brushIntensity)
+	void GraphicsCommunicator::setBrushIntensity(int _val)
 	{
-		gfx->rightMouseDown(brushSize, (float)brushIntensity / 100);
+		gfx->setBrushIntensity(_val);
 	}
 
-	void GraphicsCommunicator::leftMouseDown(int brushSize, int brushIntensity)
+	void GraphicsCommunicator::setBrushSize(int _val)
 	{
-		gfx->leftMouseDown(brushSize, (float)brushIntensity / 100);
+		gfx->setBrushSize(_val);
 	}
 
-	void GraphicsCommunicator::rightMouseUp()
+	void GraphicsCommunicator::updateMouse()
 	{
-		gfx->rightMouseUp();
-	}
-
-	void GraphicsCommunicator::leftMouseUp()
-	{
-		gfx->leftMouseUp();
-	}
-
-	void GraphicsCommunicator::updateMouse(int x, int y)
-	{
-		POINT p;
-		p.x = x;
-		p.y = y;
-		gfx->updateMouse(p);
+		gfx->updateMouse();
 	}
 
 	GraphicsCommunicator::~GraphicsCommunicator()

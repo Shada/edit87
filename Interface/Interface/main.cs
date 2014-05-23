@@ -1,22 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;
 using System.Xml;
-using System.Diagnostics;
-using WeifenLuo.WinFormsUI.Docking;
 using System.Globalization;
-
-using Microsoft.DirectX;
-
-using wrap;
+using CookComputing.XmlRpc;
+using WeifenLuo.WinFormsUI.Docking;
 
 namespace LevelEditor
 {
@@ -24,11 +13,15 @@ namespace LevelEditor
     {
         public const string activeLayoutName = "PanelLayout.xml";
 
-        private bool forwardKey, backwardKey, leftKey, rightKey, leftMouseDown, rightMouseDown;
+		private bool forwardKey;
+		private bool backwardKey;
+		private bool leftKey;
+		private bool rightKey;
 
-		private int mousePosX, mousePosY, windowWidth, windowHeight;
+		private int windowWidth;
+		private int windowHeight;
 
-        DeserializeDockContent deserializeDockContent;
+		DeserializeDockContent deserializeDockContent;
         public TreeNode resourcesRoot = new TreeNode("Root", 0, 0);		
 
 		public MapEditor()
@@ -37,9 +30,6 @@ namespace LevelEditor
 
 			InitializeComponent();
             createStandardControls();
-
-			//brushSize = (int)nud_BrushSize.Value;
-			//brushIntensity = (int)nud_brushIntensity.Value;
 
 			windowWidth = Size.Width;
 			windowHeight = Size.Height;
@@ -66,10 +56,10 @@ namespace LevelEditor
 
         private void createStandardControls()
         {
-			Utils.Panels.addPanel(new PanBrushes(), typeof(PanBrushes).ToString());
 			Utils.Panels.addPanel(new PanTextures(), typeof(PanTextures).ToString());
 			Utils.Panels.addPanel(new PanResources(), typeof(PanResources).ToString());
 			Utils.Panels.addPanel(new PanRender(this), typeof(PanRender).ToString());
+			Utils.Panels.addPanel(new PanBrushes(), typeof(PanBrushes).ToString());
 			Utils.Panels.addPanel(new PanLibrary(), typeof(PanLibrary).ToString());
 			Utils.Panels.addPanel(new PanProperties(), typeof(PanProperties).ToString());
         }
@@ -227,22 +217,6 @@ namespace LevelEditor
 			project.Show();
 		}
 
-		private void MapEditor_MouseUp(object sender, MouseEventArgs e)
-		{
-			mapEditorMouseUp(e);
-		}
-
-		private void MapEditor_MouseMove(object sender, MouseEventArgs e)
-		{
-			mousePosX = e.X;
-			mousePosY = e.Y;
-		}
-
-		private void MapEditor_MouseDown(object sender, MouseEventArgs e)
-		{
-			mapEditorMouseDown(e);
-		}
-
 		private void MapEditor_KeyDown(object sender, KeyEventArgs e)
 		{
 			mapEditorKeyDown(e);
@@ -271,28 +245,6 @@ namespace LevelEditor
 		#endregion
 
 		#region non-events
-
-		private void mapEditorMouseDown(MouseEventArgs e)
-		{
-			if (!rightMouseDown || !leftMouseDown)
-			{
-				if (!leftMouseDown && e.Button == System.Windows.Forms.MouseButtons.Left)
-					leftMouseDown = true;
-				else if (!rightMouseDown && e.Button == System.Windows.Forms.MouseButtons.Right)
-					rightMouseDown = true;
-			}
-		}
-
-		private void mapEditorMouseUp(MouseEventArgs e)
-		{
-			if (rightMouseDown || leftMouseDown)
-			{
-				if (leftMouseDown && e.Button == System.Windows.Forms.MouseButtons.Left)
-					leftMouseDown = false;
-				else if (rightMouseDown && e.Button == System.Windows.Forms.MouseButtons.Right)
-					rightMouseDown = false;
-			}
-		}
 
 		private void mapEditorLoad()
 		{
@@ -618,21 +570,10 @@ namespace LevelEditor
 			int zDir = rightKey ? 1 : leftKey ? -1 : 0;
 			bool mouseMove = xDir != 0 || zDir != 0;
 			if (mouseMove)
-				Utils.Graphics.gfx.moveCamera(xDir, zDir);			
+				Utils.Graphics.gfx.moveCamera(xDir, zDir);
 
-			if (rightMouseDown && !leftMouseDown)
-			{
-				PanBrushes brush = (PanBrushes)Utils.Panels.getpanelByName("LevelEditor.PanBrushes");
-				Utils.Graphics.gfx.rightMouseDown(brush.BrushSize, brush.BrushIntensity);
-			}
-			else if (leftMouseDown && !rightMouseDown)
-			{
-				PanBrushes brush = (PanBrushes)Utils.Panels.getpanelByName("LevelEditor.PanBrushes");
-				Utils.Graphics.gfx.leftMouseDown(brush.BrushSize, brush.BrushIntensity);
-			}				
-
-			if (rightMouseDown || leftMouseDown || mouseMove)
-				Utils.Graphics.gfx.renderScene();
+			Utils.Graphics.gfx.updateMouse();
+			Utils.Graphics.gfx.renderScene();
 		}        
 
 		private void resizeWindow()
@@ -733,10 +674,5 @@ namespace LevelEditor
 		}
 
 		#endregion
-
-		private void mainDockPanel_MouseDown(object sender, MouseEventArgs e)
-		{
-			int i = 0;
-		}
 	}
 }

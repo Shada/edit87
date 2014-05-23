@@ -34,7 +34,8 @@ private:
 
 	Tools selectedTool;
 
-	bool minmaxCalcDone;
+	bool minmaxCalcDone, lButtprev, rButtprev;
+	int brushSize, brushIntensity;
 	std::thread minmaxCalc;
 
 	HWND hWnd;
@@ -51,6 +52,12 @@ private:
 	/* Generic objects */
 	map< unsigned int, Composition* >	m_compositions;
 
+	void rightMouseDown();
+	void leftMouseDown();
+	void rightMouseUp();
+	void leftMouseUp();
+	bool rectIntersect(RECT _r, POINT _p);
+
 public:
 	Engine();
 	~Engine();
@@ -62,12 +69,13 @@ public:
 	void renderScene()						{ dx->renderScene(); }
 	void move(float alongX, float alongZ);
 
+	void setBrushIntensity(int _val);
+	void setBrushSize(int _val);
+
 	/* Mouse calls */ // Maybe we want to handle mouse up and down entirely in c#. Discuss this with other ppl
-	void rightMouseDown(int brushSize, float brushIntensity);
-	void leftMouseDown(int brushSize, float brushIntensity);
-	void rightMouseUp();
-	void leftMouseUp();
-	void updateMouse(POINT mouse);
+
+	void resizeWindow(int width, int height);
+	void updateMouse();
 
 	/* Tool calls */
 	void setTextureTool()					{ selectedTool = Tools::TEXTURING;		}
