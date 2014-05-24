@@ -4,14 +4,13 @@ using System.Windows.Forms;
 using System.IO;
 using System.Xml;
 using System.Globalization;
-using CookComputing.XmlRpc;
 using WeifenLuo.WinFormsUI.Docking;
 
 namespace LevelEditor
 {
 	public partial class MapEditor : Form
     {
-        public const string activeLayoutName = "PanelLayout.xml";
+        const string activeLayoutName = "PanelLayout.xml";
 
 		private bool forwardKey;
 		private bool backwardKey;
@@ -22,7 +21,7 @@ namespace LevelEditor
 		private int windowHeight;
 
 		DeserializeDockContent deserializeDockContent;
-        public TreeNode resourcesRoot = new TreeNode("Root", 0, 0);		
+        //public TreeNode resourcesRoot = new TreeNode("Root", 0, 0);		
 
 		public MapEditor()
 		{

@@ -148,11 +148,14 @@ namespace LevelEditor
 			if (t.Type == Utils.twTag.TYPE.IMAGE)
 			{
 				PanTextures tex = (PanTextures)Utils.Panels.getpanelByName("LevelEditor.PanTextures");
-				tex.addImages(Image.FromFile(Utils.ProjectDirectory.FullName + "\\" + fileRealName));
+
+				Image img = Image.FromFile(Utils.ProjectDirectory.FullName + "\\" + fileRealName);
+				img.Tag = t;
+				tex.addImages(img);
 			}
 
 			res.updateTWRes(tw_fileTree.Nodes[0]);
-			this.Close();
+			Close();
 		}
 
 		private void btn_renameFile_Click(object sender, EventArgs e)

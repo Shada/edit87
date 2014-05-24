@@ -69,6 +69,13 @@ namespace wrap
 		gfx->setBrushSize(_val);
 	}
 
+	void GraphicsCommunicator::setBrushTexture(System::String^ _name)
+	{
+		msclr::interop::marshal_context context;
+		std::string standardString = context.marshal_as<std::string>(_name);
+		gfx->setBrushTexture(standardString);
+	}
+
 	void GraphicsCommunicator::updateMouse()
 	{
 		gfx->updateMouse();

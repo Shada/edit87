@@ -29,7 +29,6 @@
         private void InitializeComponent()
         {
 			this.components = new System.ComponentModel.Container();
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PanTextures));
 			this.lv_Textures = new System.Windows.Forms.ListView();
 			this.textureList = new System.Windows.Forms.ImageList(this.components);
 			this.label8 = new System.Windows.Forms.Label();
@@ -44,14 +43,13 @@
 			this.lv_Textures.SmallImageList = this.textureList;
 			this.lv_Textures.TabIndex = 31;
 			this.lv_Textures.UseCompatibleStateImageBehavior = false;
+			this.lv_Textures.SelectedIndexChanged += new System.EventHandler(this.lv_Textures_SelectedIndexChanged);
 			// 
 			// textureList
 			// 
-			this.textureList.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("textureList.ImageStream")));
+			this.textureList.ColorDepth = System.Windows.Forms.ColorDepth.Depth8Bit;
+			this.textureList.ImageSize = new System.Drawing.Size(32, 32);
 			this.textureList.TransparentColor = System.Drawing.Color.Transparent;
-			this.textureList.Images.SetKeyName(0, "dirt.png");
-			this.textureList.Images.SetKeyName(1, "grass.png");
-			this.textureList.Images.SetKeyName(2, "rock.png");
 			// 
 			// label8
 			// 
