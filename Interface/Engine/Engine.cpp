@@ -67,19 +67,20 @@ void Engine::createTerrain(int width, int height, float pointStep, bool fromPerl
 
 	objectTool		= new ObjectTool(dx);
 	m_objectRadial	= new ObjectRadial(objectTool);
-	m_objectRadial->init(4, 50, 25, dx);
+	m_objectRadial->init(4, 25, dx);
 
 	dx->setRadial(m_objectRadial);
 
 	m_terrainRadial = new TerrainRadial(&selectedTool);
-	m_terrainRadial->init(5, 50, 35, dx);
+	m_terrainRadial->init(5, 25, dx);
 
 	m_currentRadial = m_terrainRadial;
+
+	objectTool->addListener(m_objectRadial);
 }
 
 void Engine::leftMouseDown()
 {
-	leftMouseIsDown = true;
 	switch(selectedTool)
 	{
 	case Tools::ELEVATION:
@@ -90,10 +91,15 @@ void Engine::leftMouseDown()
 		break;
 	case Tools::SELECTOR:
 		{
-			if(m_selectedObject != nullptr)
-				objectTool->update(m_selectedObject, elm::vec2(mousePos.x, mousePos.y), elm::vec2(oldMousePos.x, oldMousePos.y));			
+			//if(m_objectRadial->getState() != RState::HIDE)
+				m_objectRadial->update(leftMouseIsDown);
 
-			m_terrainRadial->update(leftMouseIsDown);
+			if(m_selectedObject != nullptr)
+				objectTool->update(m_selectedObject, elm::vec2(mousePos.x, mousePos.y), elm::vec2(oldMousePos.x, oldMousePos.y));	
+
+				
+			m_terrainRadial->update(true);
+
 		}
 		break;
 
@@ -107,14 +113,14 @@ void Engine::leftMouseDown()
 	dx->setMousePoint(mousePos);
 
 	dx->updateTerrainBuffer(terrain->getVBuffer()); 
-
+	oldLeftMouseIsDown = false;
 	oldMousePos = mousePos;
 	dx->renderScene(node);
+	
 }
 
 void Engine::leftMouseUp()
 {
-	leftMouseIsDown = false;
 	if(m_currentKeyBinding.second == true)
 	{
 		switch(m_currentKeyBinding.first)
@@ -132,11 +138,15 @@ void Engine::leftMouseUp()
 		break;
 	case Tools::SELECTOR:
 		selectObject();
-		m_objectRadial->update(leftMouseIsDown);
 
+		//if(m_objectRadial->getState() != RState::HIDE)
+			m_objectRadial->update(leftMouseIsDown);
+
+		if(m_selectedObject != nullptr)
+			objectTool->update(m_selectedObject, elm::vec2(mousePos.x, mousePos.y), elm::vec2(oldMousePos.x, oldMousePos.y));	
 		break;
 	}
-
+	leftMouseIsDown = !leftMouseIsDown;
 	dx->renderScene(node);
 }
 
@@ -157,6 +167,7 @@ void Engine::rightMouseDown()
 
 	camera->move(elm::vec2(0));
 	dx->renderScene(node);
+	
 }
 
 void Engine::rightMouseUp()
@@ -222,6 +233,12 @@ void Engine::keyboardEvent(unsigned int _key, bool _isDown)
 		//setSelctorTool();
 		break;
 
+	case Key::AXIS_X:
+	case Key::AXIS_Y:
+	case Key::AXIS_Z:
+		m_objectRadial->setAxis((Key)m_currentKeyBinding.first);
+		break;
+
 	case Key::STATE_TERRAIN:
 		m_terrainRadial->setState(RState::SELECT);
 		m_terrainRadial->setSpawn(elm::vec2(mousePos.x, mousePos.y));
@@ -250,6 +267,8 @@ void Engine::keyboardEvent(unsigned int _key, bool _isDown)
 		break;
 
 	 }
+
+	dx->renderScene(node);
 }
 void Engine::findMinMaxValues()
 {

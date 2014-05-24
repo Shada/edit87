@@ -1,5 +1,5 @@
 #include "ObjectTool.h"
-
+#include "IRadial.h"
 #include "RenderDX11.h"
 
 ObjectTool::ObjectTool(RenderDX11	*_dxPtr)
@@ -9,6 +9,10 @@ ObjectTool::ObjectTool(RenderDX11	*_dxPtr)
 	currentState = OTState::NONE;
 }
 
+void ObjectTool::addListener(IRadial *_radialMenu)
+{
+	radialMenu	= _radialMenu;
+}
 
 ObjectTool::~ObjectTool(void)
 {
@@ -21,6 +25,10 @@ void ObjectTool::setAxis( elm::vec3 _axis )
 
 void ObjectTool::update(Composition* _composition, elm::vec2 _mouse, elm::vec2 _oldMouse)
 {
+	if(currentState == OTState::NONE)
+		return;
+
+	radialMenu->setState(RState::HIDE);
 	Object3D* object	= _composition->getProperty<Object3D>();
 	Mesh3D* mesh		= dxPtr->g_meshes[object->getMeshID()];
 
@@ -114,7 +122,7 @@ void ObjectTool::scale(elm::vec2 _mouse, elm::vec2 _oldMouse, Object3D* _object,
 	xDiff = _mouse.x - _oldMouse.x;
 	yDiff = _mouse.y - _oldMouse.y;
 
-	elm::vec3 nscale = elm::vec3( (xDiff + yDiff) * _axis / 10.f ) + _object->getScale();
+	elm::vec3 nscale = elm::vec3( (xDiff + yDiff) / 10.f ) + _object->getScale();
 
 	float min = 0.1f;
 	float max = 5.0f;
@@ -124,7 +132,6 @@ void ObjectTool::scale(elm::vec2 _mouse, elm::vec2 _oldMouse, Object3D* _object,
 		nscale = elm::vec3(min);
 
 	_object->setScale( nscale );
-	
 }
 
 void ObjectTool::translate(elm::vec2 _mouse, elm::vec2 _oldMouse, Object3D* _object, Mesh3D* _mesh, elm::vec3 _axis)
@@ -137,7 +144,14 @@ void ObjectTool::translate(elm::vec2 _mouse, elm::vec2 _oldMouse, Object3D* _obj
 	max = _mesh->getMaxVertex() * _object->getScale() + _object->getPosition();
 	elm::vec3 diff;
 
-	diff = elm::vec3(_mouse.x - _oldMouse.x, _mouse.y - _oldMouse.y, vPickRayOrig.z) * _axis * (vPickRayDir);
+
+	if(_axis.z == 0)		// xy
+		diff = elm::vec3(_mouse.x - _oldMouse.x, -(_mouse.y - _oldMouse.y), 0) * _axis;
+	else if(_axis.y == 0)	//xz
+		diff = elm::vec3(_mouse.x - _oldMouse.x, 0, -(_mouse.y - _oldMouse.y)) * _axis;
+	else
+		diff = elm::vec3(_mouse.x - _oldMouse.x, -(_mouse.y - _oldMouse.y), -(_mouse.y - _oldMouse.y)) * _axis;
+
 
 	float len = elm::vecLength(diff);
 	_object->setPosition((diff) + _object->getPosition());

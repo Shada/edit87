@@ -5,6 +5,7 @@
 IRadial::IRadial(void)
 {
 	m_toolBufferId = -1;
+	radius = 50;
 }
 
 
@@ -12,17 +13,14 @@ IRadial::~IRadial(void)
 {
 }
 
-void ObjectRadial::init(unsigned int _numIcons, float _radius, elm::vec2 _iconDimension, RenderDX11* _dx)
+void ObjectRadial::init(unsigned int _numIcons, elm::vec2 _iconDimension, RenderDX11* _dx)
 {
 	dxPtr			= _dx;
 	m_state			= RState::HIDE;
 	screenWidth		= (float)dxPtr->width;
 	screenHeight	= (float)dxPtr->height;
 	m_numIcons		= _numIcons;
-	
 	m_iconSize		= elm::vec2(_iconDimension.x / screenWidth * 2, _iconDimension.y / screenHeight * 2);
-
-	radius			= _radius;
 	m_origin		= elm::vec2(0);
 
 	m_selectedToolFunction	= -1;
@@ -35,7 +33,7 @@ void ObjectRadial::init(unsigned int _numIcons, float _radius, elm::vec2 _iconDi
 		float x = p.x / screenWidth * 2.f;
 		float y = p.y / screenHeight * 2.f;
 		elm::vec2 scrnp = elm::vec2(x,y);
-		IIcon icon(scrnp, m_iconSize, radius, 1);
+		IIcon icon(scrnp, m_iconSize, dxPtr->toolMoveId + i);
 
 		m_icons.push_back(icon);	
 	}
@@ -47,12 +45,17 @@ void ObjectRadial::init(unsigned int _numIcons, float _radius, elm::vec2 _iconDi
 		float sx = sp.x / screenWidth * 2.f;
 		float sy = sp.y / screenHeight * 2.f;
 
-		m_icons[ m_icons.size() - 1 ].addSubIcon(1, elm::vec2(sx,sy), m_iconSize * 0.5);
+		m_icons[ m_icons.size() - 1 ].addSubIcon(dxPtr->toolXId + j, elm::vec2(sx,sy), m_iconSize * 0.5);
+
+		if(j==0)
+		{
+			m_icons[ m_icons.size() - 1 ].getSubIcons()[0]->toggleHighlight();
+		}
 	}
 	
 }
 
-void TerrainRadial::init(unsigned int _numIcons, float _radius, elm::vec2 _iconDimension, RenderDX11* _dx)
+void TerrainRadial::init(unsigned int _numIcons, elm::vec2 _iconDimension, RenderDX11* _dx)
 {
 	dxPtr			= _dx;
 	m_state			= RState::HIDE;
@@ -61,7 +64,6 @@ void TerrainRadial::init(unsigned int _numIcons, float _radius, elm::vec2 _iconD
 	float rad		= 360.f / _numIcons * 0.0174532925f;
 	m_iconSize		= elm::vec2(_iconDimension.x / screenWidth * 2, _iconDimension.y / screenHeight * 2);
 	m_numIcons		= _numIcons;
-	radius			= _radius;
 	m_origin		= elm::vec2(0);
 
 	m_selectedToolFunction	= -1;
@@ -73,7 +75,7 @@ void TerrainRadial::init(unsigned int _numIcons, float _radius, elm::vec2 _iconD
 		float x = p.x / screenWidth * 2.f;
 		float y = p.y / screenHeight * 2.f;
 		elm::vec2 scrnp = elm::vec2(x,y);
-		IIcon icon(scrnp, m_iconSize, radius, 0);
+		IIcon icon(scrnp, m_iconSize, 0);
 
 		m_icons.push_back(icon);	
 	}
@@ -100,16 +102,17 @@ void IRadial::select(elm::vec2 _mouse, bool _leftMouseDown)
 		if(selected)
 		{	
 			m_selectedToolFunction = i;
+
+			/*if(!_leftMouseDown)
+				m_state = RState::HIDE;*/
 		}
 
 		
 		for(int j = 0; j < icon.getSubIcons().size(); j++)
 		{
 			SubIcon* sub = icon.getSubIcons()[j];
-			sub->setLeftMouseButton(_leftMouseDown);
-			bool res = selected = sub->collide(scrnm, scrno);
 
-			if(!res)
+			if(!sub->isHighlighted())
 				m_axis[j] = 0;
 		}
 	}
@@ -179,30 +182,30 @@ ObjectRadial::ObjectRadial(ObjectTool* _tool)
 	m_defColor = elm::vec4(1,0,0,1);
 }
 
-void ObjectRadial::update(bool _leftMouseDown)
+bool ObjectRadial::update(bool _leftMouseDown)
 {
-	if(m_state == RState::HIDE)
-		return;
+	if(m_state!= RState::SELECT)
+		return false;
 
 	// check for icon selection
-	select(m_mouse, _leftMouseDown);
+	select(m_mouse,_leftMouseDown);
 	m_tool->setAxis(m_axis);
 	switch(m_selectedToolFunction)
 	{
 	case 0:
 		// translate
 		m_tool->setState(OTState::TRANSLATE);
-		setState(RState::HIDE);
+
 		break;
 	case 1:
 		// scale
 		m_tool->setState(OTState::SCALE); 
-		setState(RState::HIDE);
+
 		break;
 	case 2:
 		// rotate
 		m_tool->setState(OTState::ROTATE);
-		setState(RState::HIDE);
+
 		
 		break;
 	default:
@@ -210,6 +213,7 @@ void ObjectRadial::update(bool _leftMouseDown)
 		break;
 	}
 	m_selectedToolFunction = -1;
+	return true;
 }
 
 TerrainRadial::TerrainRadial(Tools* _toolPtr)
@@ -218,8 +222,11 @@ TerrainRadial::TerrainRadial(Tools* _toolPtr)
 	m_selectedTool	= _toolPtr;
 }
 
-void TerrainRadial::update(bool _leftMouseDown)
+bool TerrainRadial::update(bool _leftMouseDown)
 {
+	if(m_state != RState::HIDE)
+		return false;
+
 	switch(m_selectedToolFunction)
 	{
 	case 0:
@@ -243,4 +250,29 @@ void TerrainRadial::update(bool _leftMouseDown)
 		break;
 	}
 	m_selectedToolFunction = -1;
+	return true;
+}
+
+void ObjectRadial::setAxis(Key _axis)
+{
+	vector<SubIcon*>& subs = m_icons[m_icons.size()-1].getSubIcons();
+	switch(_axis)
+	{
+	case Key::AXIS_X:
+		subs[0]->toggleHighlight();
+		break;
+	case Key::AXIS_Y:
+		subs[1]->toggleHighlight();
+		break;
+	case Key::AXIS_Z:
+		subs[2]->toggleHighlight();
+		break;
+	}
+
+	if(!subs[0]->isHighlighted() && !subs[1]->isHighlighted() && !subs[2]->isHighlighted())
+	{
+		m_axis[0] = 1;
+		subs[0]->toggleHighlight();
+	}
+
 }

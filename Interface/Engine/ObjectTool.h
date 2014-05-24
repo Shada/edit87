@@ -8,6 +8,7 @@
 
 class Camera;
 class RenderDX11;
+class IRadial;
 
 enum class OTState
 {
@@ -28,6 +29,8 @@ public:
 	void setState(OTState _state);
 	OTState getState()
 	{ return currentState; }
+
+	void addListener(IRadial *_radialMenu);
 private:
 	
 	void rotate(elm::vec2 _mouse, elm::vec2 _oldMouse, Object3D* _object, Mesh3D* _mesh, elm::vec3 _axis);
@@ -41,7 +44,7 @@ private:
 	elm::vec3	currentAxis;
 
 	OTState		currentState;
-
+	IRadial		*radialMenu;
 	
 };
 

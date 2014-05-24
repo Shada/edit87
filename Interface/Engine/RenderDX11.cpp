@@ -357,6 +357,43 @@ HRESULT RenderDX11::init()
 		return hr;
 	}
 	g_textures.push_back(tex);
+
+	tex = nullptr;
+	hr = D3DX11CreateShaderResourceViewFromFile(g_device, "..\\Textures\\xarr.png", NULL, NULL, &tex, NULL);
+	toolXId = g_textures.size();
+	g_textures.push_back(tex);
+
+	tex = nullptr;
+	hr = D3DX11CreateShaderResourceViewFromFile(g_device, "..\\Textures\\yarr.png", NULL, NULL, &tex, NULL);
+	toolYId = g_textures.size();
+	g_textures.push_back(tex);
+
+	tex = nullptr;
+	hr = D3DX11CreateShaderResourceViewFromFile(g_device, "..\\Textures\\zarr.png", NULL, NULL, &tex, NULL);
+	toolZId = g_textures.size();
+	g_textures.push_back(tex);
+
+	tex = nullptr;
+	hr = D3DX11CreateShaderResourceViewFromFile(g_device, "..\\Textures\\translate.png", NULL, NULL, &tex, NULL);
+
+	toolMoveId = g_textures.size();
+	g_textures.push_back(tex);
+	tex = nullptr;
+	hr = D3DX11CreateShaderResourceViewFromFile(g_device, "..\\Textures\\scale.png", NULL, NULL, &tex, NULL);
+
+	toolScaleId = g_textures.size();
+	g_textures.push_back(tex);
+	tex = nullptr;
+	hr = D3DX11CreateShaderResourceViewFromFile(g_device, "..\\Textures\\rotate.png", NULL, NULL, &tex, NULL);
+
+	toolRotateId = g_textures.size();
+	g_textures.push_back(tex);
+	tex = nullptr;
+	hr = D3DX11CreateShaderResourceViewFromFile(g_device, "..\\Textures\\anchor.png", NULL, NULL, &tex, NULL);
+	toolAnchorId = g_textures.size();
+	g_textures.push_back(tex);
+
+
 	createSampleStates();
 
 	// default mesh

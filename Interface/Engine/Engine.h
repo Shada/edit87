@@ -98,5 +98,5 @@ public:
 
 	void updateFollowTerrainObjects();
 
-	bool leftMouseIsDown;
+	bool leftMouseIsDown, oldLeftMouseIsDown;
 };

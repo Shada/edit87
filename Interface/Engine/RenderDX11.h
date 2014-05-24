@@ -111,6 +111,7 @@ private:
 
 	HRESULT createSRV(unsigned int& _outId, string _fileName);
 
+	int toolScaleId, toolMoveId, toolRotateId, toolAnchorId, toolXId, toolYId, toolZId;
 	int toolBufferId;
 	elm::vec2 toolPosition;
 

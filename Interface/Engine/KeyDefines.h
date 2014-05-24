@@ -16,4 +16,7 @@ enum class Key
 	STATE_FOLLOW_TERRAIN = 'F',
 	STATE_ELEVATE = 'E',
 	STATE_LOWER = 'Q',
+	AXIS_X	= '1',
+	AXIS_Y	= '2',
+	AXIS_Z	= '3',
 };

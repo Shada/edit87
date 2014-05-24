@@ -33,12 +33,13 @@ public:
 	IRadial(void);
 	virtual ~IRadial(void);
 
-	virtual void init(unsigned int _numIcons, float _radius, elm::vec2 _iconDimension, RenderDX11* _dx) = 0;
+	virtual void init(unsigned int _numIcons, elm::vec2 _iconDimension, RenderDX11* _dx) = 0;
 
 	void select(elm::vec2 _mouse, bool _leftMouseDown);
 	void draw();
 
-	virtual void update(bool _leftMouseDown) = 0;
+	virtual bool update(bool _leftMouseDown) = 0;
+	virtual void setAxis(Key _axis){}
 	void setState(RState _state);
 
 	void setSpawn(elm::vec2 _origin);
@@ -69,11 +70,13 @@ class ObjectRadial
 public:
 	ObjectRadial(ObjectTool* _tool);
 
-	void update(bool _leftMouseDown) override;
-	void init(unsigned int _numIcons, float _radius, elm::vec2 _iconDimension, RenderDX11* _dx) override;
+	bool update(bool _leftMouseDown) override;
+	void init(unsigned int _numIcons, elm::vec2 _iconDimension, RenderDX11* _dx) override;
+	virtual void setAxis(Key _axis)override;
 
 private:
 	ObjectTool*	m_tool;
+	friend class Engine;
 };
 
 class TerrainRadial
@@ -82,10 +85,10 @@ class TerrainRadial
 public:
 	TerrainRadial(Tools* _toolPtr);
 
-	void update(bool _leftMouseDown) override;
+	bool update(bool _leftMouseDown) override;
 	void setWorldPos(elm::vec3 _worldPos)
 	{ m_mouseWorldPos = _worldPos; }
-	void init(unsigned int _numIcons, float _radius, elm::vec2 _iconDimension, RenderDX11* _dx) override;
+	void init(unsigned int _numIcons, elm::vec2 _iconDimension, RenderDX11* _dx) override;
 private:
 
 	elm::vec3	m_mouseWorldPos;

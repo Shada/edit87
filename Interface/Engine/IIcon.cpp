@@ -2,8 +2,8 @@
 
 
 
-IIcon::IIcon(elm::vec2 _offset, elm::vec2 _size, float _radius, int _textureId)
-	: m_offset(_offset), m_size(_size), m_radius(_radius), m_textureId(_textureId), m_highlighted(false)
+IIcon::IIcon(elm::vec2 _offset, elm::vec2 _size, int _textureId)
+	: m_offset(_offset), m_size(_size), m_textureId(_textureId), m_highlighted(false)
 {
 	
 }
@@ -64,7 +64,7 @@ void IIcon::updateShader(RenderDX11* _dx)
 
 void IIcon::addSubIcon(int _textureId, elm::vec2 _offset, elm::vec2 _size)
 {
-	m_subIcons.push_back( new SubIcon(_offset, _size, 42, _textureId) );
+	m_subIcons.push_back( new SubIcon(_offset, _size, _textureId) );
 }
 
 vector<SubIcon*>& IIcon::getSubIcons()
@@ -77,24 +77,16 @@ elm::vec2 IIcon::getOffset()
 	return m_offset;
 }
 
-bool SubIcon::collide(elm::vec2 _mouse, elm::vec2 _origin)
+bool SubIcon::toggleHighlight()
 {
-	elm::vec2 rPos = _origin + m_offset;
-
-	if( _mouse.x > (rPos.x - m_size.x) && _mouse.x < (rPos.x + m_size.x) &&
-		-_mouse.y > (rPos.y - m_size.y) && -_mouse.y < (rPos.y + m_size.y) )
-	{
-		m_highlighted = !m_highlighted;
-	}
-
+	m_highlighted = !m_highlighted;
+	//m_oldMouse	= m_isLeftMouseButton;
 	return m_highlighted;
 }
 
-void SubIcon::setLeftMouseButton(bool _isDown)
-{
-	m_isLeftMouseButton = _isDown;
-}
 
-SubIcon::SubIcon(elm::vec2 _offset, elm::vec2 _size, float _radius, int _textureId)
-	: IIcon(_offset, _size, _radius, _textureId)
-{}
+SubIcon::SubIcon(elm::vec2 _offset, elm::vec2 _size, int _textureId)
+	: IIcon(_offset, _size, _textureId)
+{
+
+}

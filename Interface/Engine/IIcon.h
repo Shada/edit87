@@ -5,12 +5,18 @@
 #include "Event.h"
 #include "ObjectTool.h"
 
+enum class SIcon
+{
+	SELECTED,
+	UNSELECTED,
+};
+
 class SubIcon;
 
 class IIcon
 {
 public:
-	IIcon(elm::vec2 _offset, elm::vec2 _size, float _radius, int _textureId);
+	IIcon(elm::vec2 _offset, elm::vec2 _size, int _textureId);
 	virtual ~IIcon(void);
 
 	virtual void	update();
@@ -25,10 +31,9 @@ public:
 protected:
 	elm::vec2			m_size;
 	elm::vec2			m_offset;
-	float				m_radius;
 	unsigned int		m_textureId;
 	bool				m_highlighted;
-	
+
 	vector<SubIcon*>	m_subIcons;
 };
 
@@ -36,13 +41,12 @@ class SubIcon
 	: public IIcon
 {
 public:
-	SubIcon(elm::vec2 _offset, elm::vec2 _size, float _radius, int _textureId);
+	SubIcon(elm::vec2 _offset, elm::vec2 _size, int _textureId);
 	~SubIcon(){}
 
-	bool collide(elm::vec2 _mouse, elm::vec2 _origin) override;
-	void setLeftMouseButton(bool _isDown);
+	bool toggleHighlight();
+	bool isHighlighted(){ return m_highlighted; }
 private:
-	bool m_isLeftMouseButton;
 	ObjectTool*	m_tool;
 	elm::vec3 m_axis;
 };
