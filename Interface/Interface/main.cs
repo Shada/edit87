@@ -20,6 +20,22 @@ using wrap;
 
 namespace LevelEditor
 {
+    //public struct ToolViewOption
+    //{
+    //    bool toolPresent;
+    //    string toolName; //tool name without the "levelEditor." part
+
+    //    public ToolViewOption(string _toolName)
+    //    {
+    //        this.toolName = _toolName;
+    //        IDockContent panel = Utils.Panels.getpanelByName("LevelEditor." + _toolName);
+    //        if (panel == null || panel.DockHandler.IsHidden)
+    //            toolPresent = false;
+    //        else
+    //            toolPresent = true;
+    //    }
+    //}
+
 	public partial class MapEditor : Form
     {
         public const string activeLayoutName = "PanelLayout.xml";
@@ -29,7 +45,7 @@ namespace LevelEditor
 		private int mousePosX, mousePosY, windowWidth, windowHeight;
 
         DeserializeDockContent deserializeDockContent;
-        public TreeNode resourcesRoot = new TreeNode("Root", 0, 0);		
+        public TreeNode resourcesRoot = new TreeNode("Root", 0, 0);
 
 		public MapEditor()
 		{
@@ -209,7 +225,7 @@ namespace LevelEditor
 
 		private void brushToolsToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-            toggleDisplayBrushes();
+            toggleDisplayMenuItems( typeof(PanBrushes) );
 		}
 
 		private void resetToDefaultToolStripMenuItem_Click(object sender, EventArgs e)
@@ -675,7 +691,7 @@ namespace LevelEditor
                 item.CheckState = CheckState.Checked;
 
                 //shortcutPanel.Size = new Size(shortcutPanel.Size.Width, shortcutPanel.Size.Height - 34);
-                mainDockPanel.Size = new Size(mainDockPanel.Size.Width, mainDockPanel.Size.Height - 34);
+                mainDockPanel.Size = new Size(mainDockPanel.Size.Width, mainDockPanel.Size.Height);
 
                 //shortcutPanel.Location = new Point(shortcutPanel.Location.X, shortcutPanel.Location.Y + 34);
                 mainDockPanel.Location = new Point(mainDockPanel.Location.X, mainDockPanel.Location.Y + 34);
@@ -689,27 +705,77 @@ namespace LevelEditor
             }
 		}
 
-        private void toggleDisplayBrushes()
+        private void toggleDisplayMenuItems(Type panelType)
         {
-			DockContent panel = (PanBrushes)Utils.Panels.getpanelByName("LevelEditor.PanBrushes");
-            if (panel == null)
+			DockContent panel = (DockContent)Utils.Panels.getpanelByName(panelType.ToString());
+            ToolStripMenuItem toolMenuItem = null;
+            if (panelType == typeof(PanBrushes))
             {
-
+                toolMenuItem = brushToolsToolStripMenuItem;
             }
-            if (!panel.IsDisposed)
+            else if (panelType == typeof(PanLibrary))
+            {
+                toolMenuItem = libraryToolStripMenuItem;
+            }
+            else if (panelType == typeof(PanProperties))
+            {
+                toolMenuItem = propertiesToolStripMenuItem;
+            }
+            else if (panelType == typeof(PanResources))
+            {
+                toolMenuItem = resourcesToolToolStripMenuItem;
+            }
+            else if (panelType == typeof(PanTextures))
+            {
+                toolMenuItem = texturesToolToolStripMenuItem;
+            }
+
+            if (panel == null || panel.IsDisposed)
+            {
+                if (panelType == typeof(PanBrushes))
+                {
+                    panel = new PanBrushes();
+                }
+                else if (panelType == typeof(PanLibrary))
+                {
+                    panel = new PanLibrary();
+                }
+                else if (panelType == typeof(PanProperties))
+                {
+                    panel = new PanProperties();
+                }
+                else if (panelType == typeof(PanResources))
+                {
+                    panel = new PanResources();
+                }
+                else if (panelType == typeof(PanTextures))
+                {
+                    panel = new PanTextures();
+                }
+                else if (panelType == typeof(PanRender))
+                {
+                    panel = new PanRender(this);
+                }
+            }
+            else if (!panel.IsDisposed)
             {
                 if (panel.IsHidden)
+                {
                     panel.IsHidden = false;
+                    toolMenuItem.Checked = true;
+                }
                 else
+                {
                     panel.Hide();
+                    toolMenuItem.Checked = false;
+                }
+                return;
             }
-            else
-            {
-                panel.Show(mainDockPanel, DockState.Float);
-                panel.DockHandler.FloatPane.DockTo(mainDockPanel.DockWindows[DockState.DockRight]);
-                Utils.Panels.addPanel(panel, typeof(PanBrushes).ToString());
-            }
-            
+
+            panel.Show(mainDockPanel, DockState.Float);
+            Utils.Panels.addPanel(panel, panelType.ToString());
+            if(toolMenuItem != null)
+                toolMenuItem.Checked = true;
         }
 
         private void closeAllDocuments()
@@ -742,5 +808,25 @@ namespace LevelEditor
 		{
 			int i = 0;
 		}
+
+        private void resourcesToolToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            toggleDisplayMenuItems(typeof(PanResources));
+        }
+
+        private void texturesToolToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            toggleDisplayMenuItems(typeof(PanTextures));
+        }
+
+        private void libraryToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            toggleDisplayMenuItems(typeof(PanLibrary));
+        }
+
+        private void propertiesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            toggleDisplayMenuItems(typeof(PanProperties));
+        }
 	}
 }

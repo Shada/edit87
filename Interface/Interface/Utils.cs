@@ -101,11 +101,11 @@ namespace LevelEditor
 
             public static void destroy()
 			{
-				foreach (PanelStruct p in panels)
-				{
-					if (p.Panel != null)
-						p.Panel.Close();
-				}
+                for (int i = panels.Count-1; i >= 0 ; i--)
+                {
+                    if(panels[i].Panel != null)
+                        panels[i].Panel.Close();
+                }
 
 				panels.Clear();
 			}

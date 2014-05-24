@@ -36,5 +36,10 @@ namespace LevelEditor
         {
             lv_Textures.Size = new Size(Size.Width - lv_TexturesSizeDiff, Size.Height - lv_TexturesSizeDiff - 24);
         }
+
+        private void PanTextures_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            Utils.Panels.removePanel(this.GetType().ToString());
+        }
     }
 }

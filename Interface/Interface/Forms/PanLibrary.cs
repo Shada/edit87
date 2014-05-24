@@ -218,5 +218,10 @@ namespace LevelEditor
 			tw_objects.SelectedNode = e.Node;
 		}
 
+        private void PanLibrary_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            Utils.Panels.removePanel(this.GetType().ToString());
+        }
+
     }
 }

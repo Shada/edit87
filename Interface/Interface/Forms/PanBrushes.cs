@@ -47,7 +47,7 @@ namespace LevelEditor
 
         private void PanBrushes_FormClosing(object sender, FormClosingEventArgs e)
         {
-            Utils.Panels.removePanel("LevelEditor.PanBrushes");
+            Utils.Panels.removePanel(this.GetType().ToString());
         }
     }
 }
