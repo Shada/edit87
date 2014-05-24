@@ -8,6 +8,7 @@ namespace LevelEditor
     public partial class PanRender : DockContent
     {
 		MapEditor editor;
+        private IntPtr win;
 
 		public PanRender(MapEditor _editor)
         {
@@ -16,8 +17,10 @@ namespace LevelEditor
 		
 			resizeRenderPanel();
 
+		    win = drawSurface.Handle;
+
 			Utils.Graphics.Init();
-			Utils.Graphics.gfx.setHandle(drawSurface.Handle, "main", this.Size.Width, this.Size.Height);
+            Utils.Graphics.Sethandle(win, "main", this.Size.Width, this.Size.Height);
 			Utils.Graphics.gfx.createTerrain(256, 256, 5, false, 0);
         }
 
@@ -29,6 +32,9 @@ namespace LevelEditor
 													editor.Bounds.Y + this.Bounds.Y + 55,
 													this.Bounds.Width + 1,
 													this.Bounds.Height - 6);
+
+                if (Utils.Graphics.gfx != null && drawSurface.Size.Width != 0)
+                    Utils.Graphics.gfx.resizeWindow(drawSurface.Size.Width, drawSurface.Size.Height);
 			}
 		}
 
@@ -44,27 +50,11 @@ namespace LevelEditor
 
 		private void PanRender_DockStateChanged(object sender, EventArgs e)
 		{
-			//Utils.Graphics.Sethandle(drawSurface.Handle, "main");
-		}
-
-		protected void drawSurface_MouseUp(object sender, MouseEventArgs e)
-		{
-			int i = 0;
-		}
-
-		protected void drawSurface_MouseDown(object sender, MouseEventArgs e)
-		{
-			int i = 0;
-		}
-
-		protected void PanRender_MouseUp(object sender, MouseEventArgs e)
-		{
-			int i = 0;
-		}
-
-		protected void PanRender_MouseDown(object sender, MouseEventArgs e)
-		{
-			int i = 0;
+		    if (drawSurface.Handle != win)
+		    {
+		        win = drawSurface.Handle;
+                Utils.Graphics.gfx.updateHandle(win, "main", drawSurface.Size.Width, drawSurface.Size.Height);
+		    }
 		}
     }
 }

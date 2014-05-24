@@ -16,18 +16,20 @@ public:
 
 	virtual void move(float alongX, float alongZ) = 0;
 
+	virtual void setBrushIntensity(int _val) = 0;
+	virtual void setBrushSize(int _val) = 0;
+
 	/* Mouse calls */
-	virtual void rightMouseDown(int brushSize, float brushIntensity) = 0;
-	virtual void leftMouseDown(int brushSize, float brushIntensity) = 0;
-	virtual void rightMouseUp() = 0;
-	virtual void leftMouseUp() = 0;
-	virtual void updateMouse(POINT mouse) = 0;
+	virtual void updateMouse() = 0;
+	virtual void resizeWindow(int width, int height) = 0;
 
 	/* Tool calls */
+	virtual void setSelctorTool() = 0;
 	virtual void setTextureTool() = 0;
 	virtual void setElevationTool() = 0;
 	virtual void setNormalizerTool() = 0;
 	virtual void setObjectPlacerTool() = 0;
-	virtual void setSelctorTool() = 0;
+
 	virtual void addHandels(HWND _hWnd, std::string _name, int width, int height) = 0;
+	virtual void updateHandle(HWND _hWnd, std::string _name, int width, int height) = 0;
 };

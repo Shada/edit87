@@ -16,8 +16,8 @@
 
 #include "Blendmap.h"
 
-#define SAFE_RELEASE(x) if( x ) { (x)->Release(); (x) = nullptr; }
-#define SAFE_DELETE(x) if( x ) { delete(x); (x) = nullptr; }
+//#define SAFE_RELEASE(x) if( x ) { (x)->Release(); (x) = nullptr; }
+//#define SAFE_DELETE(x) if( x ) { delete(x); (x) = nullptr; }
 
 using std::map;
 using std::string;
@@ -43,6 +43,32 @@ struct Handle
 	ID3D11DeviceContext			*deviceContext;
 	ID3D11RenderTargetView		*renderTargetView;
 	ID3D11DepthStencilView		*depthStencilView;
+
+	D3D_DRIVER_TYPE				driverType;
+	D3D_FEATURE_LEVEL			featureLevel;
+	ID3D11RasterizerState		*rasterizerState;						
+								
+	ID3D11BlendState			*blendEnable,
+								*blendDisable,
+								*blendAlpha;
+
+	ID3D11SamplerState			*wrap,
+								*clamp;
+								
+	ID3D11DepthStencilState		*depthStencilStateEnable;
+	ID3D11DepthStencilState		*depthStencilStateDisable;
+
+	ID3D11InputLayout			*layout;
+	ID3D11InputLayout			*otherlayout;
+
+	ID3D11VertexShader			*terrainVS,
+								*modelVS;
+	ID3D11PixelShader			*terrainPS,
+								*modelPS;
+
+	std::vector<ID3D11Buffer*>	buffers;
+
+	std::vector<ID3D11ShaderResourceView*> textures;
 };
 
 class RenderDX11
@@ -58,58 +84,26 @@ private:
 	RECT r;
 	HWND hWnd;
 
-	Handle primaryHandle;
+	Handle *primaryHandle;
 
 	Camera *camera;
 	Blendmap *blendmap;
 
-	D3D_DRIVER_TYPE				g_driverType;
-	D3D_FEATURE_LEVEL			g_featureLevel;
-	//ID3D11Device				*g_device;
-	//ID3D11DeviceContext			*g_deviceContext;
-	//IDXGISwapChain				*g_swapChain;
-	//ID3D11RenderTargetView		*g_renderTargetView;
-	ID3D11ShaderResourceView	*g_shaderView;
-	ID3D11RasterizerState		*g_rasterizerState;
-
-	//ID3D11DepthStencilView		*g_depthStencilView;							
-								
-	ID3D11BlendState			*g_blendEnable,
-								*g_blendDisable,
-								*g_blendAlpha;
-
-	ID3D11SamplerState			*g_wrap,
-								*g_clamp;
-								
-	ID3D11DepthStencilState		*g_depthStencilStateEnable;
-	ID3D11DepthStencilState		*g_depthStencilStateDisable;
-
-	ID3D11InputLayout			*g_layout;
-	ID3D11InputLayout			*g_otherlayout;
-
-	ID3D11VertexShader			*g_terrainVS;
-	ID3D11PixelShader			*g_terrainPS;
-
-	ID3D11VertexShader			*g_modelVS;
-	ID3D11PixelShader			*g_modelPS;
-
-	std::vector<ID3D11Buffer*>	g_buffers;
 	std::vector<Handle>			handles;
-
-	std::vector<ID3D11ShaderResourceView*> g_textures;
 
 	std::vector<Mesh3D*>		g_meshes;
 
 	std::vector<Object3D*>		g_objects;
 	std::vector<Composition>	g_comps;
 
-	HRESULT init(Handle &h);
-	HRESULT initHandle(int width, int height, Handle &h);
-	HRESULT createSampleStates();
+	void render(const Handle &h);
+
+	HRESULT init(Handle &h, int width, int height);
+	HRESULT createSampleStates(Handle &h);
 	HRESULT compileShader(LPCSTR filePath, LPCSTR shaderType, ID3DBlob **shaderBlob);
 
-	HRESULT createBuffer(void* data, int numElements, int bytesPerElement, int &bufferID);
-	HRESULT createIndexBuffer(void* data, int numElements, int &bufferID);
+	HRESULT createBuffer(void* data, int numElements, int bytesPerElement, int &bufferID, Handle &h);
+	HRESULT createIndexBuffer(void* data, int numElements, int &bufferID, Handle &h);
 
 	HRESULT createSRV(unsigned int& _outId, string _fileName);
 	/********************************** 
@@ -124,7 +118,7 @@ public:
 	~RenderDX11();
 
 	void renderScene();
-	void setRect(RECT t);
+	void renderMiniMap(std::string name);
 
 	void setTerrainIndexCount(int count)	{ terrainIndexCount = count; }
 	void setCamera(Camera *cam)				{ camera = cam; }
@@ -132,6 +126,9 @@ public:
 	void updateTerrainBuffer(std::vector<Vertex> *vBuffer);
 	void createAndSetTerrainBuffers(std::vector<Vertex> *vBuffer, std::vector<uint> *iBuffer);
 
+	void resizeSurface(int width, int height, std::string _name);
 	void addHandle(HWND _hWnd, std::string _name, int width, int height);
+	void updateHandle(HWND _hWnd, std::string _name, int width, int height);
+
 	void blendmapBrush(float _radius, float _intensity, elm::vec2 _origin, char* _texture, float _step);
 };

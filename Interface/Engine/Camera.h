@@ -24,7 +24,7 @@ public:
 	void move(elm::vec2 direction);
 	void rotate(float angle);
 
-	void resizeWindow(int width, int height) { elm::perspectiveFovLH(mProj, ELM_PI / 2, (float)width / height, 1.f, 20000.f); }
+	void resizeWindow(int width, int height);
 
 	elm::vec3 getEye()	{ return vEye; }
 	elm::mat4 getProj() { return mProj; }

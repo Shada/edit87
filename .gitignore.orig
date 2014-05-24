@@ -1,0 +1,58 @@
+# Compiled Object files
+*.slo
+*.lo
+*.o
+*.obj
+*.ilk
+*.idb
+<<<<<<< HEAD
+*.exp
+=======
+>>>>>>> RESPECT_MAH_AUTHORITAH
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll*
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+*.lib
+*.pch
+
+*/Debug/*
+*/Release/*
+*/*/Debug/*
+*/*/Release/*
+*/ipch/*
+
+# Executables
+*.exe
+*.out
+*.app
+*.cso
+
+*.psess
+*.vsp
+*.pdb
+*.FileListAbsolute.txt
+Interface.csproj*
+LevelEditor.MapEditor*
+*.Cashe
+*.cashe
+*.cache
+*.Cache
+*.suo
+TemporaryGeneratedFile*
+*.tlog
+*.log
+*sdf
+*.lastbuildstate
+*htm
+*.bi
+*.resources
+*.exe.config
+*.manifest
+*.exp

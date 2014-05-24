@@ -10,17 +10,10 @@ RenderDX11::RenderDX11()
 	terrainVertexBufferID = terrainIndexBufferID = -1;
 	blendmap = new Blendmap();
 
+	g_meshes = std::vector<Mesh3D*>(1);
+
 	camera = nullptr;
-	//g_swapChain = nullptr;
 	hWnd = nullptr;
-}
-
-void RenderDX11::setRect(RECT t)
-{
-	r = t;
-
-	//if(!g_swapChain)
-	//	init();
 }
 
 void RenderDX11::addHandle(HWND _hWnd, std::string _name, int width, int height)
@@ -34,19 +27,48 @@ void RenderDX11::addHandle(HWND _hWnd, std::string _name, int width, int height)
 	h.swapChain = nullptr;
 	h.depthStencilView = nullptr;
 
-	initHandle(width, height, h);
+	h.buffers = std::vector<ID3D11Buffer*>(2);
+	h.textures = std::vector<ID3D11ShaderResourceView*>(1);
+
+	handles.push_back(h);
 
 	if(_name == "main")
 	{
+		primaryHandle = &handles.back();
 		hWnd = _hWnd;
-		primaryHandle = h;
-		init(h);
 	}
-
-	handles.push_back(h);
+	
+	init(handles.back(), width, height);
 }
 
-HRESULT RenderDX11::initHandle(int width, int height, Handle &h)
+void RenderDX11::updateHandle(HWND _hWnd, std::string _name, int width, int height)
+{
+	for(unsigned int i = 0; i < handles.size(); i++)
+	{
+		if(handles.at(i).name == _name)
+		{
+			handles.at(i).hwnd = nullptr;
+			handles.at(i).hwnd = _hWnd;
+
+			init(handles.at(i), width, height);
+			break;
+		}
+	}
+}
+
+void RenderDX11::resizeSurface(int width, int height, std::string _name)
+{
+	for(unsigned int i = 0; i < handles.size(); i++)
+	{
+		if(handles.at(i).name == _name)
+		{
+			init(handles.at(i), width, height);
+			break;
+		}
+	}
+}
+
+HRESULT RenderDX11::init(Handle &h, int width, int height)
 {
 	HRESULT hr = S_OK;
 
@@ -84,16 +106,16 @@ HRESULT RenderDX11::initHandle(int width, int height, Handle &h)
 
     for(UINT driverTypeIndex = 0; driverTypeIndex < numDriverTypes; driverTypeIndex++)
     {
-		g_driverType = driverTypes[driverTypeIndex];
-        hr = D3D11CreateDeviceAndSwapChain(NULL, g_driverType, NULL, createDeviceFlags, featureLevels, numFeatureLevels,
-                                           D3D11_SDK_VERSION, &sd, &h.swapChain, &h.device, &g_featureLevel, &h.deviceContext);
+		h.driverType = driverTypes[driverTypeIndex];
+        hr = D3D11CreateDeviceAndSwapChain(NULL, h.driverType, NULL, createDeviceFlags, featureLevels, numFeatureLevels,
+                                           D3D11_SDK_VERSION, &sd, &h.swapChain, &h.device, &h.featureLevel, &h.deviceContext);
         if(SUCCEEDED(hr))
             break;
     }
     if(FAILED(hr))
 	{
 		MessageBox(this->hWnd, "Swapchain made fail, lol", "fail, yo", 0);
-        return hr;
+        	return hr;
 	}
 
 	 // Create a render target view
@@ -102,7 +124,7 @@ HRESULT RenderDX11::initHandle(int width, int height, Handle &h)
     if(FAILED(hr))
 	{
 		MessageBox(this->hWnd, "Backbuffer made fail, lol", "fail, yo", 0);
-        return hr;
+        	return hr;
 	}
 
     hr = h.device->CreateRenderTargetView(pBackBuffer, NULL, &h.renderTargetView);
@@ -146,7 +168,7 @@ HRESULT RenderDX11::initHandle(int width, int height, Handle &h)
     if(FAILED(hr))
 	{
 		MessageBox(this->hWnd, "depthstencilview made fail, lol", "fail, yo", 0);
-        return hr;
+        	return hr;
 	}
 
 	SAFE_RELEASE(depthStencil);
@@ -160,11 +182,6 @@ HRESULT RenderDX11::initHandle(int width, int height, Handle &h)
     vp.TopLeftX = 0;
     vp.TopLeftY = 0;
     h.deviceContext->RSSetViewports(1, &vp);
-}
-
-HRESULT RenderDX11::init(Handle &h)
-{
-	HRESULT hr = S_OK;
 
     h.deviceContext->OMSetRenderTargets(1, &h.renderTargetView, h.depthStencilView);
 
@@ -182,15 +199,15 @@ HRESULT RenderDX11::init(Handle &h)
 	rasterDesc.SlopeScaledDepthBias = 0.f;
 
 	// Create the rasterizer state from the description we just filled out.
-	hr = h.device->CreateRasterizerState(&rasterDesc, &g_rasterizerState);
+	hr = h.device->CreateRasterizerState(&rasterDesc, &h.rasterizerState);
     if(FAILED(hr))
 	{
 		MessageBox(this->hWnd, "rasterizerstate made fail, lol", "fail, yo", 0);
-        return hr;
+        	return hr;
 	}
 
 	// Now set the rasterizer state.
-	h.deviceContext->RSSetState(g_rasterizerState);
+	h.deviceContext->RSSetState(h.rasterizerState);
 
 	//create blendstates
 	D3D11_BLEND_DESC blendDesc;
@@ -203,16 +220,16 @@ HRESULT RenderDX11::init(Handle &h)
     blendDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
     blendDesc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
     blendDesc.RenderTarget[0].RenderTargetWriteMask = 0x0f;
-	hr = h.device->CreateBlendState(&blendDesc, &g_blendEnable);
+	hr = h.device->CreateBlendState(&blendDesc, &h.blendEnable);
 	
     if(FAILED(hr))
 	{
 		MessageBox(this->hWnd, "blendenable made fail, lol", "fail, yo", 0);
-        return hr;
+        	return hr;
 	}
 
 	blendDesc.RenderTarget[0].BlendEnable = FALSE;
-	hr = h.device->CreateBlendState(&blendDesc, &g_blendDisable);
+	hr = h.device->CreateBlendState(&blendDesc, &h.blendDisable);
     if(FAILED(hr))
 	{
 		MessageBox(this->hWnd, "blenddisable made fail, lol", "fail, yo", 0);
@@ -223,7 +240,7 @@ HRESULT RenderDX11::init(Handle &h)
 	blendDesc.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
 	blendDesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ZERO;
 	blendDesc.RenderTarget[0].BlendEnable = TRUE;
-	hr = h.device->CreateBlendState(&blendDesc, &g_blendAlpha);
+	hr = h.device->CreateBlendState(&blendDesc, &h.blendAlpha);
     if(FAILED(hr))
 	{
 		MessageBox(this->hWnd, "blendalpha made fail, lol", "fail, yo", 0);
@@ -246,19 +263,19 @@ HRESULT RenderDX11::init(Handle &h)
 	depthDesc.BackFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
 	depthDesc.FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
 	depthDesc.BackFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
-	hr = h.device->CreateDepthStencilState(&depthDesc, &g_depthStencilStateEnable);
+	hr = h.device->CreateDepthStencilState(&depthDesc, &h.depthStencilStateEnable);
     if(FAILED(hr))
 	{
-		MessageBox(this->hWnd, "g_depthStencilStateEnable made fail, lol", "fail, yo", 0);
+		MessageBox(this->hWnd, "h.depthStencilStateEnable made fail, lol", "fail, yo", 0);
 		return hr;
 	}
 
 	depthDesc.DepthEnable = FALSE;
-	hr = h.device->CreateDepthStencilState(&depthDesc, &g_depthStencilStateDisable);
+	hr = h.device->CreateDepthStencilState(&depthDesc, &h.depthStencilStateDisable);
 	if(FAILED(hr))
 	{
-		MessageBox(this->hWnd, "g_depthStencilStateDisable made fail, lol", "fail, yo", 0);
-        return hr;
+		MessageBox(this->hWnd, "h.depthStencilStateDisable made fail, lol", "fail, yo", 0);
+        	return hr;
 	}
 
 	//create constant buffers
@@ -274,8 +291,9 @@ HRESULT RenderDX11::init(Handle &h)
 	if(FAILED(hr))
 		return hr;
 
-	cbOnceID = g_buffers.size();
-	g_buffers.push_back(b);
+	SAFE_RELEASE(h.buffers.at(0));
+	cbOnceID = 0;
+	h.buffers.at(0) = b;
 
 	bd.ByteWidth = sizeof(CBOnChange);
 	b = nullptr;
@@ -283,8 +301,9 @@ HRESULT RenderDX11::init(Handle &h)
 	if(FAILED(hr))
 		return hr;
 
-	cbOnChangeID = g_buffers.size();
-	g_buffers.push_back(b);
+	SAFE_RELEASE(h.buffers.at(1));
+	cbOnChangeID = 1;
+	h.buffers.at(1) = b;
 
 	D3D11_INPUT_ELEMENT_DESC standardLayout[] =
 	{
@@ -303,22 +322,22 @@ HRESULT RenderDX11::init(Handle &h)
 	/* Create shaders */
 	ID3DBlob *shaderBlob;
 	compileShader("..\\Shaders\\defaultVS.hlsl", "vs_4_0", &shaderBlob);
-	h.device->CreateVertexShader(shaderBlob->GetBufferPointer(), shaderBlob->GetBufferSize(), NULL, &g_terrainVS);
-	h.device->CreateInputLayout(standardLayout, ARRAYSIZE(standardLayout), shaderBlob->GetBufferPointer(), shaderBlob->GetBufferSize(), &g_layout);
+	h.device->CreateVertexShader(shaderBlob->GetBufferPointer(), shaderBlob->GetBufferSize(), NULL, &h.terrainVS);
+	h.device->CreateInputLayout(standardLayout, ARRAYSIZE(standardLayout), shaderBlob->GetBufferPointer(), shaderBlob->GetBufferSize(), &h.layout);
 	shaderBlob->Release();
 
 	compileShader("..\\Shaders\\defaultPS.hlsl", "ps_4_0", &shaderBlob);
-	h.device->CreatePixelShader(shaderBlob->GetBufferPointer(), shaderBlob->GetBufferSize(), NULL, &g_terrainPS);
+	h.device->CreatePixelShader(shaderBlob->GetBufferPointer(), shaderBlob->GetBufferSize(), NULL, &h.terrainPS);
 
 	shaderBlob->Release();
 
 	hr = compileShader("..\\Shaders\\modelVS.hlsl", "vs_4_0", &shaderBlob);
-	hr = h.device->CreateVertexShader(shaderBlob->GetBufferPointer(), shaderBlob->GetBufferSize(), NULL, &g_modelVS);
-	hr = h.device->CreateInputLayout(aLittleLessStandardLayout, ARRAYSIZE(aLittleLessStandardLayout), shaderBlob->GetBufferPointer(), shaderBlob->GetBufferSize(), &g_otherlayout);
+	hr = h.device->CreateVertexShader(shaderBlob->GetBufferPointer(), shaderBlob->GetBufferSize(), NULL, &h.modelVS);
+	hr = h.device->CreateInputLayout(aLittleLessStandardLayout, ARRAYSIZE(aLittleLessStandardLayout), shaderBlob->GetBufferPointer(), shaderBlob->GetBufferSize(), &h.otherlayout);
 	shaderBlob->Release();
 
 	hr = compileShader("..\\Shaders\\modelPS.hlsl", "ps_4_0", &shaderBlob);
-	h.device->CreatePixelShader(shaderBlob->GetBufferPointer(), shaderBlob->GetBufferSize(), NULL, &g_modelPS);
+	h.device->CreatePixelShader(shaderBlob->GetBufferPointer(), shaderBlob->GetBufferSize(), NULL, &h.modelPS);
 
 	shaderBlob->Release();
 
@@ -330,8 +349,10 @@ HRESULT RenderDX11::init(Handle &h)
 		MessageBox(this->hWnd, "Image load made fail, lol", "fail, yo", 0);
 		return hr;
 	}
-	g_textures.push_back(tex);
-	createSampleStates();
+
+	SAFE_RELEASE(h.textures.at(0));
+	h.textures.at(0) = tex;
+	createSampleStates(h);
 
 	
 	Mesh3D *mesh = new Mesh3D();
@@ -339,27 +360,31 @@ HRESULT RenderDX11::init(Handle &h)
 	{
 		MessageBoxA(hWnd, "Model load fail", "FAIL", 0);
 	}
-	g_meshes.push_back(mesh);
-	int id;
-	if(FAILED(createBuffer((void*)g_meshes[0]->getVertices().data(), g_meshes[0]->getNumVertices(), sizeof(elm::vec3), id)))
+	g_meshes.at(0) = mesh;
+
+	int id = g_meshes[0]->getVertexBufferID();
+	if(FAILED(createBuffer((void*)g_meshes[0]->getVertices().data(), g_meshes[0]->getNumVertices(), sizeof(elm::vec3), id, h)))
 	{
 		MessageBox(this->hWnd, "VertexBuffer load made fail, lol", "fail, yo", 0);
 		return hr;
 	}
 	g_meshes[0]->setVertexBufferID(id);
-	if(FAILED(createBuffer((void*)g_meshes[0]->getNormals().data(), g_meshes[0]->getNumVertices(), sizeof(elm::vec3), id)))
+	id = g_meshes[0]->getNormalBufferID();
+	if(FAILED(createBuffer((void*)g_meshes[0]->getNormals().data(), g_meshes[0]->getNumVertices(), sizeof(elm::vec3), id, h)))
 	{
 		MessageBox(this->hWnd, "NormalBuffer load made fail, lol", "fail, yo", 0);
 		return hr;
 	}
 	g_meshes[0]->setNormalBufferID(id);
-	if(FAILED(createBuffer((void*)g_meshes[0]->getTexCoords().data(), g_meshes[0]->getNumVertices(), sizeof(elm::vec3), id)))
+	id = g_meshes[0]->getTexCoordBufferID();
+	if(FAILED(createBuffer((void*)g_meshes[0]->getTexCoords().data(), g_meshes[0]->getNumVertices(), sizeof(elm::vec3), id, h)))
 	{
 		MessageBox(this->hWnd, "TexCoordsBuffer load made fail, lol", "fail, yo", 0);
 		return hr;
 	}
 	g_meshes[0]->setTexCoordBufferID(id);
-	if(FAILED(createIndexBuffer((void*)g_meshes[0]->getIndices().data(), g_meshes[0]->getNumIndices(), id)))
+	id = g_meshes[0]->getIndexBufferID();
+	if(FAILED(createIndexBuffer((void*)g_meshes[0]->getIndices().data(), g_meshes[0]->getNumIndices(), id, h)))
 	{
 		MessageBox(this->hWnd, "IndexBuffer load made fail, lol", "fail, yo", 0);
 		return hr;
@@ -398,16 +423,16 @@ HRESULT RenderDX11::init(Handle &h)
 	{
 		return hr;
 	}
-	g_textures.push_back(tex);
+	h.textures.push_back(tex);
 
-	g_meshes[0]->setTexDiffuseID(g_textures.size() - 1);
+	g_meshes[0]->setTexDiffuseID(h.textures.size() - 1);
 
-	blendmap->init(h.device, h.deviceContext, &g_textures, &h.hwnd);
+	blendmap->init(h.device, h.deviceContext, &h.textures, &h.hwnd);
 
     return S_OK;
 }
 
-HRESULT RenderDX11::createBuffer(void *data, int numElements, int bytesPerElement, int &bufferID)
+HRESULT RenderDX11::createBuffer(void *data, int numElements, int bytesPerElement, int &bufferID, Handle &h)
 {
 	D3D11_SUBRESOURCE_DATA initData;
 	initData.pSysMem = data;
@@ -423,22 +448,32 @@ HRESULT RenderDX11::createBuffer(void *data, int numElements, int bytesPerElemen
 	bd.MiscFlags      = 0;
 
 	ID3D11Buffer *buffer = nullptr;
-	HRESULT hr = primaryHandle.device->CreateBuffer(&bd, &initData, &buffer);
+	HRESULT hr = primaryHandle->device->CreateBuffer(&bd, &initData, &buffer);
     if(FAILED(hr))
 	{
         MessageBox(NULL,"could not create vertexbuffer", "ERROR", S_OK);
 		return hr;
 	}
 
-	bufferID = g_buffers.size();
-	g_buffers.push_back(buffer);
-
-	m_buffers[bufferID] = buffer;
+	if(bufferID == -1)
+	{
+		bufferID = handles.at(0).buffers.size();
+		for(unsigned int i = 0; i < handles.size(); i++)
+			handles.at(i).buffers.push_back(buffer);
+	}
+	else
+	{
+		for(unsigned int i = 0; i < handles.size(); i++)
+		{
+			SAFE_RELEASE(handles.at(i).buffers.at(bufferID));
+			handles.at(i).buffers.at(bufferID) = buffer;
+		}
+	}
 
 	return S_OK;
 }
 
-HRESULT RenderDX11::createIndexBuffer(void* data, int numElements, int &bufferID)
+HRESULT RenderDX11::createIndexBuffer(void* data, int numElements, int &bufferID, Handle &h)
 {
 	D3D11_SUBRESOURCE_DATA initData;
 	initData.pSysMem = data;
@@ -454,17 +489,27 @@ HRESULT RenderDX11::createIndexBuffer(void* data, int numElements, int &bufferID
 	bd.MiscFlags      = 0;
 
 	ID3D11Buffer *buffer = nullptr;
-	HRESULT hr = primaryHandle.device->CreateBuffer(&bd, &initData, &buffer);
+	HRESULT hr = primaryHandle->device->CreateBuffer(&bd, &initData, &buffer);
     if(FAILED(hr))
 	{
         MessageBox(NULL,"could not create indexbuffer", "ERROR", S_OK);
 		return hr;
 	}
 
-	bufferID = g_buffers.size();
-	g_buffers.push_back(buffer);
-
-	m_buffers[bufferID] = buffer;
+	if(bufferID == -1)
+	{
+		bufferID = handles.at(0).buffers.size();
+		for(unsigned int i = 0; i < handles.size(); i++)
+			handles.at(i).buffers.push_back(buffer);
+	}
+	else
+	{
+		for(unsigned int i = 0; i < handles.size(); i++)
+		{
+			SAFE_RELEASE(handles.at(i).buffers.at(bufferID));
+			handles.at(i).buffers.at(bufferID) = buffer;
+		}
+	}
 
 	return S_OK;
 }
@@ -492,7 +537,7 @@ HRESULT RenderDX11::compileShader(LPCSTR filePath, LPCSTR shaderType, ID3DBlob *
 	return hr;
 }
 
-HRESULT RenderDX11::createSampleStates()
+HRESULT RenderDX11::createSampleStates(Handle &h)
 {
 	D3D11_SAMPLER_DESC sampDesc;
 	ZeroMemory( &sampDesc, sizeof(sampDesc));
@@ -505,7 +550,7 @@ HRESULT RenderDX11::createSampleStates()
 	sampDesc.MaxLOD = D3D11_FLOAT32_MAX;
 
 	HRESULT hr;
-	hr = primaryHandle.device->CreateSamplerState(&sampDesc, &g_wrap);
+	hr = primaryHandle->device->CreateSamplerState(&sampDesc, &h.wrap);
 	if(FAILED(hr))
 		MessageBox(hWnd, "Error creating sampler state", "ERROR", MB_OK);
 
@@ -513,7 +558,7 @@ HRESULT RenderDX11::createSampleStates()
 	sampDesc.AddressV = D3D11_TEXTURE_ADDRESS_CLAMP;
 	sampDesc.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP;
 
-	hr = primaryHandle.device->CreateSamplerState(&sampDesc, &g_clamp);
+	hr = primaryHandle->device->CreateSamplerState(&sampDesc, &h.clamp);
 	if(FAILED(hr))
 		MessageBox(hWnd, "Error creating sampler state", "ERROR", MB_OK);
 
@@ -526,7 +571,7 @@ HRESULT RenderDX11::createSRV(unsigned int& _outId, string _fileName)
 
 	ID3D11ShaderResourceView *tex	= nullptr;	
 
-	hr = D3DX11CreateShaderResourceViewFromFile(primaryHandle.device, _fileName.c_str(), NULL, NULL, &tex, NULL);
+	hr = D3DX11CreateShaderResourceViewFromFile(primaryHandle->device, _fileName.c_str(), NULL, NULL, &tex, NULL);
 
 	if(FAILED(hr))
 	{
@@ -558,19 +603,23 @@ void RenderDX11::createAndSetTerrainBuffers(std::vector<Vertex> *vBuffer, std::v
 	bd.MiscFlags = 0;
 
 	ID3D11Buffer *buffer = nullptr;
-	HRESULT hr = primaryHandle.device->CreateBuffer(&bd, &initData, &buffer);
+	HRESULT hr = primaryHandle->device->CreateBuffer(&bd, &initData, &buffer);
 	if(FAILED(hr))
 		MessageBox(NULL, "could not create terrain vertexbuffer", "ERROR", S_OK);
 
 	if(terrainVertexBufferID == -1)
 	{
-		terrainVertexBufferID = g_buffers.size();
-		g_buffers.push_back(buffer);
+		terrainVertexBufferID = handles.at(0).buffers.size();
+		for(unsigned int i = 0; i < handles.size(); i++)
+			handles.at(i).buffers.push_back(buffer);
 	}
 	else
 	{
-		SAFE_RELEASE(g_buffers.at(terrainVertexBufferID));
-		g_buffers.at(terrainVertexBufferID) = buffer;
+		for(unsigned int i = 0; i < handles.size(); i++)
+		{
+			SAFE_RELEASE(handles.at(i).buffers.at(terrainVertexBufferID));
+			handles.at(i).buffers.at(terrainVertexBufferID) = buffer;
+		}
 	}
 
 	initData.pSysMem = &iBuffer->at(0);
@@ -581,82 +630,104 @@ void RenderDX11::createAndSetTerrainBuffers(std::vector<Vertex> *vBuffer, std::v
 	bd.CPUAccessFlags = 0;
 
 	buffer = nullptr;
-	hr = primaryHandle.device->CreateBuffer(&bd, &initData, &buffer);
+	hr = primaryHandle->device->CreateBuffer(&bd, &initData, &buffer);
 	if(FAILED(hr))
 		MessageBox(NULL, "could not create terrain indexbuffer", "ERROR", S_OK);
 
 	if(terrainIndexBufferID == -1)
 	{
-		terrainIndexBufferID = g_buffers.size();
-		g_buffers.push_back(buffer);
+		terrainIndexBufferID = handles.at(0).buffers.size();
+		for(unsigned int i = 0; i < handles.size(); i++)
+			handles.at(i).buffers.push_back(buffer);
 	}
 	else
 	{
-		SAFE_RELEASE(g_buffers.at(terrainIndexBufferID));
-		g_buffers.at(terrainIndexBufferID) = buffer;
+		for(unsigned int i = 0; i < handles.size(); i++)
+		{
+			SAFE_RELEASE(handles.at(i).buffers.at(terrainIndexBufferID));
+			handles.at(i).buffers.at(terrainIndexBufferID) = buffer;
+		}
 	}
 }
 
 void RenderDX11::updateTerrainBuffer(std::vector<Vertex> *vBuffer)
 {
 	D3D11_MAPPED_SUBRESOURCE resource;
-	HRESULT hr = primaryHandle.deviceContext->Map(g_buffers.at(terrainVertexBufferID), 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &resource);
+	for(unsigned int i = 0; i < handles.size(); i++)
+	{
+		HRESULT hr = primaryHandle->deviceContext->Map(handles.at(i).buffers.at(terrainVertexBufferID), 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &resource);
 
-	if(FAILED(hr))
-		MessageBox(NULL, "Could not update terrain buffer", "ERROR", S_OK);
+		if(FAILED(hr))
+			MessageBox(NULL, "Could not update terrain buffer", "ERROR", S_OK);
 
-	memcpy(resource.pData, (void**)&vBuffer->at(0), sizeof(Vertex)* vBuffer->size());
+		memcpy(resource.pData, (void**)&vBuffer->at(0), sizeof(Vertex)* vBuffer->size());
 
-	primaryHandle.deviceContext->Unmap(g_buffers.at(terrainVertexBufferID), 0);
+		handles.at(i).deviceContext->Unmap(handles.at(i).buffers.at(terrainVertexBufferID), 0);
+	}
 }
 
 const float color[4] = {0.f, 1.f, 1.f, 1.f};
 void RenderDX11::renderScene()
 {
-	primaryHandle.deviceContext->ClearRenderTargetView(primaryHandle.renderTargetView, color);
-	primaryHandle.deviceContext->ClearDepthStencilView(primaryHandle.depthStencilView, D3D11_CLEAR_DEPTH, 1.f, 0);
+	render(*primaryHandle);
+}
+
+void RenderDX11::renderMiniMap(std::string _name)
+{
+	for(unsigned int i = 0; i < handles.size(); i++)
+	{
+		if(handles.at(i).name == _name)
+			render(handles.at(i));
+	}
+}
+
+void RenderDX11::render(const Handle &h)
+{
+	h.deviceContext->ClearRenderTargetView(h.renderTargetView, color);
+	h.deviceContext->ClearDepthStencilView(h.depthStencilView, D3D11_CLEAR_DEPTH, 1.f, 0);
 
 	CBOnChange cb;
 	cb.viewProj = camera->getView() * camera->getProj();
 	cb.position = elm::vec4(camera->getEye(), 1.f);
 	cb.world = elm::mat4();
-	primaryHandle.deviceContext->UpdateSubresource(g_buffers.at(cbOnChangeID), 0, NULL, &cb, 0, 0);
+
+	h.deviceContext->UpdateSubresource(h.buffers.at(cbOnChangeID), 0, NULL, &cb, 0, 0);
 
 	// Terrain
-	primaryHandle.deviceContext->OMSetDepthStencilState(g_depthStencilStateEnable, 0);
-	primaryHandle.deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	primaryHandle.deviceContext->IASetInputLayout(g_layout);
+	h.deviceContext->OMSetDepthStencilState(h.depthStencilStateEnable, 0);
+	h.deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	h.deviceContext->IASetInputLayout(h.layout);
 	
-	primaryHandle.deviceContext->PSSetSamplers(0, 1, &g_wrap);
+	h.deviceContext->PSSetSamplers(0, 1, &h.wrap);
 	
-	primaryHandle.deviceContext->PSSetSamplers(0, 1, &g_wrap);
-	//g_deviceContext->PSSetShaderResources(0, 1, &g_textures.at(0));
-	blendmap->CSexec();
+	h.deviceContext->PSSetSamplers(0, 1, &h.wrap);
+	h.deviceContext->PSSetShaderResources(0, 1, &h.textures.at(0));
+	//blendmap->CSexec();
 
-	primaryHandle.deviceContext->VSSetConstantBuffers(0, 1, &g_buffers.at(cbOnChangeID));
+	h.deviceContext->VSSetConstantBuffers(0, 1, &h.buffers.at(cbOnChangeID));
 
 	float blendFactor[4] = {0.f, 0.f, 0.f, 0.f};
-	primaryHandle.deviceContext->OMSetBlendState(g_blendDisable, blendFactor, 0xffffffff);
+	h.deviceContext->OMSetBlendState(h.blendDisable, blendFactor, 0xffffffff);
 
 	// Set vertex buffer
 	UINT stride = sizeof(Vertex);
 	UINT offset = 0;
-	primaryHandle.deviceContext->IASetVertexBuffers(0, 1, &g_buffers.at(terrainVertexBufferID), &stride, &offset);
-	primaryHandle.deviceContext->IASetIndexBuffer(g_buffers.at(terrainIndexBufferID), DXGI_FORMAT_R32_UINT, offset);
+	h.deviceContext->IASetVertexBuffers(0, 1, &h.buffers.at(terrainVertexBufferID), &stride, &offset);
+	h.deviceContext->IASetIndexBuffer(h.buffers.at(terrainIndexBufferID), DXGI_FORMAT_R32_UINT, offset);
 
-	primaryHandle.deviceContext->VSSetShader(g_terrainVS, NULL, 0);
-	primaryHandle.deviceContext->PSSetShader(g_terrainPS, NULL, 0);
+	h.deviceContext->VSSetShader(h.terrainVS, NULL, 0);
+	h.deviceContext->PSSetShader(h.terrainPS, NULL, 0);
 
-	primaryHandle.deviceContext->DrawIndexed(terrainIndexCount, 0, 0);
+	h.deviceContext->DrawIndexed(terrainIndexCount, 0, 0);
 	
 	/************************************************************/
 	//						DRAWING A MESH						//
 	/************************************************************/
 
 	int i = g_comps.size();
-	primaryHandle.deviceContext->VSSetShader(g_modelVS, NULL, 0);
-	primaryHandle.deviceContext->PSSetShader(g_modelPS, NULL, 0);
-	primaryHandle.deviceContext->IASetInputLayout(g_otherlayout);
+	h.deviceContext->VSSetShader(h.modelVS, NULL, 0);
+	h.deviceContext->PSSetShader(h.modelPS, NULL, 0);
+	h.deviceContext->IASetInputLayout(h.otherlayout);
 
 	stride = sizeof(elm::vec3);
 	for(unsigned int i = 0; i < g_comps.size(); i++)
@@ -668,70 +739,68 @@ void RenderDX11::renderScene()
 		
 		cb.world = elm::translationMatrix(o->getPosition());
 		cb.world = elm::scalingMatrix(o->getScale()) * cb.world;
-		primaryHandle.deviceContext->UpdateSubresource(g_buffers.at(cbOnChangeID), 0, NULL, &cb, 0, 0);
+		h.deviceContext->UpdateSubresource(h.buffers.at(cbOnChangeID), 0, NULL, &cb, 0, 0);
 
-		primaryHandle.deviceContext->IASetVertexBuffers(0, 1, &g_buffers.at(g_meshes[o->getMeshID()]->getVertexBufferID()), &stride, &offset);
-		primaryHandle.deviceContext->IASetVertexBuffers(1, 1, &g_buffers.at(g_meshes[o->getMeshID()]->getNormalBufferID()), &stride, &offset);
-		primaryHandle.deviceContext->IASetVertexBuffers(2, 1, &g_buffers.at(g_meshes[o->getMeshID()]->getTexCoordBufferID()), &stride, &offset);
+		h.deviceContext->IASetVertexBuffers(0, 1, &h.buffers.at(g_meshes[o->getMeshID()]->getVertexBufferID()), &stride, &offset);
+		h.deviceContext->IASetVertexBuffers(1, 1, &h.buffers.at(g_meshes[o->getMeshID()]->getNormalBufferID()), &stride, &offset);
+		h.deviceContext->IASetVertexBuffers(2, 1, &h.buffers.at(g_meshes[o->getMeshID()]->getTexCoordBufferID()), &stride, &offset);
 
-		primaryHandle.deviceContext->PSSetShaderResources(0, 1, &g_textures.at(g_meshes[o->getMeshID()]->getTexDiffuseID()));
+		h.deviceContext->PSSetShaderResources(0, 1, &h.textures.at(g_meshes[o->getMeshID()]->getTexDiffuseID()));
 
-		primaryHandle.deviceContext->IASetIndexBuffer(g_buffers.at(g_meshes[o->getMeshID()]->getIndexBufferID()), DXGI_FORMAT_R32_UINT, 0);
+		h.deviceContext->IASetIndexBuffer(h.buffers.at(g_meshes[o->getMeshID()]->getIndexBufferID()), DXGI_FORMAT_R32_UINT, 0);
 
-		primaryHandle.deviceContext->DrawIndexed(g_meshes[o->getMeshID()]->getNumIndices(), 0, 0);
+		h.deviceContext->DrawIndexed(g_meshes[o->getMeshID()]->getNumIndices(), 0, 0);
 	}
 
-	primaryHandle.swapChain->Present(0, 0);
+	h.swapChain->Present(0, 0);
 }
 
 RenderDX11::~RenderDX11()
 {
-	SAFE_DELETE(camera);
-
 	for(unsigned int i = 0; i < handles.size(); i++)
 	{
-		primaryHandle.deviceContext->Flush();
-		primaryHandle.deviceContext->ClearState();
-		SAFE_RELEASE(primaryHandle.swapChain);
-		SAFE_RELEASE(primaryHandle.renderTargetView);
-		SAFE_RELEASE(primaryHandle.depthStencilView);
-		SAFE_RELEASE(primaryHandle.deviceContext);
-		SAFE_RELEASE(primaryHandle.device);
+		Handle &h = handles.at(i);
+
+		h.deviceContext->Flush();
+		h.deviceContext->ClearState();
+		SAFE_RELEASE(h.swapChain);
+		SAFE_RELEASE(h.renderTargetView);
+		SAFE_RELEASE(h.depthStencilView);
+		SAFE_RELEASE(h.deviceContext);
+		SAFE_RELEASE(h.device);
+
+		SAFE_RELEASE(h.blendEnable);
+		SAFE_RELEASE(h.blendDisable);
+
+		SAFE_RELEASE(h.depthStencilStateDisable);
+		SAFE_RELEASE(h.depthStencilStateEnable);
+
+		SAFE_RELEASE(h.terrainPS);
+		SAFE_RELEASE(h.terrainVS);
+		SAFE_RELEASE(h.modelPS);
+		SAFE_RELEASE(h.modelVS);
+		SAFE_RELEASE(h.layout);
+		SAFE_RELEASE(h.otherlayout);
+		SAFE_RELEASE(h.blendAlpha);
+
+		for(unsigned int i = 0; i < h.buffers.size(); i++)
+			SAFE_RELEASE(h.buffers[i]);
+
+		h.buffers.clear();
+
+		SAFE_RELEASE(h.clamp);
+		SAFE_RELEASE(h.rasterizerState);
+
+		for(unsigned int i = 0; i < h.textures.size(); i++)
+			SAFE_RELEASE(h.textures[i]);
+
+		h.textures.clear();
+		SAFE_RELEASE(h.wrap);
 	}
 
-	SAFE_RELEASE(g_shaderView);
-
-	SAFE_RELEASE(g_blendEnable);
-	SAFE_RELEASE(g_blendDisable);
-
-	SAFE_RELEASE(g_depthStencilStateDisable);
-	SAFE_RELEASE(g_depthStencilStateEnable);
-
-	SAFE_RELEASE(g_terrainPS);
-	SAFE_RELEASE(g_terrainVS);
-	SAFE_RELEASE(g_modelPS);
-	SAFE_RELEASE(g_modelVS);
-	SAFE_RELEASE(g_layout);
-	SAFE_RELEASE(g_otherlayout);
-	SAFE_RELEASE(g_blendAlpha);
-	for(unsigned int i = 0; i < g_buffers.size(); i++)
-	{
-		SAFE_RELEASE(g_buffers[i]);
-	}
-	g_buffers.clear();
-
-	SAFE_RELEASE(g_clamp);
-	SAFE_RELEASE(g_rasterizerState);
-	for(unsigned int i = 0; i < g_textures.size(); i++)
-	{
-		SAFE_RELEASE(g_textures[i]);
-	}
-	g_textures.clear();
-	SAFE_RELEASE(g_wrap);
 	for(unsigned int i = 0; i < g_meshes.size(); i++)
-	{
 		SAFE_DELETE(g_meshes[i]);
-	}
+
 	g_meshes.clear();
 }
 
