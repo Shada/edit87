@@ -1,5 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\JetBrains.ReSharper.SDK.8.2.1158\build\JetBrains.ReSharper.SDK.Props" Condition="Exists('..\packages\JetBrains.ReSharper.SDK.8.2.1158\build\JetBrains.ReSharper.SDK.Props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -8,7 +9,7 @@
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Interface</RootNamespace>
-    <AssemblyName>editor</AssemblyName>
+    <AssemblyName>Interface</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <PublishUrl>publish\</PublishUrl>
@@ -82,13 +83,70 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
+    <Reference Include="WeifenLuo.WinFormsUI.Docking">
+      <HintPath>.\WeifenLuo.WinFormsUI.Docking.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="About.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="About.Designer.cs">
+      <DependentUpon>About.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\PanBrushes.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\PanBrushes.Designer.cs">
+      <DependentUpon>PanBrushes.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\PanLibrary.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\PanLibrary.Designer.cs">
+      <DependentUpon>PanLibrary.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\PanProperties.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\PanProperties.Designer.cs">
+      <DependentUpon>PanProperties.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\PanRender.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\PanRender.Designer.cs">
+      <DependentUpon>PanRender.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\PanResources.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\PanResources.Designer.cs">
+      <DependentUpon>PanResources.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\PanTextures.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\PanTextures.Designer.cs">
+      <DependentUpon>PanTextures.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ImportResource.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ImportResource.Designer.cs">
+      <DependentUpon>ImportResource.cs</DependentUpon>
+    </Compile>
     <Compile Include="main.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="main.Designer.cs">
       <DependentUpon>main.cs</DependentUpon>
+    </Compile>
+    <Compile Include="NameFolder.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="NameFolder.Designer.cs">
+      <DependentUpon>NameFolder.cs</DependentUpon>
     </Compile>
     <Compile Include="NewProject.cs">
       <SubType>Form</SubType>
@@ -104,14 +162,39 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="properties_test.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="properties_test.Designer.cs">
-      <DependentUpon>properties_test.cs</DependentUpon>
-    </Compile>
+    <Compile Include="PropertyBase.cs" />
+    <Compile Include="PropertyMesh.cs" />
+    <Compile Include="Utils.cs" />
+    <EmbeddedResource Include="About.resx">
+      <DependentUpon>About.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\PanBrushes.resx">
+      <DependentUpon>PanBrushes.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\PanLibrary.resx">
+      <DependentUpon>PanLibrary.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\PanProperties.resx">
+      <DependentUpon>PanProperties.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\PanRender.resx">
+      <DependentUpon>PanRender.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\PanResources.resx">
+      <DependentUpon>PanResources.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\PanTextures.resx">
+      <DependentUpon>PanTextures.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ImportResource.resx">
+      <DependentUpon>ImportResource.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="main.resx">
       <DependentUpon>main.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="NameFolder.resx">
+      <DependentUpon>NameFolder.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="NewProject.resx">
       <DependentUpon>NewProject.cs</DependentUpon>
@@ -121,9 +204,7 @@
       <SubType>Designer</SubType>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Include="properties_test.resx">
-      <DependentUpon>properties_test.cs</DependentUpon>
-    </EmbeddedResource>
+    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -145,6 +226,62 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="map_placeholder.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Images\Editor\brush.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Images\Editor\dirt.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Images\Editor\export.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Images\Editor\folder.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Images\Editor\grass.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Images\Editor\image.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Images\Editor\load.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Images\Editor\map_placeholder.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Images\Editor\noPreview.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Images\Editor\redo.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Images\Editor\rock.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Images\Editor\save.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Images\Editor\undo.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include=".NETFramework,Version=v4.5">
+      <Visible>False</Visible>
+      <ProductName>Microsoft .NET Framework 4.5 %28x86 and x64%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Wrapper\cliproject.vcxproj">
@@ -170,6 +307,14 @@
     </BootstrapperPackage>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\JetBrains.ReSharper.SDK.8.2.1158\build\JetBrains.ReSharper.SDK.Props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\JetBrains.ReSharper.SDK.8.2.1158\build\JetBrains.ReSharper.SDK.Props'))" />
+    <Error Condition="!Exists('..\packages\JetBrains.ReSharper.SDK.8.2.1158\build\JetBrains.ReSharper.SDK.Targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\JetBrains.ReSharper.SDK.8.2.1158\build\JetBrains.ReSharper.SDK.Targets'))" />
+  </Target>
+  <Import Project="..\packages\JetBrains.ReSharper.SDK.8.2.1158\build\JetBrains.ReSharper.SDK.Targets" Condition="Exists('..\packages\JetBrains.ReSharper.SDK.8.2.1158\build\JetBrains.ReSharper.SDK.Targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

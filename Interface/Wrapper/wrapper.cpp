@@ -1,14 +1,12 @@
 #include "wrapper.h"
+#include <msclr\marshal_cppstd.h>
 #include "../Engine/EngineFactory.h"
 #include <Windows.h>
 
 namespace wrap
 {
-	GraphicsCommunicator::GraphicsCommunicator(System::IntPtr win)
+	GraphicsCommunicator::GraphicsCommunicator()
 	{
-		hWnd = (HWND)((void*)win);
-		gfx = EngineFactory::createEngine(hWnd);
-		setRenderArea(232, 58, 1048, 670);
 	}
 
 	void GraphicsCommunicator::setRenderArea(int x, int y, int width, int height)
@@ -20,6 +18,16 @@ namespace wrap
 		r.right = x + width;
 		gfx->setRect(r);
 		//gfx->createTerrain(256, 256, 5.f, false);
+	}
+	void GraphicsCommunicator::setHandle(System::IntPtr _handle, System::String^ _name, int width, int height)
+	{
+		HWND hWnd = (HWND)((void*)_handle);
+		gfx = EngineFactory::createEngine();
+		msclr::interop::marshal_context context;
+		std::string standardString = context.marshal_as<std::string>(_name);
+		gfx->addHandels(hWnd, standardString, width, height);
+
+		//setRenderArea(232, 58, 1048, 670);
 	}
 
 	void GraphicsCommunicator::createTerrain(int width, int height, float pointStep, bool fromPerlinMap, int seed)
@@ -35,27 +43,26 @@ namespace wrap
 	void GraphicsCommunicator::moveCamera(int xDir, int zDir)
 	{
 		gfx->move((float)xDir, (float)zDir);
-		gfx->renderScene();
 	}
 
-	void GraphicsCommunicator::rightMouseDown()
+	void GraphicsCommunicator::rightMouseDown(int brushSize, int brushIntensity)
 	{
-		gfx->rightMouseDown();
+		gfx->rightMouseDown(brushSize, (float)brushIntensity / 100);
 	}
 
-	void GraphicsCommunicator::leftMouseDown()
+	void GraphicsCommunicator::leftMouseDown(int brushSize, int brushIntensity)
 	{
-		gfx->leftMouseDown();
+		gfx->leftMouseDown(brushSize, (float)brushIntensity / 100);
 	}
 
 	void GraphicsCommunicator::rightMouseUp()
 	{
-
+		gfx->rightMouseUp();
 	}
 
 	void GraphicsCommunicator::leftMouseUp()
 	{
-
+		gfx->leftMouseUp();
 	}
 
 	void GraphicsCommunicator::updateMouse(int x, int y)
@@ -65,30 +72,9 @@ namespace wrap
 		p.y = y;
 		gfx->updateMouse(p);
 	}
-
-	/* Tool calls */
-	void GraphicsCommunicator::setElevationTool()
-	{
-		gfx->setElevationTool();
-	}
-
-	void GraphicsCommunicator::setTextureTool()
-	{
-		gfx->setTextureTool();
-	}
-
-	void GraphicsCommunicator::setObjectPlacerTool()
-	{
-		gfx->setObjectPlacerTool();
-	}
-
-	void GraphicsCommunicator::setSelctorTool()
-	{
-		gfx->setSelctorTool();
-	}
 	
 	GraphicsCommunicator::~GraphicsCommunicator()
 	{
-
+		delete(gfx);
 	}
 }

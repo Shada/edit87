@@ -1,0 +1,55 @@
+#pragma once
+#include "Terrain.h"
+<<<<<<< HEAD
+#include "Quadnode.h"
+=======
+>>>>>>> RESPECT_MAH_AUTHORITAH
+
+class Camera
+{
+private:
+<<<<<<< HEAD
+	HWND hWnd;
+
+	int width, height;
+
+=======
+>>>>>>> RESPECT_MAH_AUTHORITAH
+	const Terrain *terrain;
+
+	float minX, maxX, minZ, maxZ;
+
+<<<<<<< HEAD
+	std::vector<elm::vec4> frustum;
+
+=======
+>>>>>>> RESPECT_MAH_AUTHORITAH
+	elm::mat4 mProj, mView, mRot;
+	
+	elm::vec3 terrainPos;
+	elm::vec3 vEye, vLook, vUp, vRight;
+public:
+<<<<<<< HEAD
+	Camera(int width, int height, const Terrain *terrain, HWND hwnd);
+=======
+	Camera(int width, int height, const Terrain *terrain);
+>>>>>>> RESPECT_MAH_AUTHORITAH
+	~Camera();
+
+	void move(elm::vec2 direction);
+	void rotate(float angle);
+
+	void resizeWindow(int width, int height) { elm::perspectiveFovLH(mProj, ELM_PI / 2, (float)width / height, 1.f, 20000.f); }
+
+	elm::vec3 getEye()	{ return vEye; }
+	elm::mat4 getProj() { return mProj; }
+	elm::mat4 getView() { return mView; }
+
+<<<<<<< HEAD
+	std::vector<elm::vec4> getFrustum()	{ return frustum; }
+
+	elm::vec3 getWorldPos(int mousePosX, int mousePosY, Quadnode *node);
+=======
+	elm::vec2 getWorldPos(int mousePosX, int mousePosY);
+>>>>>>> RESPECT_MAH_AUTHORITAH
+};

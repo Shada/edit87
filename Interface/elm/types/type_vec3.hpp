@@ -62,6 +62,10 @@ namespace elm
 		{
 			return v * (1.f / a);
 		}
+		friend vec3 operator/(float a, const vec3 &v)
+		{
+			return vec3(a / v.x, a / v.y, a / v.z);
+		}
 		friend vec3 operator-(const vec3 &v)
 		{
 			return vec3(-v.x, -v.y, -v.z);

@@ -5,6 +5,7 @@
 *.obj
 *.ilk
 *.idb
+*.exp
 
 # Compiled Dynamic libraries
 *.so
@@ -16,11 +17,13 @@
 *.la
 *.a
 *.lib
+*.pch
 
 */Debug/*
 */Release/*
 */*/Debug/*
 */*/Release/*
+*/ipch/*
 
 # Executables
 *.exe
@@ -28,6 +31,8 @@
 *.app
 *.cso
 
+*.psess
+*.vsp
 *.pdb
 *.FileListAbsolute.txt
 Interface.csproj*

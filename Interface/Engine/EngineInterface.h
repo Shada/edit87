@@ -1,5 +1,5 @@
 #pragma once
-
+#include <string>
 #include <Windows.h>
 
 class EngineInterface
@@ -17,15 +17,17 @@ public:
 	virtual void move(float alongX, float alongZ) = 0;
 
 	/* Mouse calls */
-	virtual void rightMouseDown() = 0;
-	virtual void leftMouseDown() = 0;
+	virtual void rightMouseDown(int brushSize, float brushIntensity) = 0;
+	virtual void leftMouseDown(int brushSize, float brushIntensity) = 0;
 	virtual void rightMouseUp() = 0;
 	virtual void leftMouseUp() = 0;
 	virtual void updateMouse(POINT mouse) = 0;
 
 	/* Tool calls */
-	virtual void setElevationTool() = 0;
 	virtual void setTextureTool() = 0;
+	virtual void setElevationTool() = 0;
+	virtual void setNormalizerTool() = 0;
 	virtual void setObjectPlacerTool() = 0;
 	virtual void setSelctorTool() = 0;
+	virtual void addHandels(HWND _hWnd, std::string _name, int width, int height) = 0;
 };

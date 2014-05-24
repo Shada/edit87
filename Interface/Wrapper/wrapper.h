@@ -9,7 +9,7 @@ namespace wrap
 		HWND hWnd;
 		EngineInterface *gfx;
 	public:
-		GraphicsCommunicator(System::IntPtr win);
+		GraphicsCommunicator();
 		~GraphicsCommunicator();
 
 		void setRenderArea(int x, int y, int width, int height);
@@ -20,16 +20,19 @@ namespace wrap
 		void moveCamera(int xDir, int zDir);
 
 		/* Mouse calls */
-		void rightMouseDown();
-		void leftMouseDown();
+		void rightMouseDown(int brushSize, int brushIntensity);
+		void leftMouseDown(int brushSize, int brushIntensity);
 		void rightMouseUp();
 		void leftMouseUp();
 		void updateMouse(int x, int y);
 
 		/* Tool calls */
-		void setElevationTool();
-		void setTextureTool();
-		void setObjectPlacerTool();
-		void setSelctorTool();
+		void setTextureTool()			{ gfx->setTextureTool();		}
+		void setSelctorTool()			{ gfx->setSelctorTool();		}
+		void setElevationTool()			{ gfx->setElevationTool();		}
+		void setNormalizerTool()		{ gfx->setNormalizerTool();		}
+		void setObjectPlacerTool()		{ gfx->setObjectPlacerTool();	}
+
+		void setHandle(System::IntPtr _handle, System::String^ _name, int width, int height);
 	};
 }

@@ -1,15 +1,20 @@
 #pragma once
 #include "Terrain.h"
+#include "Quadnode.h"
 
 class Camera
 {
 private:
+	int width, height;
+
 	const Terrain *terrain;
 
 	float minX, maxX, minZ, maxZ;
 
+	std::vector<elm::vec4> frustum;
+
 	elm::mat4 mProj, mView, mRot;
-	
+
 	elm::vec3 terrainPos;
 	elm::vec3 vEye, vLook, vUp, vRight;
 public:
@@ -25,5 +30,7 @@ public:
 	elm::mat4 getProj() { return mProj; }
 	elm::mat4 getView() { return mView; }
 
-	elm::vec2 getWorldPos(int mousePosX, int mousePosY);
+	std::vector<elm::vec4> getFrustum()	{ return frustum; }
+
+	elm::vec3 getWorldPos(int mousePosX, int mousePosY, Quadnode *node);
 };
