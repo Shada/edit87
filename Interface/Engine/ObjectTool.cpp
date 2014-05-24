@@ -2,9 +2,10 @@
 #include "IRadial.h"
 #include "RenderDX11.h"
 
-ObjectTool::ObjectTool(RenderDX11	*_dxPtr)
+ObjectTool::ObjectTool(RenderDX11	*_dxPtr, Terrain *_terrain)
 {
 	dxPtr = _dxPtr;
+	terrain = _terrain;
 	cameraPtr = _dxPtr->camera;
 	currentState = OTState::NONE;
 }
@@ -45,6 +46,9 @@ void ObjectTool::update(Composition* _composition, elm::vec2 _mouse, elm::vec2 _
 		break;
 	case  OTState::TRANSLATE:
 		translate(_mouse, _oldMouse, object, mesh, currentAxis);
+		break;
+	case OTState::FOLLOWTERRAIN:
+		moveToTerrainHeight(object);
 		break;
 	}
 }
@@ -154,6 +158,44 @@ void ObjectTool::translate(elm::vec2 _mouse, elm::vec2 _oldMouse, Object3D* _obj
 
 
 	float len = elm::vecLength(diff);
+
+
 	_object->setPosition((diff) + _object->getPosition());
-	//_object->setPosition(vPickRayOrig + (vPickRayDir* len));
+	elm::vec3 cpos = _object->getPosition();
+	if(_object->getIsFollowingTerrain() && _axis.y == 0)
+	{
+		moveToTerrainHeight(_object);
+	}
+	else if(_object->getIsFollowingTerrain() && _axis.y != 0)
+	{
+		_object->setIsFollowingTerrain(false);
+	}
+}
+
+void ObjectTool::elevate(Object3D* _object)
+{	
+	_object->setIsFollowingTerrain(false);
+
+	elm::vec3 pos = _object->getPosition();
+	pos.y += 1;
+
+	_object->setPosition(pos);
+}
+
+void ObjectTool::lower(Object3D* _object)
+{
+	_object->setIsFollowingTerrain(false);
+
+	elm::vec3 pos = _object->getPosition();
+	pos.y -= 1;
+
+	_object->setPosition(pos);
+}
+
+void ObjectTool::moveToTerrainHeight(Object3D* _object)
+{
+	elm::vec3 v = _object->getPosition();
+	v.y = terrain->getHeightAt(_object->getPosition().xz);
+	_object->setPosition(v);
+	_object->setIsFollowingTerrain(true);
 }

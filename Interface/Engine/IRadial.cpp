@@ -208,6 +208,11 @@ bool ObjectRadial::update(bool _leftMouseDown)
 
 		
 		break;
+	case 3:
+		// follow terrain
+		m_tool->setState(OTState::FOLLOWTERRAIN);
+		setState(RState::HIDE);
+		break;
 	default:
 		m_tool->setState(OTState::NONE);
 		break;
