@@ -50,11 +50,13 @@ namespace LevelEditor
 			{
 				private DockContent m_panel;
 				private string m_name;
+                private ToolStripMenuItem m_toolMenuItem;
 
-				public PanelStruct(DockContent _panel, string _name)
+				public PanelStruct(DockContent _panel, string _name, ToolStripMenuItem _toolMenuItem)
 				{
 					m_panel = _panel;
 					m_name = _name;
+                    m_toolMenuItem = _toolMenuItem;
 				}
 
 				public DockContent Panel
@@ -68,13 +70,19 @@ namespace LevelEditor
 					get { return m_name; }
 					set { m_name = value; }
 				}
+
+                public ToolStripMenuItem toolMenuItem
+                {
+                    get { return m_toolMenuItem; }
+                    set { m_toolMenuItem = value; }
+                }
 			}
 
 			private static List<PanelStruct> panels = new List<PanelStruct>();
 
-			public static void addPanel(DockContent _panel, string _name)
+			public static void addPanel(DockContent _panel, string _name, ToolStripMenuItem _toolMenuItem)
 			{
-				panels.Add(new PanelStruct(_panel, _name));
+				panels.Add(new PanelStruct(_panel, _name, _toolMenuItem));
 			}
 
 			public static IDockContent getpanelByName(string _name)
@@ -92,10 +100,13 @@ namespace LevelEditor
 
             public static void removePanel(string _name)
             {
-                for (int i = 0; i < panels.Count; i++)
+                for (int i = panels.Count - 1; i >= 0; i--)
                 {
                     if (_name == panels[i].Name)
+                    {
+                        panels[i].toolMenuItem.Checked = false;
                         panels.RemoveAt(i);
+                    }
                 }
             }
 
@@ -103,8 +114,11 @@ namespace LevelEditor
 			{
                 for (int i = panels.Count-1; i >= 0 ; i--)
                 {
-                    if(panels[i].Panel != null)
+                    if (panels[i].Panel != null)
+                    {
+                        //panels[i].toolMenuItem.Checked = false;
                         panels[i].Panel.Close();
+                    }
                 }
 
 				panels.Clear();

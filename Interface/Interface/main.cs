@@ -22,17 +22,18 @@ namespace LevelEditor
 {
     //public struct ToolViewOption
     //{
-    //    bool toolPresent;
     //    string toolName; //tool name without the "levelEditor." part
+    //    ToolStripMenuItem toolMenuItem = null;
 
-    //    public ToolViewOption(string _toolName)
+    //    public ToolViewOption(string _toolName, ToolStripMenuItem _menuItem)
     //    {
+    //        this.toolMenuItem = _menuItem;
     //        this.toolName = _toolName;
     //        IDockContent panel = Utils.Panels.getpanelByName("LevelEditor." + _toolName);
     //        if (panel == null || panel.DockHandler.IsHidden)
-    //            toolPresent = false;
+    //            toolMenuItem.Checked = false;
     //        else
-    //            toolPresent = true;
+    //            toolMenuItem.Checked = true;
     //    }
     //}
 
@@ -83,12 +84,12 @@ namespace LevelEditor
 
         private void createStandardControls()
         {
-			Utils.Panels.addPanel(new PanBrushes(), typeof(PanBrushes).ToString());
-			Utils.Panels.addPanel(new PanTextures(), typeof(PanTextures).ToString());
-			Utils.Panels.addPanel(new PanResources(), typeof(PanResources).ToString());
-			Utils.Panels.addPanel(new PanRender(this), typeof(PanRender).ToString());
-			Utils.Panels.addPanel(new PanLibrary(), typeof(PanLibrary).ToString());
-			Utils.Panels.addPanel(new PanProperties(), typeof(PanProperties).ToString());
+			Utils.Panels.addPanel(new PanBrushes(),     typeof(PanBrushes).ToString(),      brushToolsToolStripMenuItem);
+			Utils.Panels.addPanel(new PanTextures(),    typeof(PanTextures).ToString(),     texturesToolToolStripMenuItem);
+			Utils.Panels.addPanel(new PanResources(),   typeof(PanResources).ToString(),    resourcesToolToolStripMenuItem);
+			Utils.Panels.addPanel(new PanRender(this),  typeof(PanRender).ToString(),       null);
+			Utils.Panels.addPanel(new PanLibrary(),     typeof(PanLibrary).ToString(),      libraryToolStripMenuItem);
+			Utils.Panels.addPanel(new PanProperties(),  typeof(PanProperties).ToString(),   propertiesToolStripMenuItem);
         }
 
 		#region events
@@ -773,7 +774,7 @@ namespace LevelEditor
             }
 
             panel.Show(mainDockPanel, DockState.Float);
-            Utils.Panels.addPanel(panel, panelType.ToString());
+            Utils.Panels.addPanel(panel, panelType.ToString(), toolMenuItem);
             if(toolMenuItem != null)
                 toolMenuItem.Checked = true;
         }
@@ -803,11 +804,6 @@ namespace LevelEditor
 		}
 
 		#endregion
-
-		private void mainDockPanel_MouseDown(object sender, MouseEventArgs e)
-		{
-			int i = 0;
-		}
 
         private void resourcesToolToolStripMenuItem_Click(object sender, EventArgs e)
         {

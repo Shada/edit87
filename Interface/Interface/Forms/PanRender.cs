@@ -47,26 +47,6 @@ namespace LevelEditor
 			//Utils.Graphics.Sethandle(drawSurface.Handle, "main");
 		}
 
-		protected void drawSurface_MouseUp(object sender, MouseEventArgs e)
-		{
-			int i = 0;
-		}
-
-		protected void drawSurface_MouseDown(object sender, MouseEventArgs e)
-		{
-			int i = 0;
-		}
-
-		protected void PanRender_MouseUp(object sender, MouseEventArgs e)
-		{
-			int i = 0;
-		}
-
-		protected void PanRender_MouseDown(object sender, MouseEventArgs e)
-		{
-			int i = 0;
-		}
-
         private void PanRender_FormClosing(object sender, FormClosingEventArgs e)
         {
             Utils.Panels.removePanel(this.GetType().ToString());
