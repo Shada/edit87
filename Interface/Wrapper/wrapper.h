@@ -34,5 +34,6 @@ namespace wrap
 
 		void resizeWindow(int width, int height);
 		void setHandle(System::IntPtr _handle, System::String^ _name);
+		void updateHandle(System::IntPtr _handle, System::String^ _name);
 	};
 }

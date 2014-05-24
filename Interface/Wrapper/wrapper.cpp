@@ -7,6 +7,7 @@ namespace wrap
 {
 	GraphicsCommunicator::GraphicsCommunicator()
 	{
+		gfx = EngineFactory::createEngine();
 	}
 
 	void GraphicsCommunicator::setRenderArea(int x, int y, int width, int height)
@@ -22,13 +23,22 @@ namespace wrap
 	void GraphicsCommunicator::setHandle(System::IntPtr _handle, System::String^ _name)
 	{
 		HWND hWnd = (HWND)((void*)_handle);
-		gfx = EngineFactory::createEngine();
+		
 		msclr::interop::marshal_context context;
 		std::string standardString = context.marshal_as<std::string>(_name);
 		gfx->addHandels(hWnd, standardString);
 
 		setRenderArea(0, 0, 850, 600);
 	}
+
+	void GraphicsCommunicator::updateHandle(System::IntPtr _handle, System::String^ _name)
+	{
+		HWND hWnd = (HWND)((void*)_handle);
+		msclr::interop::marshal_context context;
+		std::string standardString = context.marshal_as<std::string>(_name);
+		gfx->updateHandle(hWnd, standardString);
+	}
+
 	void GraphicsCommunicator::resizeWindow(int width, int height)
 	{
 		gfx->resizeWindow(width, height);

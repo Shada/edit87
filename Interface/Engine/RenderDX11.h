@@ -124,5 +124,7 @@ public:
 	void createAndSetTerrainBuffers(std::vector<Vertex> *vBuffer, std::vector<uint> *iBuffer);
 
 	void addHandle(HWND _hWnd, std::string _name);
+	void updateHandle(HWND _hWnd, std::string _name);
+
 	void blendmapBrush(float _radius, float _intensity, elm::vec2 _origin, char* _texture, float _step);
 };

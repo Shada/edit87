@@ -35,6 +35,15 @@ void RenderDX11::addHandle(HWND _hWnd, std::string _name)
 		hWnd = _hWnd;
 }
 
+void RenderDX11::updateHandle(HWND _hWnd, std::string _name)
+{
+	for(unsigned int i = 0; i < handles.size(); i++)
+	{
+		//if(handles.at(i).name == _name)
+
+	}
+}
+
 HRESULT RenderDX11::init()
 {
 	HRESULT hr = S_OK;

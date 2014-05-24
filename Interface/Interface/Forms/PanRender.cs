@@ -32,7 +32,7 @@ namespace LevelEditor
 													this.Bounds.Height - 6);
 
 				if (Utils.Graphics.gfx != null)
-				Utils.Graphics.gfx.resizeWindow(this.Size.Width, this.Size.Height);
+				    Utils.Graphics.gfx.resizeWindow(this.Size.Width, this.Size.Height);
 			}
 		}
 
@@ -48,7 +48,9 @@ namespace LevelEditor
 
 		private void PanRender_DockStateChanged(object sender, EventArgs e)
 		{
-			//Utils.Graphics.Sethandle(drawSurface.Handle, "main");
+            Utils.Graphics.gfx.updateHandle(drawSurface.Handle, "main");
+		        
+		    //Utils.Graphics.Sethandle(drawSurface.Handle, "main");
 		}
     }
 }

@@ -83,5 +83,7 @@ public:
 	void setElevationTool()					{ selectedTool = Tools::ELEVATION;		}
 	void setNormalizerTool()				{ selectedTool = Tools::NORMALIZER;		}
 	void setObjectPlacerTool()				{ selectedTool = Tools::OBJECTPLACER;	}
+
 	void addHandels(HWND _hWnd, std::string _name);
+	void updateHandle(HWND _hWnd, std::string _name);
 };

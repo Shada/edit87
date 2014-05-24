@@ -24,10 +24,12 @@ public:
 	virtual void resizeWindow(int width, int height) = 0;
 
 	/* Tool calls */
+	virtual void setSelctorTool() = 0;
 	virtual void setTextureTool() = 0;
 	virtual void setElevationTool() = 0;
 	virtual void setNormalizerTool() = 0;
 	virtual void setObjectPlacerTool() = 0;
-	virtual void setSelctorTool() = 0;
+
 	virtual void addHandels(HWND _hWnd, std::string _name) = 0;
+	virtual void updateHandle(HWND _hWnd, std::string _name) = 0;
 };

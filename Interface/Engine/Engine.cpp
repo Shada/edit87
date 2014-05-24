@@ -42,6 +42,11 @@ void Engine::addHandels(HWND _hWnd, std::string _name)
 	hWnd = _hWnd;
 }
 
+void Engine::updateHandle(HWND _hWnd, std::string _name)
+{
+	dx->updateHandle(_hWnd, _name);
+}
+
 void Engine::createTerrain(int width, int height, float pointStep, bool fromPerlinMap, int seed)
 {
 	if(!terrain)
