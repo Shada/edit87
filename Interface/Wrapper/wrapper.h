@@ -12,8 +12,6 @@ namespace wrap
 		GraphicsCommunicator();
 		~GraphicsCommunicator();
 
-		void setRenderArea(int x, int y, int width, int height);
-
 		void renderScene();
 		void createTerrain(int width, int height, float pointStep, bool fromPerlinMap, int seed);
 

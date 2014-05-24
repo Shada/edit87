@@ -10,15 +10,6 @@ namespace wrap
 		gfx = EngineFactory::createEngine();
 	}
 
-	void GraphicsCommunicator::setRenderArea(int x, int y, int width, int height)
-	{
-		RECT r;
-		r.top = y;
-		r.left = x; 
-		r.bottom = y + height;
-		r.right = x + width;
-		gfx->setRect(r);
-	}
 	void GraphicsCommunicator::setHandle(System::IntPtr _handle, System::String^ _name, int _width, int _height)
 	{
 		HWND hWnd = (HWND)((void*)_handle);

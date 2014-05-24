@@ -10,8 +10,6 @@ public:
 
 	virtual void renderScene() = 0;
 
-	virtual void setRect(RECT t) = 0;
-
 	virtual void createTerrain(int width, int height, float pointStep, bool fromPerlinMap, int seed) = 0;
 
 	virtual void move(float alongX, float alongZ) = 0;
