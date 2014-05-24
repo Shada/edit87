@@ -65,7 +65,7 @@ void Engine::createTerrain(int width, int height, float pointStep, bool fromPerl
 	dx->setTerrainIndexCount(terrain->getIndexCount());
 	dx->setCamera(camera);
 
-	objectTool		= new ObjectTool(dx);
+	objectTool		= new ObjectTool(dx, terrain);
 	m_objectRadial	= new ObjectRadial(objectTool);
 	m_objectRadial->init(4, 50, 25, dx);
 
