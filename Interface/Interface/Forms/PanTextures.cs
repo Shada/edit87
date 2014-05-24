@@ -18,7 +18,6 @@ namespace LevelEditor
     public partial class PanTextures : DockContent
     {
         int lv_TexturesSizeDiff = 12;
-		List<Image> FullImages = new List<System.Drawing.Image>();
 
         public PanTextures()
         {
@@ -45,7 +44,6 @@ namespace LevelEditor
 
 		        img.Tag = tag;
 
-				FullImages.Add(img);
 		        textureList.Images.Add(img);
 				lv_Textures.Items.Add(new ListViewItem(defStrings[i], i));
 	        }
@@ -53,7 +51,6 @@ namespace LevelEditor
 
 		public void addImages(Image _img)
 		{
-			FullImages.Add(_img);
 			textureList.Images.Add(_img);
 			var name = _img.Tag as Utils.twTag;
 			lv_Textures.Items.Add(new ListViewItem(name.getAttributeByName<string>("showname"), textureList.Images.Count - 1));
@@ -70,8 +67,8 @@ namespace LevelEditor
 
 		private void lv_Textures_SelectedIndexChanged(object sender, EventArgs e)
 		{
-			ListView.SelectedIndexCollection list = lv_Textures.SelectedIndices;
-			var tag = FullImages[list[0]].Tag as Utils.twTag;
+			var list = lv_Textures.SelectedIndices;
+			var tag = textureList.Images[list[0]].Tag as Utils.twTag;
 			Utils.Graphics.gfx.setBrushTexture(tag.getAttributeByName<string>("path"));
 		}
     }
