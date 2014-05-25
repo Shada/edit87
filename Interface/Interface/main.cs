@@ -46,6 +46,9 @@ namespace LevelEditor
 		private int mousePosX, mousePosY, windowWidth, windowHeight;
 
         DeserializeDockContent deserializeDockContent;
+
+        ToolTip toolTips;
+
         public TreeNode resourcesRoot = new TreeNode("Root", 0, 0);
 
 		public MapEditor()
@@ -67,6 +70,19 @@ namespace LevelEditor
 
             timer1.Interval = 20;
             timer1.Start();
+
+            toolTips = new ToolTip();
+            toolTips.AutoPopDelay = 10000;
+            toolTips.InitialDelay = 500;
+            toolTips.ReshowDelay = 500;
+            toolTips.ShowAlways = true;
+            toolTips.SetToolTip(btn_save, "Save the level");
+            toolTips.SetToolTip(btn_load, "Load a level");
+            toolTips.SetToolTip(btn_export, "Export the level");
+            toolTips.SetToolTip(cb_history, "History");
+            toolTips.SetToolTip(btn_undo, "Undo change");
+            toolTips.SetToolTip(btn_redo, "Redo change");
+
 		}
 
 		public void initPanels()
@@ -231,7 +247,8 @@ namespace LevelEditor
 
 		private void resetToDefaultToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			panelLayoutReset();
+            if(MessageBox.Show("Do you want to reset the layout?", "Layout Reset", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                panelLayoutReset();
 		}
 
 		private void MapEditor_FormClosing(object sender, FormClosingEventArgs e)
