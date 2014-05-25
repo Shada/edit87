@@ -98,6 +98,20 @@ namespace LevelEditor
 				return null;
 			}
 
+            public static void updateToolStrips()
+            {
+                foreach (PanelStruct p in panels)
+                {
+                    if (p.Panel != null && p.toolMenuItem != null)
+                    {
+                        if (!p.Panel.IsDisposed)
+                            p.toolMenuItem.Checked = true;
+                        else
+                            p.toolMenuItem.Checked = false;
+                    }
+                }
+            }
+
             public static void removePanel(string _name)
             {
                 for (int i = panels.Count - 1; i >= 0; i--)

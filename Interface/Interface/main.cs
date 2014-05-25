@@ -363,6 +363,12 @@ namespace LevelEditor
 			library.Show(mainDockPanel, DockState.DockLeft);
 			properties.Show(library.Pane, DockAlignment.Bottom, 0.50);
 
+            brushToolsToolStripMenuItem.Checked = true;
+            texturesToolToolStripMenuItem.Checked = true;
+            resourcesToolToolStripMenuItem.Checked = true;
+            libraryToolStripMenuItem.Checked = true;
+            propertiesToolStripMenuItem.Checked = true;
+
 			mainDockPanel.ResumeLayout(true, true);
 		}
 
@@ -379,6 +385,8 @@ namespace LevelEditor
 			mainDockPanel.LoadFromXml(activeLayoutName, deserializeDockContent);
 
 			mainDockPanel.ResumeLayout(true, true);
+
+            Utils.Panels.updateToolStrips();
 		}
 
 		private void saveProject()

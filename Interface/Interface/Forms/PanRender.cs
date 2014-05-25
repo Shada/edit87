@@ -49,7 +49,7 @@ namespace LevelEditor
 
         private void PanRender_FormClosing(object sender, FormClosingEventArgs e)
         {
-            Utils.Panels.removePanel(this.GetType().ToString());
+            //Utils.Panels.removePanel(this.GetType().ToString());
         }
     }
 }
