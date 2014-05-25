@@ -1,17 +1,14 @@
 #include "Engine.h"
 
-Engine::Engine() : lButtprev(false), rButtprev(false)
+Engine::Engine()
 {
-	selectedTool = Tools::ELEVATION;
-	minmaxCalcDone = true;
-
+	mouseWorldPos = elm::vec3(200, 0, 1000);
+	brushTexture = "";
 	camera = nullptr;
 	terrain = nullptr;
 	dx = nullptr;
-
-	//dx = new RenderDX11(hWnd);
-
-	mouseWorldPos = elm::vec3(200, 0, 1000);
+	selectedTool = Tools::ELEVATION;
+	minmaxCalcDone = true;
 }
 
 void Engine::init()
@@ -77,6 +74,11 @@ void Engine::setBrushIntensity(int _val)
 void Engine::setBrushSize(int _val)
 {
 	brushSize = _val;
+}
+
+void Engine::setBrushTexture(std::string _val)
+{
+	brushTexture = _val;
 }
 
 void Engine::leftMouseDown()

@@ -16,6 +16,7 @@ public:
 
 	virtual void setBrushIntensity(int _val) = 0;
 	virtual void setBrushSize(int _val) = 0;
+	virtual void setBrushTexture(std::string _val) = 0;
 
 	/* Mouse calls */
 	virtual void updateMouse() = 0;

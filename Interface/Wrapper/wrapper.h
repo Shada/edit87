@@ -19,6 +19,7 @@ namespace wrap
 
 		void setBrushIntensity(int _val);
 		void setBrushSize(int _val);
+		void setBrushTexture(System::String^ _name);
 
 		/* Mouse calls */
 		void updateMouse();

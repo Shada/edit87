@@ -57,6 +57,7 @@ private:
 	void rightMouseUp();
 	void leftMouseUp();
 	bool rectIntersect(RECT _r, POINT _p);
+	std::string brushTexture;
 
 public:
 	Engine();
@@ -70,6 +71,7 @@ public:
 
 	void setBrushIntensity(int _val);
 	void setBrushSize(int _val);
+	void setBrushTexture(std::string _val);
 
 	/* Mouse calls */ // Maybe we want to handle mouse up and down entirely in c#. Discuss this with other ppl
 
