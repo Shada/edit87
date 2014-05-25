@@ -23,9 +23,6 @@ namespace LevelEditor
         public PanTextures()
         {
 	        InitializeComponent();
-
-			if(Utils.ProjectDirectory.Exists)
-				initDefTex();
         }
 
 	    public void initDefTex()
@@ -56,6 +53,18 @@ namespace LevelEditor
 		public List<Utils.twTag> TexTags 
 		{
 			get { return tags; }
+			set
+			{
+				tags = value;
+				int counter = 0;
+
+				foreach (Utils.twTag tag in tags)
+				{
+					textureList.Images.Add(Image.FromFile(tag.getAttributeByName<string>("path")));
+					lv_Textures.Items.Add(new ListViewItem(tag.getAttributeByName<string>("showname"), counter));
+					counter++;
+				}
+			}
 		}
 
 	    public void addImages(Image _img)

@@ -209,10 +209,10 @@ namespace LevelEditor
 			mainDockPanel.SaveAsXml(activeLayoutName);
 			Utils.Graphics.gfx.cleanUp();
 
-#if DEBUG
-			if(Utils.ProjectDirectory.Exists)
-				Utils.ProjectDirectory.Delete(true);
-#endif
+//#if DEBUG
+//			if(Utils.ProjectDirectory.Exists)
+//				Utils.ProjectDirectory.Delete(true);
+//#endif
 		} //TODO: glöm en att ta bort debug kod!
 
 		private void newProjectToolStripMenuItem_Click(object sender, EventArgs e)
@@ -450,18 +450,21 @@ namespace LevelEditor
 		{
 			PanResources res = (PanResources)Utils.Panels.getpanelByName("LevelEditor.PanResources");
 			PanLibrary lib = (PanLibrary)Utils.Panels.getpanelByName("LevelEditor.PanLibrary");
+			PanTextures tex = (PanTextures) Utils.Panels.getpanelByName("LevelEditor.PanTextures");
 
 			XmlNode projName = Utils.ProjectFile.SelectSingleNode("/root/header/projectName");
 			Utils.ProjectName = projName.InnerText;
 
 			XmlNode xmlResources = Utils.ProjectFile.SelectSingleNode("/root/resources/folder");
 			XmlNode xmlLibrary = Utils.ProjectFile.SelectSingleNode("/root/library/folder");
+			XmlNode xmlTextures = Utils.ProjectFile.SelectSingleNode("/root/textures");
 
 			TreeNode twResources = new TreeNode(Utils.ProjectName, 0, 0);
 			TreeNode twLibrary = new TreeNode(Utils.ProjectName, 0, 0);
 
 			readXMLNode(xmlResources, ref twResources);
 			readXMLNode(xmlLibrary, ref twLibrary);
+			tex.TexTags = readXMLTexNode(xmlTextures);
 
 			res.init(twResources);
 			lib.init(twLibrary);
@@ -556,6 +559,51 @@ namespace LevelEditor
 			res.Tag = tag;
 
 			return res;
+		}
+
+		private List<Utils.twTag> readXMLTexNode(XmlNode _xmlNode)
+		{
+			List<Utils.twTag> tags = new List<Utils.twTag>();
+
+			XmlNodeList list = _xmlNode.ChildNodes;
+
+			for (int child = 0; child < list.Count; child++)
+			{
+				Utils.twTag tag = new Utils.twTag(getTagType(list[child]));
+
+				for (int attribute = 0; attribute < list[child].ChildNodes.Count; attribute++)
+				{
+					string[] vals = list[child].ChildNodes[attribute].InnerText.Split('|');
+
+					if (vals[0] == "b")
+					{
+						bool b = (vals[1] == "false" ? false : true);
+						tag.addAttribute(Utils.twTagAttribute.dataType.BOOL, list[child].ChildNodes[attribute].Name, b);
+					}
+					else if (vals[0] == "c")
+					{
+						char c = vals[1].ToCharArray()[0];
+						tag.addAttribute(Utils.twTagAttribute.dataType.CHAR, list[child].ChildNodes[attribute].Name, c);
+					}
+					else if (vals[0] == "f")
+					{
+						float f = Convert.ToSingle(vals[1], CultureInfo.CurrentCulture);
+						tag.addAttribute(Utils.twTagAttribute.dataType.FLOAT, list[child].ChildNodes[attribute].Name, f);
+					}
+					else if (vals[0] == "i")
+					{
+						int i = Convert.ToInt32(vals[1], CultureInfo.CurrentCulture);
+						tag.addAttribute(Utils.twTagAttribute.dataType.INT, list[child].ChildNodes[attribute].Name, i);
+					}
+					else if (vals[0] == "s")
+					{
+						tag.addAttribute(Utils.twTagAttribute.dataType.STRING, list[child].ChildNodes[attribute].Name, vals[1]);
+					}
+				}
+				tags.Add(tag);
+			}
+
+			return tags;
 		}
 
 		private Utils.twTag.TYPE getTagType(XmlNode _xmlNode)
