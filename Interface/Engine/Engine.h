@@ -23,7 +23,8 @@ class Engine : public EngineInterface
 private:
 	RenderDX11	*dx;
 	Terrain		*terrain;
-	Camera		*camera;
+	Camera		*camera,
+				*minimapCamera;
 	Quadnode	*node;
 
 	std::vector<Quadnode*> leafNodes;
@@ -57,6 +58,7 @@ private:
 	void rightMouseUp();
 	void leftMouseUp();
 	bool rectIntersect(RECT _r, POINT _p);
+	std::string brushTexture;
 
 public:
 	Engine();
@@ -66,14 +68,16 @@ public:
 	void createTerrain(int width, int height, float pointStep, bool fromPerlinMap, int seed);
 
 	void renderScene()						{ dx->renderScene(); }
+	void renderScene(std::string name)		{ dx->renderScene(name); }
 	void move(float alongX, float alongZ);
 
 	void setBrushIntensity(int _val);
 	void setBrushSize(int _val);
+	void setBrushTexture(std::string _val);
 
 	/* Mouse calls */ // Maybe we want to handle mouse up and down entirely in c#. Discuss this with other ppl
 
-	void resizeWindow(int width, int height);
+	void resizeWindow(int width, int height, std::string name);
 	void updateMouse();
 
 	/* Tool calls */

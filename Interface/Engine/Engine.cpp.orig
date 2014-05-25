@@ -1,21 +1,19 @@
 #include "Engine.h"
 
-
 <<<<<<< HEAD
-Engine::Engine(HWND hwnd)
+Engine::Engine() : lButtprev(false), rButtprev(false)
+=======
+
+Engine::Engine()
+>>>>>>> something_something_dark_side
 {
-	hWnd = hwnd;
-
-	selectedTool = Tools::ELEVATION;
-
-	minmaxCalcDone = true;
-
+	mouseWorldPos = elm::vec3(200, 0, 1000);
+	brushTexture = "";
 	camera = nullptr;
 	terrain = nullptr;
-
-	dx = new RenderDX11(hWnd);
-
-	mouseWorldPos = elm::vec3(200, 0, 1000);
+	dx = nullptr;
+	selectedTool = Tools::ELEVATION;
+	minmaxCalcDone = true;
 }
 
 void Engine::init()
@@ -28,33 +26,20 @@ void Engine::init()
 	c.setProperty(co);
 }
 
-void Engine::setRect(RECT t)
-{
-	r = t;
-	dx->setRect(t);
-	if(camera)
-		camera->resizeWindow(r.right - r.left, r.bottom - r.top);
-=======
-Engine::Engine()
-{
-	selectedTool = Tools::SELECTOR;
-
-	camera = nullptr;
-	terrain = nullptr;
-	dx = nullptr;
-
-	//dx = new RenderDX11(hWnd);
-
-	mouseWorldPos = elm::vec2(200, 1000);
-}
-
-void Engine::addHandels(HWND _hWnd, std::string _name)
+void Engine::addHandels(HWND hWnd, std::string name, int width, int height)
 {
 	if(!dx)
 		dx = new RenderDX11();
 	
-	dx->addHandle(_hWnd, _name);
->>>>>>> RESPECT_MAH_AUTHORITAH
+	dx->addHandle(hWnd, name, width, height);
+	this->hWnd = hWnd;
+}
+
+void Engine::updateHandle(HWND hWnd, std::string name, int width, int height)
+{
+	dx->updateHandle(hWnd, name, width, height);
+	dx->createAndSetTerrainBuffers(terrain->getVBuffer(), terrain->getIBuffer());
+	this->hWnd = hWnd;
 }
 
 void Engine::createTerrain(int width, int height, float pointStep, bool fromPerlinMap, int seed)
@@ -63,7 +48,6 @@ void Engine::createTerrain(int width, int height, float pointStep, bool fromPerl
 		terrain = new Terrain();
 
 	terrain->createTerrain(width, height, pointStep, fromPerlinMap, seed);
-<<<<<<< HEAD
 
 	node = new Quadnode();
 	node->fillTree(0, terrain->getIBuffer()->size(), terrain->getPosition().xz, terrain->getDim(), terrain->getTreeDepth());
@@ -74,38 +58,47 @@ void Engine::createTerrain(int width, int height, float pointStep, bool fromPerl
 	dx->createAndSetTerrainBuffers(terrain->getVBuffer(), terrain->getIBuffer());
 
 	if(!camera)
-		camera = new Camera(r.right - r.left, r.bottom - r.top, terrain, hWnd);
-=======
-	dx->createAndSetTerrainBuffers(terrain->getVBuffer(), terrain->getIBuffer());
-
-	if(!camera)
 		camera = new Camera(width, height, terrain);
->>>>>>> RESPECT_MAH_AUTHORITAH
 
 	dx->setTerrainIndexCount(terrain->getIndexCount());
 	dx->setCamera(camera);
 }
 
-<<<<<<< HEAD
-void Engine::leftMouseDown(int brushSize, float brushIntensity)
-=======
+void Engine::resizeWindow(int width, int height)
+{
+	camera->resizeWindow(width, height);
+	dx->resizeSurface(width, height, "main");
+	dx->createAndSetTerrainBuffers(terrain->getVBuffer(), terrain->getIBuffer());
+}
+
+void Engine::setBrushIntensity(int _val)
+{
+	brushIntensity = _val;
+}
+
+void Engine::setBrushSize(int _val)
+{
+	brushSize = _val;
+}
+
+void Engine::setBrushTexture(std::string _val)
+{
+	brushTexture = _val;
+}
+
 void Engine::leftMouseDown()
->>>>>>> RESPECT_MAH_AUTHORITAH
 {
 	switch(selectedTool)
 	{
 	case Tools::ELEVATION:
-<<<<<<< HEAD
-		terrain->applyElevationBrush((float)brushSize, brushIntensity, mouseWorldPos.xz);
+		terrain->applyElevationBrush((float)brushSize, (float)brushIntensity / 100, mouseWorldPos.xz);
 		dx->updateTerrainBuffer(terrain->getVBuffer());
 		break;
 	case Tools::NORMALIZER:
 		terrain->applyNormalizeBrush((float)brushSize, brushIntensity, mouseWorldPos.xz);
 		dx->updateTerrainBuffer(terrain->getVBuffer());
 		break;
-	}
-
-	
+	}	
 
 	if(minmaxCalcDone)
 	{
@@ -114,33 +107,22 @@ void Engine::leftMouseDown()
 	}
 
 	camera->move(elm::vec2(0));
-
-	
-}
-
-void Engine::rightMouseDown(int brushSize, float brushIntensity)
-=======
-		break;
-	}
-	terrain->applyBrush(100, 1, elm::vec2(200, 1000));
-	camera->move(elm::vec2(0));
-	dx->createAndSetTerrainBuffers(terrain->getVBuffer(), terrain->getIBuffer());
-	dx->renderScene();
 }
 
 void Engine::rightMouseDown()
->>>>>>> RESPECT_MAH_AUTHORITAH
 {
 	switch(selectedTool)
 	{
 	case Tools::ELEVATION:
-<<<<<<< HEAD
-		terrain->applyElevationBrush((float)brushSize, -brushIntensity, mouseWorldPos.xz);
+		terrain->applyElevationBrush((float)brushSize, -(float)brushIntensity / 100, mouseWorldPos.xz);
 		dx->updateTerrainBuffer(terrain->getVBuffer());
 		break;
 	case Tools::NORMALIZER:
 		terrain->applyDefaultNormalizeBrush((float)brushSize, brushIntensity, mouseWorldPos.xz);
 		dx->updateTerrainBuffer(terrain->getVBuffer());
+		break;
+	case Tools::TEXTURING:
+		dx->blendmapBrush((float)brushSize, brushIntensity, mouseWorldPos.xz, "..\\Textures\\lavag.jpg", terrain->getStep());
 		break;
 	}
 
@@ -183,21 +165,28 @@ void Engine::move(float alongX, float alongZ)
 {
 	camera->move(elm::vec2(alongX, alongZ));
 	mouseWorldPos = camera->getWorldPos(mousePos.x, mousePos.y, node);
-=======
-		break;
-	}
-	terrain->applyBrush(100, -1, elm::vec2(200, 1000));
-	camera->move(elm::vec2(0));
-	dx->createAndSetTerrainBuffers(terrain->getVBuffer(), terrain->getIBuffer());
-	dx->renderScene();
->>>>>>> RESPECT_MAH_AUTHORITAH
 }
 
-void Engine::updateMouse(POINT mouse)
+void Engine::updateMouse()
 {
-	mousePos = mouse;
-<<<<<<< HEAD
-	mouseWorldPos = camera->getWorldPos(mousePos.x, mousePos.y, node);
+	GetCursorPos(&mousePos);
+	RECT win;
+	GetWindowRect(hWnd, &win);
+
+	bool lButt = (GetKeyState(VK_LBUTTON) & 0xA000);
+	bool rButt = (GetKeyState(VK_RBUTTON) & 0xA000);
+
+	mouseWorldPos = camera->getWorldPos(mousePos.x - win.left, mousePos.y - win.top, node);
+
+	if(lButt && rectIntersect(win, mousePos))
+		leftMouseDown();
+	else
+		leftMouseUp();		
+
+	if(rButt && rectIntersect(win, mousePos))
+		rightMouseDown();
+	else
+		rightMouseUp();	
 }
 
 void Engine::findMinMaxValues()
@@ -205,18 +194,17 @@ void Engine::findMinMaxValues()
 	minmaxCalcDone = false;
 	terrain->findMinMaxValues(leafNodes);
 	minmaxCalcDone = true;
-=======
-	mouseWorldPos = camera->getWorldPos(mousePos.x, mousePos.y);
->>>>>>> RESPECT_MAH_AUTHORITAH
+}
+
+bool Engine::rectIntersect(RECT _r, POINT _p)
+{
+	return (_r.bottom > _p.y && _r.top < _p.y && _r.left < _p.x && _r.right > _p.x);
 }
 
 Engine::~Engine()
 {
 	SAFE_DELETE(dx);
-<<<<<<< HEAD
 	SAFE_DELETE(node);
-=======
->>>>>>> RESPECT_MAH_AUTHORITAH
 	SAFE_DELETE(camera);
 	SAFE_DELETE(terrain);
 }

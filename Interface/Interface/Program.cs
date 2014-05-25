@@ -17,8 +17,6 @@ namespace LevelEditor
 			Application.EnableVisualStyles();
 			Application.SetCompatibleTextRenderingDefault(false);
 			Application.Run(new MapEditor());
-
-		    Utils.Graphics.gfx.cleanUp();
 		}
 	}
 }

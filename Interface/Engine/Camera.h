@@ -26,6 +26,8 @@ public:
 
 	void resizeWindow(int width, int height);
 
+	void setEyePos(elm::vec3 pos) { vEye = pos; elm::lookAtLH(mView, vLook, vUp, vEye); }
+
 	elm::vec3 getEye()	{ return vEye; }
 	elm::mat4 getProj() { return mProj; }
 	elm::mat4 getView() { return mView; }

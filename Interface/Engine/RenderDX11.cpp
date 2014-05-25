@@ -10,9 +10,9 @@ RenderDX11::RenderDX11()
 	terrainVertexBufferID = terrainIndexBufferID = -1;
 	blendmap = new Blendmap();
 
-	g_meshes = std::vector<Mesh3D*>(1);
+	g_meshes = std::vector<Mesh3D*>(1, nullptr);
+	g_objects = std::vector<Object3D*>(1);
 
-	camera = nullptr;
 	hWnd = nullptr;
 }
 
@@ -26,19 +26,21 @@ void RenderDX11::addHandle(HWND _hWnd, std::string _name, int width, int height)
 	h.renderTargetView = nullptr;
 	h.swapChain = nullptr;
 	h.depthStencilView = nullptr;
+	h.camera = nullptr;
 
 	h.buffers = std::vector<ID3D11Buffer*>(2);
-	h.textures = std::vector<ID3D11ShaderResourceView*>(1);
+	h.textures = std::vector<ID3D11ShaderResourceView*>(2);
 
 	handles.push_back(h);
+	handles.back().buffers = std::vector<ID3D11Buffer*>(handles.at(0).buffers.size());
+
+	init(handles.back(), width, height);
 
 	if(_name == "main")
 	{
-		primaryHandle = &handles.back();
+		//primaryHandle = &handles.back();
 		hWnd = _hWnd;
 	}
-	
-	init(handles.back(), width, height);
 }
 
 void RenderDX11::updateHandle(HWND _hWnd, std::string _name, int width, int height)
@@ -51,6 +53,18 @@ void RenderDX11::updateHandle(HWND _hWnd, std::string _name, int width, int heig
 			handles.at(i).hwnd = _hWnd;
 
 			init(handles.at(i), width, height);
+			break;
+		}
+	}
+}
+
+void RenderDX11::setCamera(Camera *cam, std::string name)
+{
+	for(unsigned int i = 0; i < handles.size(); i++)
+	{
+		if(handles.at(i).name == name)
+		{
+			handles.at(i).camera = cam;
 			break;
 		}
 	}
@@ -354,13 +368,15 @@ HRESULT RenderDX11::init(Handle &h, int width, int height)
 	h.textures.at(0) = tex;
 	createSampleStates(h);
 
-	
-	Mesh3D *mesh = new Mesh3D();
-	if(!mesh->loadMesh("../Models/Collada/cube.dae"))
+	if(!g_meshes.at(0))
 	{
-		MessageBoxA(hWnd, "Model load fail", "FAIL", 0);
+		Mesh3D *mesh = new Mesh3D();
+		if(!mesh->loadMesh("../Models/Collada/cube.dae"))
+		{
+			MessageBoxA(hWnd, "Model load fail", "FAIL", 0);
+		}
+		g_meshes.at(0) = mesh;
 	}
-	g_meshes.at(0) = mesh;
 
 	int id = g_meshes[0]->getVertexBufferID();
 	if(FAILED(createBuffer((void*)g_meshes[0]->getVertices().data(), g_meshes[0]->getNumVertices(), sizeof(elm::vec3), id, h)))
@@ -396,7 +412,7 @@ HRESULT RenderDX11::init(Handle &h, int width, int height)
 	obj->setPosition(elm::vec3(200,100,200));
 	obj->setScale(elm::vec3(.2f,.2f,.2f));
 
-	g_objects.push_back(obj);
+	g_objects.at(0) = obj;
 
 	CModel<Object3D>* co = new CModel<Object3D>("test", obj);
 
@@ -423,7 +439,7 @@ HRESULT RenderDX11::init(Handle &h, int width, int height)
 	{
 		return hr;
 	}
-	h.textures.push_back(tex);
+	h.textures.at(1) = tex;
 
 	g_meshes[0]->setTexDiffuseID(h.textures.size() - 1);
 
@@ -448,7 +464,7 @@ HRESULT RenderDX11::createBuffer(void *data, int numElements, int bytesPerElemen
 	bd.MiscFlags      = 0;
 
 	ID3D11Buffer *buffer = nullptr;
-	HRESULT hr = primaryHandle->device->CreateBuffer(&bd, &initData, &buffer);
+	HRESULT hr = h.device->CreateBuffer(&bd, &initData, &buffer);
     if(FAILED(hr))
 	{
         MessageBox(NULL,"could not create vertexbuffer", "ERROR", S_OK);
@@ -457,17 +473,13 @@ HRESULT RenderDX11::createBuffer(void *data, int numElements, int bytesPerElemen
 
 	if(bufferID == -1)
 	{
-		bufferID = handles.at(0).buffers.size();
-		for(unsigned int i = 0; i < handles.size(); i++)
-			handles.at(i).buffers.push_back(buffer);
+		bufferID = h.buffers.size();
+		h.buffers.push_back(buffer);
 	}
 	else
 	{
-		for(unsigned int i = 0; i < handles.size(); i++)
-		{
-			SAFE_RELEASE(handles.at(i).buffers.at(bufferID));
-			handles.at(i).buffers.at(bufferID) = buffer;
-		}
+		SAFE_RELEASE(h.buffers.at(bufferID));
+		h.buffers.at(bufferID) = buffer;
 	}
 
 	return S_OK;
@@ -489,7 +501,7 @@ HRESULT RenderDX11::createIndexBuffer(void* data, int numElements, int &bufferID
 	bd.MiscFlags      = 0;
 
 	ID3D11Buffer *buffer = nullptr;
-	HRESULT hr = primaryHandle->device->CreateBuffer(&bd, &initData, &buffer);
+	HRESULT hr = h.device->CreateBuffer(&bd, &initData, &buffer);
     if(FAILED(hr))
 	{
         MessageBox(NULL,"could not create indexbuffer", "ERROR", S_OK);
@@ -499,16 +511,12 @@ HRESULT RenderDX11::createIndexBuffer(void* data, int numElements, int &bufferID
 	if(bufferID == -1)
 	{
 		bufferID = handles.at(0).buffers.size();
-		for(unsigned int i = 0; i < handles.size(); i++)
-			handles.at(i).buffers.push_back(buffer);
+		h.buffers.push_back(buffer);
 	}
 	else
 	{
-		for(unsigned int i = 0; i < handles.size(); i++)
-		{
-			SAFE_RELEASE(handles.at(i).buffers.at(bufferID));
-			handles.at(i).buffers.at(bufferID) = buffer;
-		}
+		SAFE_RELEASE(h.buffers.at(bufferID));
+		h.buffers.at(bufferID) = buffer;
 	}
 
 	return S_OK;
@@ -550,7 +558,7 @@ HRESULT RenderDX11::createSampleStates(Handle &h)
 	sampDesc.MaxLOD = D3D11_FLOAT32_MAX;
 
 	HRESULT hr;
-	hr = primaryHandle->device->CreateSamplerState(&sampDesc, &h.wrap);
+	hr = h.device->CreateSamplerState(&sampDesc, &h.wrap);
 	if(FAILED(hr))
 		MessageBox(hWnd, "Error creating sampler state", "ERROR", MB_OK);
 
@@ -558,7 +566,7 @@ HRESULT RenderDX11::createSampleStates(Handle &h)
 	sampDesc.AddressV = D3D11_TEXTURE_ADDRESS_CLAMP;
 	sampDesc.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP;
 
-	hr = primaryHandle->device->CreateSamplerState(&sampDesc, &h.clamp);
+	hr = h.device->CreateSamplerState(&sampDesc, &h.clamp);
 	if(FAILED(hr))
 		MessageBox(hWnd, "Error creating sampler state", "ERROR", MB_OK);
 
@@ -571,17 +579,23 @@ HRESULT RenderDX11::createSRV(unsigned int& _outId, string _fileName)
 
 	ID3D11ShaderResourceView *tex	= nullptr;	
 
-	hr = D3DX11CreateShaderResourceViewFromFile(primaryHandle->device, _fileName.c_str(), NULL, NULL, &tex, NULL);
-
-	if(FAILED(hr))
+	for(unsigned int i = 0; i < handles.size(); i++)
 	{
-		MessageBox(hWnd, "Image load made fail, lol", "fail, yo", 0);
-		return hr;
+		if(handles.at(i).name == "main")
+		{
+			hr = D3DX11CreateShaderResourceViewFromFile(handles.at(i).device, _fileName.c_str(), NULL, NULL, &tex, NULL);
+
+			if(FAILED(hr))
+			{
+				MessageBox(hWnd, "Image load made fail, lol", "fail, yo", 0);
+				return hr;
+			}
+			break;
+		}
 	}
-	
+
 	_outId			= m_SRVs.size();
 	m_SRVs[_outId]	= tex;
-
 	return S_OK;
 }
 
@@ -602,22 +616,33 @@ void RenderDX11::createAndSetTerrainBuffers(std::vector<Vertex> *vBuffer, std::v
 	bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 	bd.MiscFlags = 0;
 
-	ID3D11Buffer *buffer = nullptr;
-	HRESULT hr = primaryHandle->device->CreateBuffer(&bd, &initData, &buffer);
-	if(FAILED(hr))
-		MessageBox(NULL, "could not create terrain vertexbuffer", "ERROR", S_OK);
+	ID3D11Buffer *buffer;
+	HRESULT hr;
 
 	if(terrainVertexBufferID == -1)
 	{
 		terrainVertexBufferID = handles.at(0).buffers.size();
 		for(unsigned int i = 0; i < handles.size(); i++)
+		{
+			buffer = nullptr;
+			hr = handles.at(i).device->CreateBuffer(&bd, &initData, &buffer);
+			if(FAILED(hr))
+				MessageBox(NULL, "could not create terrain indexbuffer", "ERROR", S_OK);
+
 			handles.at(i).buffers.push_back(buffer);
+		}
 	}
 	else
 	{
 		for(unsigned int i = 0; i < handles.size(); i++)
 		{
 			SAFE_RELEASE(handles.at(i).buffers.at(terrainVertexBufferID));
+
+			buffer = nullptr;
+			hr = handles.at(i).device->CreateBuffer(&bd, &initData, &buffer);
+			if(FAILED(hr))
+				MessageBox(NULL, "could not create terrain indexbuffer", "ERROR", S_OK);
+
 			handles.at(i).buffers.at(terrainVertexBufferID) = buffer;
 		}
 	}
@@ -629,22 +654,30 @@ void RenderDX11::createAndSetTerrainBuffers(std::vector<Vertex> *vBuffer, std::v
 	bd.ByteWidth = sizeof(unsigned int) * iBuffer->size();
 	bd.CPUAccessFlags = 0;
 
-	buffer = nullptr;
-	hr = primaryHandle->device->CreateBuffer(&bd, &initData, &buffer);
-	if(FAILED(hr))
-		MessageBox(NULL, "could not create terrain indexbuffer", "ERROR", S_OK);
-
 	if(terrainIndexBufferID == -1)
 	{
 		terrainIndexBufferID = handles.at(0).buffers.size();
 		for(unsigned int i = 0; i < handles.size(); i++)
+		{
+			buffer = nullptr;
+			hr = handles.at(i).device->CreateBuffer(&bd, &initData, &buffer);
+			if(FAILED(hr))
+				MessageBox(NULL, "could not create terrain indexbuffer", "ERROR", S_OK);
+
 			handles.at(i).buffers.push_back(buffer);
+		}
 	}
 	else
 	{
 		for(unsigned int i = 0; i < handles.size(); i++)
 		{
 			SAFE_RELEASE(handles.at(i).buffers.at(terrainIndexBufferID));
+
+			buffer = nullptr;
+			hr = handles.at(i).device->CreateBuffer(&bd, &initData, &buffer);
+			if(FAILED(hr))
+				MessageBox(NULL, "could not create terrain indexbuffer", "ERROR", S_OK);
+
 			handles.at(i).buffers.at(terrainIndexBufferID) = buffer;
 		}
 	}
@@ -655,7 +688,7 @@ void RenderDX11::updateTerrainBuffer(std::vector<Vertex> *vBuffer)
 	D3D11_MAPPED_SUBRESOURCE resource;
 	for(unsigned int i = 0; i < handles.size(); i++)
 	{
-		HRESULT hr = primaryHandle->deviceContext->Map(handles.at(i).buffers.at(terrainVertexBufferID), 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &resource);
+		HRESULT hr = handles.at(i).deviceContext->Map(handles.at(i).buffers.at(terrainVertexBufferID), 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &resource);
 
 		if(FAILED(hr))
 			MessageBox(NULL, "Could not update terrain buffer", "ERROR", S_OK);
@@ -669,15 +702,25 @@ void RenderDX11::updateTerrainBuffer(std::vector<Vertex> *vBuffer)
 const float color[4] = {0.f, 1.f, 1.f, 1.f};
 void RenderDX11::renderScene()
 {
-	render(*primaryHandle);
+	for(unsigned int i = 0; i < handles.size(); i++)
+	{
+		if(handles.at(i).name == "main")
+		{
+			render(handles.at(i));
+			break;
+		}
+	}
 }
 
-void RenderDX11::renderMiniMap(std::string _name)
+void RenderDX11::renderScene(std::string _name)
 {
 	for(unsigned int i = 0; i < handles.size(); i++)
 	{
 		if(handles.at(i).name == _name)
+		{
 			render(handles.at(i));
+			break;
+		}
 	}
 }
 
@@ -687,8 +730,8 @@ void RenderDX11::render(const Handle &h)
 	h.deviceContext->ClearDepthStencilView(h.depthStencilView, D3D11_CLEAR_DEPTH, 1.f, 0);
 
 	CBOnChange cb;
-	cb.viewProj = camera->getView() * camera->getProj();
-	cb.position = elm::vec4(camera->getEye(), 1.f);
+	cb.viewProj = h.camera->getView() * h.camera->getProj();
+	cb.position = elm::vec4(h.camera->getEye(), 1.f);
 	cb.world = elm::mat4();
 
 	h.deviceContext->UpdateSubresource(h.buffers.at(cbOnChangeID), 0, NULL, &cb, 0, 0);

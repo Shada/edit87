@@ -1,4 +1,4 @@
-﻿namespace Interface.Forms
+﻿namespace LevelEditor
 {
     partial class PanAlternateView
     {
@@ -45,8 +45,11 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(284, 262);
             this.Controls.Add(this.drawSurface);
+            this.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Name = "PanAlternateView";
             this.Text = "PanAlternateView";
+            this.DockStateChanged += new System.EventHandler(this.PanAlternateView_DockStateChanged);
+            this.SizeChanged += new System.EventHandler(this.PanAlternateView_SizeChanged);
             this.ResumeLayout(false);
 
         }

@@ -21,7 +21,6 @@ namespace LevelEditor
 
 			Utils.Graphics.Init();
             Utils.Graphics.Addhandle(win, "main", this.Size.Width, this.Size.Height);
-			Utils.Graphics.gfx.createTerrain(256, 256, 5, false, 0);
         }
 
 		public void resizeRenderPanel()
@@ -34,7 +33,7 @@ namespace LevelEditor
 													this.Bounds.Height - 6);
 
                 if (Utils.Graphics.gfx != null && drawSurface.Size.Width != 0)
-                    Utils.Graphics.gfx.resizeWindow(drawSurface.Size.Width, drawSurface.Size.Height);
+                    Utils.Graphics.gfx.resizeWindow(drawSurface.Size.Width, drawSurface.Size.Height, "main");
 			}
 		}
 

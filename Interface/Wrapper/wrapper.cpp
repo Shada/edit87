@@ -10,29 +10,28 @@ namespace wrap
 		gfx = EngineFactory::createEngine();
 	}
 
+	std::string GraphicsCommunicator::toString(System::String^ text)
+	{
+		msclr::interop::marshal_context context;
+		return context.marshal_as<std::string>(text);
+	}
+
 	void GraphicsCommunicator::addHandle(System::IntPtr _handle, System::String^ _name, int _width, int _height)
 	{
 		HWND hWnd = (HWND)((void*)_handle);
-
-		msclr::interop::marshal_context context;
-		std::string standardString = context.marshal_as<std::string>(_name);
-
-		gfx->addHandle(hWnd, standardString, _width, _height);
+		gfx->addHandle(hWnd, toString(_name), _width, _height);
 	}
 
 	void GraphicsCommunicator::updateHandle(System::IntPtr _handle, System::String^ _name, int _width, int _height)
 	{
 		HWND hWnd = (HWND)((void*)_handle);
 
-		msclr::interop::marshal_context context;
-		std::string standardString = context.marshal_as<std::string>(_name);
-
-		gfx->updateHandle(hWnd, standardString, _width, _height);
+		gfx->updateHandle(hWnd, toString(_name), _width, _height);
 	}
 
-	void GraphicsCommunicator::resizeWindow(int width, int height)
+	void GraphicsCommunicator::resizeWindow(int _width, int _height, System::String ^_name)
 	{
-		gfx->resizeWindow(width, height);
+		gfx->resizeWindow(_width, _height, toString(_name));
 	}
 
 	void GraphicsCommunicator::createTerrain(int width, int height, float pointStep, bool fromPerlinMap, int seed)
@@ -43,6 +42,11 @@ namespace wrap
 	void GraphicsCommunicator::renderScene()
 	{
 		gfx->renderScene();
+	}
+
+	void GraphicsCommunicator::renderScene(System::String ^_name)
+	{
+		gfx->renderScene(toString(_name));
 	}
 
 	void GraphicsCommunicator::moveCamera(int xDir, int zDir)
@@ -58,6 +62,13 @@ namespace wrap
 	void GraphicsCommunicator::setBrushSize(int _val)
 	{
 		gfx->setBrushSize(_val);
+	}
+
+	void GraphicsCommunicator::setBrushTexture(System::String^ _name)
+	{
+		msclr::interop::marshal_context context;
+		std::string standardString = context.marshal_as<std::string>(_name);
+		gfx->setBrushTexture(standardString);
 	}
 
 	void GraphicsCommunicator::updateMouse()

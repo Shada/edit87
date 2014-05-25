@@ -4,14 +4,13 @@ using System.Windows.Forms;
 using System.IO;
 using System.Xml;
 using System.Globalization;
-using CookComputing.XmlRpc;
 using WeifenLuo.WinFormsUI.Docking;
 
 namespace LevelEditor
 {
 	public partial class MapEditor : Form
     {
-        public const string activeLayoutName = "PanelLayout.xml";
+        const string activeLayoutName = "PanelLayout.xml";
 
 		private bool forwardKey;
 		private bool backwardKey;
@@ -22,7 +21,7 @@ namespace LevelEditor
 		private int windowHeight;
 
 		DeserializeDockContent deserializeDockContent;
-        public TreeNode resourcesRoot = new TreeNode("Root", 0, 0);
+        //public TreeNode resourcesRoot = new TreeNode("Root", 0, 0);		
 
 		public MapEditor()
 		{
@@ -35,9 +34,8 @@ namespace LevelEditor
 			windowHeight = Size.Height;
 
             deserializeDockContent = new DeserializeDockContent(Utils.Panels.getpanelByName);
-            mainDockPanel.LoadFromXml(activeLayoutName, deserializeDockContent);
+            //mainDockPanel.LoadFromXml(activeLayoutName, deserializeDockContent);
 
-            timer1.Interval = 20;
             timer1.Start();
 		}
 
@@ -59,9 +57,12 @@ namespace LevelEditor
 			Utils.Panels.addPanel(new PanTextures(), typeof(PanTextures).ToString());
 			Utils.Panels.addPanel(new PanResources(), typeof(PanResources).ToString());
 			Utils.Panels.addPanel(new PanRender(this), typeof(PanRender).ToString());
+            Utils.Panels.addPanel(new PanAlternateView(this), typeof(PanAlternateView).ToString());
 			Utils.Panels.addPanel(new PanBrushes(), typeof(PanBrushes).ToString());
 			Utils.Panels.addPanel(new PanLibrary(), typeof(PanLibrary).ToString());
 			Utils.Panels.addPanel(new PanProperties(), typeof(PanProperties).ToString());
+
+            Utils.Graphics.gfx.createTerrain(256, 256, 5, false, 0);
         }
 
 		#region events
@@ -209,6 +210,7 @@ namespace LevelEditor
 		private void MapEditor_FormClosing(object sender, FormClosingEventArgs e)
 		{
 			mainDockPanel.SaveAsXml(activeLayoutName);
+			Utils.Graphics.gfx.cleanUp();
 		}
 
 		private void newProjectToolStripMenuItem_Click(object sender, EventArgs e)
@@ -287,6 +289,7 @@ namespace LevelEditor
 			PanTextures texture = (PanTextures)Utils.Panels.getpanelByName("LevelEditor.PanTextures");
 			PanResources resources = (PanResources)Utils.Panels.getpanelByName("LevelEditor.PanResources");
 			PanRender render = (PanRender)Utils.Panels.getpanelByName("LevelEditor.PanRender");
+            PanAlternateView minimap = (PanAlternateView)Utils.Panels.getpanelByName("LevelEditor.PanAlternateView");
 			PanLibrary library = (PanLibrary)Utils.Panels.getpanelByName("LevelEditor.PanLibrary");
 			PanProperties properties = (PanProperties)Utils.Panels.getpanelByName("LevelEditor.PanProperties");
 
@@ -295,6 +298,7 @@ namespace LevelEditor
 			resources.Show(texture.Pane, DockAlignment.Bottom, 0.50);
 			render.Show(mainDockPanel, DockState.Document);
 			library.Show(mainDockPanel, DockState.DockLeft);
+            minimap.Show(library.Pane, DockAlignment.Bottom, 0.5);
 			properties.Show(library.Pane, DockAlignment.Bottom, 0.50);
 
 			mainDockPanel.ResumeLayout(true, true);
@@ -574,6 +578,7 @@ namespace LevelEditor
 
 			Utils.Graphics.gfx.updateMouse();
 			Utils.Graphics.gfx.renderScene();
+            Utils.Graphics.gfx.renderScene("minimap");
 		}        
 
 		private void resizeWindow()
@@ -653,6 +658,7 @@ namespace LevelEditor
         {
             if (mainDockPanel.DocumentStyle == DocumentStyle.SystemMdi)
             {
+                timer1.Stop();
                 foreach (Form form in MdiChildren)
                     form.Close();
             }
@@ -670,7 +676,9 @@ namespace LevelEditor
 		private void MapEditor_Move(object sender, EventArgs e)
 		{
 			PanRender render = (PanRender)Utils.Panels.getpanelByName("LevelEditor.PanRender");
+		    PanAlternateView minimap = (PanAlternateView) Utils.Panels.getpanelByName("LevelEditor.PanAlternateView");
 			render.resizeRenderPanel();
+		    minimap.resizeRenderPanel();
 		}
 
 		#endregion

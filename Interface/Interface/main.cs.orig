@@ -1,77 +1,47 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;
 using System.Xml;
-using System.Diagnostics;
-using WeifenLuo.WinFormsUI.Docking;
 using System.Globalization;
-
-using Microsoft.DirectX;
-
-using wrap;
+using WeifenLuo.WinFormsUI.Docking;
 
 namespace LevelEditor
 {
 	public partial class MapEditor : Form
-<<<<<<< HEAD
     {
-        private wrap.GraphicsCommunicator graphics;
-        private int windowWidth, windowHeight;
-        private bool forwardKey, backwardKey, leftKey, rightKey, leftMouseDown, rightMouseDown;
+        const string activeLayoutName = "PanelLayout.xml";
 
-        private int mousePosX, mousePosY, brushSize, brushIntensity;
+		private bool forwardKey;
+		private bool backwardKey;
+		private bool leftKey;
+		private bool rightKey;
+
+		private int windowWidth;
+		private int windowHeight;
+
+		DeserializeDockContent deserializeDockContent;
+<<<<<<< HEAD
+        public TreeNode resourcesRoot = new TreeNode("Root", 0, 0);
 =======
-	{
-        public const string activeLayoutName = "PanelLayout.xml";
-
-        private bool forwardKey, backwardKey, leftKey, rightKey, leftMouseDown, rightMouseDown;
-
-        private int mousePosX, mousePosY;
-        int windowWidth, windowHeight;
->>>>>>> RESPECT_MAH_AUTHORITAH
-
-        DeserializeDockContent deserializeDockContent;
-        public TreeNode resourcesRoot = new TreeNode("Root", 0, 0);		
+        //public TreeNode resourcesRoot = new TreeNode("Root", 0, 0);		
+>>>>>>> something_something_dark_side
 
 		public MapEditor()
 		{
             this.KeyPreview = true;
-<<<<<<< HEAD
-            graphics = new GraphicsCommunicator(this.Handle);
-			InitializeComponent();
-
-            timer1.Interval = 20;
-            timer1.Start();
-
-            brushSize = (int)nud_BrushSize.Value;
-            brushIntensity = (int)nud_brushIntensity.Value;
-
-            windowWidth = Size.Width;
-            windowHeight = Size.Height;
-            graphics.setRenderArea(0, 0, windowWidth, windowHeight);
-            graphics.createTerrain(256, 256, 5, false, 0);
-=======
 
 			InitializeComponent();
             createStandardControls();
 
-            windowWidth = Size.Width;
-            windowHeight = Size.Height;
+			windowWidth = Size.Width;
+			windowHeight = Size.Height;
 
             deserializeDockContent = new DeserializeDockContent(Utils.Panels.getpanelByName);
             mainDockPanel.LoadFromXml(activeLayoutName, deserializeDockContent);
 
             timer1.Interval = 20;
             timer1.Start();
->>>>>>> RESPECT_MAH_AUTHORITAH
 		}
 
 		public void initPanels()
@@ -89,26 +59,18 @@ namespace LevelEditor
 
         private void createStandardControls()
         {
-			Utils.Panels.addPanel(new PanBrushes(), typeof(PanBrushes).ToString());
 			Utils.Panels.addPanel(new PanTextures(), typeof(PanTextures).ToString());
 			Utils.Panels.addPanel(new PanResources(), typeof(PanResources).ToString());
 			Utils.Panels.addPanel(new PanRender(this), typeof(PanRender).ToString());
+			Utils.Panels.addPanel(new PanBrushes(), typeof(PanBrushes).ToString());
 			Utils.Panels.addPanel(new PanLibrary(), typeof(PanLibrary).ToString());
 			Utils.Panels.addPanel(new PanProperties(), typeof(PanProperties).ToString());
         }
 
 		#region events
-
 		private void btn_TerrainBrush_Click(object sender, EventArgs e)
-<<<<<<< HEAD
-        {
-            int seed = Environment.TickCount & Int32.MaxValue;
-            graphics.createTerrain(256, 256, 5, true, seed);
-            graphics.renderScene();
-=======
 		{
             NO();
->>>>>>> RESPECT_MAH_AUTHORITAH
 		}
 
 		private void btn_TextureBrush_Click(object sender, EventArgs e)
@@ -258,22 +220,6 @@ namespace LevelEditor
 			project.Show();
 		}
 
-		private void MapEditor_MouseUp(object sender, MouseEventArgs e)
-		{
-			mapEditorMouseUp(e);
-		}
-
-		private void MapEditor_MouseMove(object sender, MouseEventArgs e)
-		{
-			mousePosX = e.X;
-			mousePosY = e.Y;
-		}
-
-		private void MapEditor_MouseDown(object sender, MouseEventArgs e)
-		{
-			mapEditorMouseDown(e);
-		}
-
 		private void MapEditor_KeyDown(object sender, KeyEventArgs e)
 		{
 			mapEditorKeyDown(e);
@@ -303,46 +249,8 @@ namespace LevelEditor
 
 		#region non-events
 
-		private void mapEditorMouseDown(MouseEventArgs e)
-		{
-			if (!rightMouseDown || !leftMouseDown)
-			{
-				if (!leftMouseDown && e.Button == System.Windows.Forms.MouseButtons.Left)
-				{
-					//graphics.leftMouseDown();
-					leftMouseDown = true;
-				}
-				else if (!rightMouseDown && e.Button == System.Windows.Forms.MouseButtons.Right)
-				{
-					//graphics.rightMouseDown();
-					rightMouseDown = true;
-				}
-			}
-		}
-
-		private void mapEditorMouseUp(MouseEventArgs e)
-		{
-			if (rightMouseDown || leftMouseDown)
-			{
-				if (leftMouseDown && e.Button == System.Windows.Forms.MouseButtons.Left)
-				{
-					//graphics.leftMouseUp();
-					leftMouseDown = false;
-				}
-				else if (rightMouseDown && e.Button == System.Windows.Forms.MouseButtons.Right)
-				{
-					//graphics.rightMouseUp();
-					rightMouseDown = false;
-				}
-			}
-		}
-
 		private void mapEditorLoad()
 		{
-<<<<<<< HEAD
-            NumericUpDown send = (NumericUpDown)sender;
-            brushSize = (int)send.Value;
-=======
 			DeserializeDockContent ddc = new DeserializeDockContent(Utils.Panels.getpanelByName);
 			mainDockPanel.LoadFromXml(activeLayoutName, ddc);
 		}
@@ -356,7 +264,6 @@ namespace LevelEditor
 				case Keys.A: leftKey = true; break;
 				case Keys.D: rightKey = true; break;
 			}
->>>>>>> RESPECT_MAH_AUTHORITAH
 		}
 
 		private void mapEditorKeyUp(KeyEventArgs e)
@@ -462,10 +369,6 @@ namespace LevelEditor
 
 		private XmlElement writeXMLNodeHelper(TreeNode _treeNode)
 		{
-<<<<<<< HEAD
-            NumericUpDown send = (NumericUpDown)sender;
-            brushIntensity = (int)send.Value;
-=======
 			Utils.twTag tag = (Utils.twTag)_treeNode.Tag;
 			XmlElement node = Utils.ProjectFile.CreateElement(null, Convert.ToString(tag.Type).ToLower(), null);
 
@@ -499,7 +402,6 @@ namespace LevelEditor
 			}
 
 			return node;
->>>>>>> RESPECT_MAH_AUTHORITAH
 		}
 
 		private void writeXMLelement(string _elemName, string _elemVal, XmlElement node)
@@ -669,13 +571,12 @@ namespace LevelEditor
 		{
 			int xDir = forwardKey ? 1 : backwardKey ? -1 : 0;
 			int zDir = rightKey ? 1 : leftKey ? -1 : 0;
-			if (xDir != 0 || zDir != 0)
+			bool mouseMove = xDir != 0 || zDir != 0;
+			if (mouseMove)
 				Utils.Graphics.gfx.moveCamera(xDir, zDir);
 
-			if (rightMouseDown)
-				Utils.Graphics.gfx.rightMouseDown();
-			if (leftMouseDown)
-				Utils.Graphics.gfx.leftMouseDown();
+			Utils.Graphics.gfx.updateMouse();
+			Utils.Graphics.gfx.renderScene();
 		}        
 
 		private void resizeWindow()
@@ -731,87 +632,6 @@ namespace LevelEditor
             }
 		}
 
-<<<<<<< HEAD
-        private void MapEditor_KeyDown(object sender, KeyEventArgs e)
-        {
-            switch (e.KeyCode)
-            {
-                case Keys.W:    forwardKey = true;      break;
-                case Keys.S:    backwardKey = true;     break;
-                case Keys.A:    leftKey = true;         break;
-                case Keys.D:    rightKey = true;        break;
-            }
-        }
-
-        private void timer1_Tick(object sender, EventArgs e)
-        {
-            int xDir = forwardKey ? 1 : backwardKey ? -1 : 0;
-            int zDir = rightKey ? 1 : leftKey ? -1 : 0;
-            bool mouseMove = xDir != 0 || zDir != 0;
-            if (mouseMove)
-                graphics.moveCamera(xDir, zDir);
-
-            if (rightMouseDown && !leftMouseDown)
-                graphics.rightMouseDown(brushSize, brushIntensity);
-            if (leftMouseDown && !rightMouseDown)
-                graphics.leftMouseDown(brushSize, brushIntensity);
-
-            if(rightMouseDown || leftMouseDown || mouseMove)
-                graphics.renderScene();
-        }
-
-        private void MapEditor_KeyUp(object sender, KeyEventArgs e)
-        {
-            switch (e.KeyCode)
-            {
-                case Keys.W:    forwardKey = false;     break;
-                case Keys.S:    backwardKey = false;    break;
-                case Keys.A:    leftKey = false;        break;
-                case Keys.D:    rightKey = false;       break;
-            }
-        }
-
-        private void MapEditor_MouseDown(object sender, MouseEventArgs e)
-        {
-            if (!rightMouseDown || !leftMouseDown)
-            {
-                if (!leftMouseDown && e.Button == System.Windows.Forms.MouseButtons.Left)
-                {
-                    //graphics.leftMouseDown();
-                    leftMouseDown = true;
-                }
-                else if (!rightMouseDown && e.Button == System.Windows.Forms.MouseButtons.Right)
-                {
-                    //graphics.rightMouseDown();
-                    rightMouseDown = true;
-                }
-            }
-        }
-
-        private void MapEditor_MouseUp(object sender, MouseEventArgs e)
-        {
-            if (rightMouseDown || leftMouseDown)
-            {
-                if (leftMouseDown && e.Button == System.Windows.Forms.MouseButtons.Left)
-                {
-                    graphics.leftMouseUp();
-                    leftMouseDown = false;
-                }
-                else if (rightMouseDown && e.Button == System.Windows.Forms.MouseButtons.Right)
-                {
-                    graphics.rightMouseUp();
-                    rightMouseDown = false;
-                }
-            }
-        }
-
-        private void MapEditor_MouseMove(object sender, MouseEventArgs e)
-        {
-            mousePosX = e.X;
-            mousePosY = e.Y;
-            graphics.updateMouse(mousePosX, mousePosY);
-        }
-=======
         private void toggleDisplay()
         {
 			DockContent panel = (PanBrushes)Utils.Panels.getpanelByName("LevelEditor.PanBrushes");
@@ -857,6 +677,5 @@ namespace LevelEditor
 		}
 
 		#endregion
->>>>>>> RESPECT_MAH_AUTHORITAH
 	}
 }
