@@ -111,9 +111,9 @@ namespace LevelEditor
 				graphics = new GraphicsCommunicator();
 			}
 
-			public static void Sethandle(IntPtr _handle, string _name, int _width, int _height)
+			public static void Addhandle(IntPtr _handle, string _name, int _width, int _height)
 			{
-				graphics.setHandle(_handle, _name, _width, _height);
+				graphics.addHandle(_handle, _name, _width, _height);
 			}
 
 			public static wrap.GraphicsCommunicator gfx

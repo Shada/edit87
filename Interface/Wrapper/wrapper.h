@@ -12,8 +12,6 @@ namespace wrap
 		GraphicsCommunicator();
 		~GraphicsCommunicator();
 
-		void setRenderArea(int x, int y, int width, int height);
-
 		void renderScene();
 		void createTerrain(int width, int height, float pointStep, bool fromPerlinMap, int seed);
 
@@ -33,7 +31,7 @@ namespace wrap
 		void setObjectPlacerTool()		{ gfx->setObjectPlacerTool();	}
 
 		void resizeWindow(int width, int height);
-		void setHandle(System::IntPtr _handle, System::String^ _name, int _width, int _height);
+		void addHandle(System::IntPtr _handle, System::String^ _name, int _width, int _height);
 		void updateHandle(System::IntPtr _handle, System::String^ _name, int _width, int _height);
 
 		void cleanUp();

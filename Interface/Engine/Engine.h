@@ -83,6 +83,6 @@ public:
 	void setNormalizerTool()				{ selectedTool = Tools::NORMALIZER;		}
 	void setObjectPlacerTool()				{ selectedTool = Tools::OBJECTPLACER;	}
 
-	void addHandels(HWND hWnd, std::string name, int width, int height);
+	void addHandle(HWND hWnd, std::string name, int width, int height);
 	void updateHandle(HWND hWnd, std::string name, int width, int height);
 };

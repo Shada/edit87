@@ -10,29 +10,23 @@ namespace wrap
 		gfx = EngineFactory::createEngine();
 	}
 
-	void GraphicsCommunicator::setRenderArea(int x, int y, int width, int height)
-	{
-		RECT r;
-		r.top = y;
-		r.left = x; 
-		r.bottom = y + height;
-		r.right = x + width;
-		gfx->setRect(r);
-	}
-	void GraphicsCommunicator::setHandle(System::IntPtr _handle, System::String^ _name, int _width, int _height)
+	void GraphicsCommunicator::addHandle(System::IntPtr _handle, System::String^ _name, int _width, int _height)
 	{
 		HWND hWnd = (HWND)((void*)_handle);
-		//gfx = EngineFactory::createEngine();
+
 		msclr::interop::marshal_context context;
 		std::string standardString = context.marshal_as<std::string>(_name);
-		gfx->addHandels(hWnd, standardString, _width, _height);
+
+		gfx->addHandle(hWnd, standardString, _width, _height);
 	}
 
 	void GraphicsCommunicator::updateHandle(System::IntPtr _handle, System::String^ _name, int _width, int _height)
 	{
 		HWND hWnd = (HWND)((void*)_handle);
+
 		msclr::interop::marshal_context context;
 		std::string standardString = context.marshal_as<std::string>(_name);
+
 		gfx->updateHandle(hWnd, standardString, _width, _height);
 	}
 

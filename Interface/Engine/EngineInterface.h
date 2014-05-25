@@ -10,8 +10,6 @@ public:
 
 	virtual void renderScene() = 0;
 
-	virtual void setRect(RECT t) = 0;
-
 	virtual void createTerrain(int width, int height, float pointStep, bool fromPerlinMap, int seed) = 0;
 
 	virtual void move(float alongX, float alongZ) = 0;
@@ -30,6 +28,6 @@ public:
 	virtual void setNormalizerTool() = 0;
 	virtual void setObjectPlacerTool() = 0;
 
-	virtual void addHandels(HWND _hWnd, std::string _name, int width, int height) = 0;
+	virtual void addHandle(HWND _hWnd, std::string _name, int width, int height) = 0;
 	virtual void updateHandle(HWND _hWnd, std::string _name, int width, int height) = 0;
 };

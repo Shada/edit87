@@ -20,7 +20,7 @@ namespace LevelEditor
 		    win = drawSurface.Handle;
 
 			Utils.Graphics.Init();
-            Utils.Graphics.Sethandle(win, "main", this.Size.Width, this.Size.Height);
+            Utils.Graphics.Addhandle(win, "main", this.Size.Width, this.Size.Height);
 			Utils.Graphics.gfx.createTerrain(256, 256, 5, false, 0);
         }
 

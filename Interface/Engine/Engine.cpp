@@ -24,7 +24,7 @@ void Engine::init()
 	c.setProperty(co);
 }
 
-void Engine::addHandels(HWND hWnd, std::string name, int width, int height)
+void Engine::addHandle(HWND hWnd, std::string name, int width, int height)
 {
 	if(!dx)
 		dx = new RenderDX11();
