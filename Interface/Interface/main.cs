@@ -208,6 +208,7 @@ namespace LevelEditor
 		private void MapEditor_FormClosing(object sender, FormClosingEventArgs e)
 		{
 			mainDockPanel.SaveAsXml(activeLayoutName);
+			Utils.Graphics.gfx.cleanUp();
 		}
 
 		private void newProjectToolStripMenuItem_Click(object sender, EventArgs e)
