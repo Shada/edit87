@@ -1,11 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;
 using System.Xml;
@@ -21,8 +15,6 @@ namespace LevelEditor
             InitializeComponent();
 
             edit = _edit;
-            //projectFile = _projectFile;
-            //projectDirectory = _projectDirectory;
             mtxb_mapSizeX.ValidatingType = typeof(uint);
             mtxb_mapSizeY.ValidatingType = typeof(uint);
         }
@@ -69,9 +61,12 @@ namespace LevelEditor
             }
 
 			Utils.ProjectDirectory = Directory.CreateDirectory(folder);
-			//Directory.CreateDirectory(folder + "\\brushes");
-			//Directory.CreateDirectory(folder + "\\resources");
-			//Directory.CreateDirectory(folder + "\\maps");
+
+			File.Copy(Environment.CurrentDirectory + "\\..\\textures\\grass.png", Utils.ProjectDirectory.FullName + "\\grass.png");
+			File.Copy(Environment.CurrentDirectory + "\\..\\textures\\ground.png", Utils.ProjectDirectory.FullName + "\\ground.png");
+			File.Copy(Environment.CurrentDirectory + "\\..\\textures\\lava.png", Utils.ProjectDirectory.FullName + "\\lava.png");
+			File.Copy(Environment.CurrentDirectory + "\\..\\textures\\lavag.png", Utils.ProjectDirectory.FullName + "\\lavag.png");
+			File.Copy(Environment.CurrentDirectory + "\\..\\textures\\sand.png", Utils.ProjectDirectory.FullName + "\\sand.png");
 
             using (XmlTextWriter writer = new XmlTextWriter(folder + "\\" + txb_projectName.Text + ".xml", Encoding.UTF8))
             {
@@ -93,6 +88,8 @@ namespace LevelEditor
 				writer.WriteEndElement(); //RESOURCES
 				writer.WriteStartElement("library");
 				writer.WriteEndElement(); //LIBRARY
+				writer.WriteStartElement("textures");
+				writer.WriteEndElement(); //TEXTURES
                 writer.WriteEndElement(); //ROOT
                 writer.WriteEndDocument();
             }
@@ -100,8 +97,9 @@ namespace LevelEditor
 			Utils.ProjectFile.Load(folder + "\\" + txb_projectName.Text + ".xml");
 			Utils.ProjectName = txb_projectName.Text;
 			edit.initPanels();
+			edit.saveProject();
 			
-            this.Close();
+            Close();
         }
 	}
 }

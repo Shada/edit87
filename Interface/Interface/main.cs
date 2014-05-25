@@ -1,10 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using System.IO;
 using System.Xml;
 using System.Globalization;
+using CookComputing.XmlRpc;
 using WeifenLuo.WinFormsUI.Docking;
+using Util = JetBrains.ReSharper.Psi.JavaScript.WinRT.Util;
 
 namespace LevelEditor
 {
@@ -20,28 +23,22 @@ namespace LevelEditor
 		private int windowWidth;
 		private int windowHeight;
 
-		DeserializeDockContent deserializeDockContent;
-        //public TreeNode resourcesRoot = new TreeNode("Root", 0, 0);		
+		DeserializeDockContent deserializeDockContent;	
 
 		public MapEditor()
 		{
-            this.KeyPreview = true;
-
 			InitializeComponent();
-            createStandardControls();
-
 			windowWidth = Size.Width;
 			windowHeight = Size.Height;
-
-            deserializeDockContent = new DeserializeDockContent(Utils.Panels.getpanelByName);
-            mainDockPanel.LoadFromXml(activeLayoutName, deserializeDockContent);
-
-            timer1.Interval = 20;
-            timer1.Start();
+			KeyPreview = true;
 		}
 
 		public void initPanels()
 		{
+			createStandardControls();
+			deserializeDockContent = new DeserializeDockContent(Utils.Panels.getpanelByName);
+			mainDockPanel.LoadFromXml(activeLayoutName, deserializeDockContent);
+
 			PanResources res = (PanResources)Utils.Panels.getpanelByName("LevelEditor.PanResources");
 			res.init(new TreeNode(Utils.ProjectName, 0, 0));
 
@@ -51,6 +48,7 @@ namespace LevelEditor
 			saveToolStripMenuItem.Enabled = true;
 			saveAsToolStripMenuItem.Enabled = true;
 			exportToolStripMenuItem.Enabled = true;
+			timer.Start();
 		}
 
         private void createStandardControls()
@@ -207,9 +205,15 @@ namespace LevelEditor
 
 		private void MapEditor_FormClosing(object sender, FormClosingEventArgs e)
 		{
+			timer.Stop();
 			mainDockPanel.SaveAsXml(activeLayoutName);
 			Utils.Graphics.gfx.cleanUp();
-		}
+
+#if DEBUG
+			if(Utils.ProjectDirectory.Exists)
+				Utils.ProjectDirectory.Delete(true);
+#endif
+		} //TODO: glöm en att ta bort debug kod!
 
 		private void newProjectToolStripMenuItem_Click(object sender, EventArgs e)
 		{
@@ -227,7 +231,7 @@ namespace LevelEditor
 			mapEditorKeyUp(e);
 		}
 
-		private void timer1_Tick(object sender, EventArgs e)
+		private void timer_Tick(object sender, EventArgs e)
 		{
 			timerTick();
 		}
@@ -302,7 +306,6 @@ namespace LevelEditor
 
 		private void importPrefrences()
 		{
-			//throw new NotImplementedException("yet to be implemented");
 			mainDockPanel.SuspendLayout(true);
 			closeAllDocuments();
 			createStandardControls();
@@ -315,13 +318,15 @@ namespace LevelEditor
 			mainDockPanel.ResumeLayout(true, true);
 		}
 
-		private void saveProject()
+		public void saveProject()
 		{
 			PanResources res = (PanResources)Utils.Panels.getpanelByName("LevelEditor.PanResources");
 			TreeNode tnRes = res.resourcesRoot;
 
 			PanLibrary lib = (PanLibrary)Utils.Panels.getpanelByName("LevelEditor.PanLibrary");
 			TreeNode tnLib = lib.libraryRoot;
+
+			PanTextures tex = (PanTextures)Utils.Panels.getpanelByName("LevelEditor.PanTextures");
 
 			XmlNode root = Utils.ProjectFile.DocumentElement;
 			XmlNode xmlHeader = Utils.ProjectFile.SelectSingleNode("/root/header");
@@ -342,12 +347,24 @@ namespace LevelEditor
 
 			writeXLMNode(ref xmlNewLibrary, tnLib);
 
+			XmlNode xmlTextures = Utils.ProjectFile.SelectSingleNode("/root/textures");
+			root.RemoveChild(xmlTextures);
+
+			XmlElement xmlNewTextures = Utils.ProjectFile.CreateElement(null, "textures", null);
+			root.InsertAfter(xmlNewTextures, xmlNewLibrary);
+
+			foreach (Utils.twTag tag in tex.TexTags)
+			{
+				XmlElement elem = writeXMLNodeHelper(null, tag);
+				xmlNewTextures.AppendChild(elem);
+			}
+
 			Utils.ProjectFile.Save(Utils.ProjectDirectory.FullName + "\\test.xml");
 		}
 
 		private void writeXLMNode(ref XmlElement _rootElement, TreeNode _treeNode)
 		{
-			XmlElement elem = writeXMLNodeHelper(_treeNode);
+			XmlElement elem = writeXMLNodeHelper(_treeNode.Text.ToLower(), _treeNode.Tag as Utils.twTag);
 
 			if (_treeNode.Nodes.Count > 0)
 			{
@@ -364,14 +381,14 @@ namespace LevelEditor
 			}
 		}
 
-		private XmlElement writeXMLNodeHelper(TreeNode _treeNode)
+		private XmlElement writeXMLNodeHelper(string _name, Utils.twTag _tag)
 		{
-			Utils.twTag tag = (Utils.twTag)_treeNode.Tag;
-			XmlElement node = Utils.ProjectFile.CreateElement(null, Convert.ToString(tag.Type).ToLower(), null);
+			XmlElement node = Utils.ProjectFile.CreateElement(null, Convert.ToString(_tag.Type).ToLower(), null);
 
-			writeXMLelement("name", "s|" + _treeNode.Text, node);
+			if(_name != null)
+				writeXMLelement("name", "s|" + _name, node);
 
-			foreach (Utils.twTagAttribute twa in tag.Attributes)
+			foreach (Utils.twTagAttribute twa in _tag.Attributes)
 			{
 				switch (twa.dt)
 				{
@@ -424,7 +441,8 @@ namespace LevelEditor
 				tmp = tmp.Substring(0, tmpI);
 
 				Utils.ProjectDirectory = new DirectoryInfo(tmp);
-				readXML();				
+				initPanels();
+				readXML();
 			}
 		}
 

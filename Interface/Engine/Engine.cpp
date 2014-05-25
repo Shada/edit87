@@ -117,7 +117,7 @@ void Engine::rightMouseDown()
 		dx->updateTerrainBuffer(terrain->getVBuffer());
 		break;
 	case Tools::TEXTURING:
-		dx->blendmapBrush((float)brushSize, brushIntensity, mouseWorldPos.xz, "..\\Textures\\lavag.jpg", terrain->getStep());
+		dx->blendmapBrush((float)brushSize, brushIntensity, mouseWorldPos.xz, "..\\Textures\\lavag.png", terrain->getStep());
 		break;
 	}
 

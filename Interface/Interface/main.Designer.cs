@@ -76,7 +76,7 @@
 			this.btn_redo = new System.Windows.Forms.Button();
 			this.btn_undo = new System.Windows.Forms.Button();
 			this.mainDockPanel = new WeifenLuo.WinFormsUI.Docking.DockPanel();
-			this.timer1 = new System.Windows.Forms.Timer(this.components);
+			this.timer = new System.Windows.Forms.Timer(this.components);
 			this.ofd_loadProject = new System.Windows.Forms.OpenFileDialog();
 			this.menuStrip.SuspendLayout();
 			this.shortcutPanel.SuspendLayout();
@@ -111,7 +111,7 @@
 			// newProjectToolStripMenuItem
 			// 
 			this.newProjectToolStripMenuItem.Name = "newProjectToolStripMenuItem";
-			this.newProjectToolStripMenuItem.Size = new System.Drawing.Size(138, 22);
+			this.newProjectToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
 			this.newProjectToolStripMenuItem.Text = "New Project";
 			this.newProjectToolStripMenuItem.Click += new System.EventHandler(this.newProjectToolStripMenuItem_Click);
 			// 
@@ -119,7 +119,7 @@
 			// 
 			this.saveToolStripMenuItem.Enabled = false;
 			this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-			this.saveToolStripMenuItem.Size = new System.Drawing.Size(138, 22);
+			this.saveToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
 			this.saveToolStripMenuItem.Text = "Save";
 			this.saveToolStripMenuItem.Click += new System.EventHandler(this.saveToolStripMenuItem_Click);
 			// 
@@ -127,14 +127,14 @@
 			// 
 			this.saveAsToolStripMenuItem.Enabled = false;
 			this.saveAsToolStripMenuItem.Name = "saveAsToolStripMenuItem";
-			this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(138, 22);
+			this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
 			this.saveAsToolStripMenuItem.Text = "Save as";
 			this.saveAsToolStripMenuItem.Click += new System.EventHandler(this.saveAsToolStripMenuItem_Click);
 			// 
 			// loadToolStripMenuItem
 			// 
 			this.loadToolStripMenuItem.Name = "loadToolStripMenuItem";
-			this.loadToolStripMenuItem.Size = new System.Drawing.Size(138, 22);
+			this.loadToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
 			this.loadToolStripMenuItem.Text = "Load";
 			this.loadToolStripMenuItem.Click += new System.EventHandler(this.loadToolStripMenuItem_Click);
 			// 
@@ -142,7 +142,7 @@
 			// 
 			this.exportToolStripMenuItem.Enabled = false;
 			this.exportToolStripMenuItem.Name = "exportToolStripMenuItem";
-			this.exportToolStripMenuItem.Size = new System.Drawing.Size(138, 22);
+			this.exportToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
 			this.exportToolStripMenuItem.Text = "Export";
 			this.exportToolStripMenuItem.Click += new System.EventHandler(this.exportToolStripMenuItem_Click);
 			// 
@@ -153,7 +153,7 @@
             this.exportPreferencesToolStripMenuItem,
             this.resetToDefaultToolStripMenuItem});
 			this.layoutToolStripMenuItem.Name = "layoutToolStripMenuItem";
-			this.layoutToolStripMenuItem.Size = new System.Drawing.Size(138, 22);
+			this.layoutToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
 			this.layoutToolStripMenuItem.Text = "Layout";
 			// 
 			// importPreferencesToolStripMenuItem
@@ -356,12 +356,11 @@
 			// 
 			// mainDockPanel
 			// 
-			this.mainDockPanel.ActiveAutoHideContent = null;
 			this.mainDockPanel.BackColor = System.Drawing.SystemColors.ControlDarkDark;
 			this.mainDockPanel.DockBackColor = System.Drawing.SystemColors.ControlDark;
 			this.mainDockPanel.Location = new System.Drawing.Point(0, 60);
 			this.mainDockPanel.Name = "mainDockPanel";
-			this.mainDockPanel.Size = new System.Drawing.Size(1264, 628);
+			this.mainDockPanel.Size = new System.Drawing.Size(1264, 622);
 			dockPanelGradient4.EndColor = System.Drawing.SystemColors.ControlLight;
 			dockPanelGradient4.StartColor = System.Drawing.SystemColors.ControlLight;
 			autoHideStripSkin2.DockStripGradient = dockPanelGradient4;
@@ -369,6 +368,7 @@
 			tabGradient8.StartColor = System.Drawing.SystemColors.Control;
 			tabGradient8.TextColor = System.Drawing.SystemColors.ControlDarkDark;
 			autoHideStripSkin2.TabGradient = tabGradient8;
+			autoHideStripSkin2.TextFont = new System.Drawing.Font("Segoe UI", 9F);
 			dockPanelSkin2.AutoHideStripSkin = autoHideStripSkin2;
 			tabGradient9.EndColor = System.Drawing.SystemColors.ControlLightLight;
 			tabGradient9.StartColor = System.Drawing.SystemColors.ControlLightLight;
@@ -382,6 +382,7 @@
 			tabGradient10.TextColor = System.Drawing.SystemColors.ControlText;
 			dockPaneStripGradient2.InactiveTabGradient = tabGradient10;
 			dockPaneStripSkin2.DocumentGradient = dockPaneStripGradient2;
+			dockPaneStripSkin2.TextFont = new System.Drawing.Font("Segoe UI", 9F);
 			tabGradient11.EndColor = System.Drawing.SystemColors.ActiveCaption;
 			tabGradient11.LinearGradientMode = System.Drawing.Drawing2D.LinearGradientMode.Vertical;
 			tabGradient11.StartColor = System.Drawing.SystemColors.GradientActiveCaption;
@@ -408,9 +409,10 @@
 			this.mainDockPanel.Skin = dockPanelSkin2;
 			this.mainDockPanel.TabIndex = 22;
 			// 
-			// timer1
+			// timer
 			// 
-			this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
+			this.timer.Interval = 20;
+			this.timer.Tick += new System.EventHandler(this.timer_Tick);
 			// 
 			// ofd_loadProject
 			// 
@@ -439,6 +441,7 @@
 			this.shortcutPanel.ResumeLayout(false);
 			this.ResumeLayout(false);
 			this.PerformLayout();
+
 		}
 
 		#endregion
@@ -474,7 +477,7 @@
 		private System.Windows.Forms.ImageList imageList1;
 		private WeifenLuo.WinFormsUI.Docking.DockPanel mainDockPanel;
 		private System.Windows.Forms.ToolStripMenuItem resetToDefaultToolStripMenuItem;
-		private System.Windows.Forms.Timer timer1;
+		private System.Windows.Forms.Timer timer;
 		private System.Windows.Forms.OpenFileDialog ofd_loadProject;
 
 

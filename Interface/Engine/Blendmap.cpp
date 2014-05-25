@@ -79,11 +79,11 @@ void Blendmap::createTexture2DArray(int _width, int _height)
 		MessageBox(NULL, "Failed to create texture for render target view.", "RenderDX11 Error", S_OK);
 	}
 
-	addTexture("..\\Textures\\ground.jpg");
+	addTexture("..\\Textures\\ground.png");
 	addTexture("..\\Textures\\grass.png");
-	addTexture("..\\Textures\\lava.jpg");
-	addTexture("..\\Textures\\sand.jpg");
-	addTexture("..\\Textures\\lavag.jpg");
+	addTexture("..\\Textures\\lava.png");
+	addTexture("..\\Textures\\sand.png");
+	addTexture("..\\Textures\\lavag.png");
 	//LoadTextureInToTextureArray("..\\Textures\\lava.jpg", 8);
 
 
