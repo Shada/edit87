@@ -23,7 +23,8 @@ class Engine : public EngineInterface
 private:
 	RenderDX11	*dx;
 	Terrain		*terrain;
-	Camera		*camera;
+	Camera		*camera,
+				*minimapCamera;
 	Quadnode	*node;
 
 	std::vector<Quadnode*> leafNodes;
@@ -34,7 +35,8 @@ private:
 
 	Tools selectedTool;
 
-	bool minmaxCalcDone;
+	bool minmaxCalcDone, lButtprev, rButtprev;
+	int brushSize, brushIntensity;
 	std::thread minmaxCalc;
 
 	HWND hWnd;
@@ -51,6 +53,13 @@ private:
 	/* Generic objects */
 	map< unsigned int, Composition* >	m_compositions;
 
+	void rightMouseDown();
+	void leftMouseDown();
+	void rightMouseUp();
+	void leftMouseUp();
+	bool rectIntersect(RECT _r, POINT _p);
+	std::string brushTexture;
+
 public:
 	Engine();
 	~Engine();
@@ -58,16 +67,18 @@ public:
 	void init();
 	void createTerrain(int width, int height, float pointStep, bool fromPerlinMap, int seed);
 
-	void setRect(RECT t);
 	void renderScene()						{ dx->renderScene(); }
+	void renderScene(std::string name)		{ dx->renderScene(name); }
 	void move(float alongX, float alongZ);
 
+	void setBrushIntensity(int _val);
+	void setBrushSize(int _val);
+	void setBrushTexture(std::string _val);
+
 	/* Mouse calls */ // Maybe we want to handle mouse up and down entirely in c#. Discuss this with other ppl
-	void rightMouseDown(int brushSize, float brushIntensity);
-	void leftMouseDown(int brushSize, float brushIntensity);
-	void rightMouseUp();
-	void leftMouseUp();
-	void updateMouse(POINT mouse);
+
+	void resizeWindow(int width, int height, std::string name);
+	void updateMouse();
 
 	/* Tool calls */
 	void setTextureTool()					{ selectedTool = Tools::TEXTURING;		}
@@ -75,5 +86,7 @@ public:
 	void setElevationTool()					{ selectedTool = Tools::ELEVATION;		}
 	void setNormalizerTool()				{ selectedTool = Tools::NORMALIZER;		}
 	void setObjectPlacerTool()				{ selectedTool = Tools::OBJECTPLACER;	}
-	void addHandels(HWND _hWnd, std::string _name);
+
+	void addHandle(HWND hWnd, std::string name, int width, int height);
+	void updateHandle(HWND hWnd, std::string name, int width, int height);
 };

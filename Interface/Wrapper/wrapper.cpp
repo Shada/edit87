@@ -7,28 +7,31 @@ namespace wrap
 {
 	GraphicsCommunicator::GraphicsCommunicator()
 	{
+		gfx = EngineFactory::createEngine();
 	}
 
-	void GraphicsCommunicator::setRenderArea(int x, int y, int width, int height)
+	std::string GraphicsCommunicator::toString(System::String^ text)
 	{
-		RECT r;
-		r.top = y;
-		r.left = x; 
-		r.bottom = y + height;
-		r.right = x + width;
-		gfx->setRect(r);
-		//gfx->createTerrain(256, 256, 5.f, false);
+		msclr::interop::marshal_context context;
+		return context.marshal_as<std::string>(text);
 	}
 
-	void GraphicsCommunicator::setHandle(System::IntPtr _handle, System::String^ _name)
+	void GraphicsCommunicator::addHandle(System::IntPtr _handle, System::String^ _name, int _width, int _height)
 	{
 		HWND hWnd = (HWND)((void*)_handle);
-		gfx = EngineFactory::createEngine();
-		msclr::interop::marshal_context context;
-		std::string standardString = context.marshal_as<std::string>(_name);
-		gfx->addHandels(hWnd, standardString);
+		gfx->addHandle(hWnd, toString(_name), _width, _height);
+	}
 
-		setRenderArea(232, 58, 1048, 670);
+	void GraphicsCommunicator::updateHandle(System::IntPtr _handle, System::String^ _name, int _width, int _height)
+	{
+		HWND hWnd = (HWND)((void*)_handle);
+
+		gfx->updateHandle(hWnd, toString(_name), _width, _height);
+	}
+
+	void GraphicsCommunicator::resizeWindow(int _width, int _height, System::String ^_name)
+	{
+		gfx->resizeWindow(_width, _height, toString(_name));
 	}
 
 	void GraphicsCommunicator::createTerrain(int width, int height, float pointStep, bool fromPerlinMap, int seed)
@@ -41,41 +44,44 @@ namespace wrap
 		gfx->renderScene();
 	}
 
+	void GraphicsCommunicator::renderScene(System::String ^_name)
+	{
+		gfx->renderScene(toString(_name));
+	}
+
 	void GraphicsCommunicator::moveCamera(int xDir, int zDir)
 	{
 		gfx->move((float)xDir, (float)zDir);
 	}
 
-	void GraphicsCommunicator::rightMouseDown(int brushSize, int brushIntensity)
+	void GraphicsCommunicator::setBrushIntensity(int _val)
 	{
-		gfx->rightMouseDown(brushSize, (float)brushIntensity / 100);
+		gfx->setBrushIntensity(_val);
 	}
 
-	void GraphicsCommunicator::leftMouseDown(int brushSize, int brushIntensity)
+	void GraphicsCommunicator::setBrushSize(int _val)
 	{
-		gfx->leftMouseDown(brushSize, (float)brushIntensity / 100);
+		gfx->setBrushSize(_val);
 	}
 
-	void GraphicsCommunicator::rightMouseUp()
+	void GraphicsCommunicator::setBrushTexture(System::String^ _name)
 	{
-		gfx->rightMouseUp();
+		msclr::interop::marshal_context context;
+		std::string standardString = context.marshal_as<std::string>(_name);
+		gfx->setBrushTexture(standardString);
 	}
 
-	void GraphicsCommunicator::leftMouseUp()
+	void GraphicsCommunicator::updateMouse()
 	{
-		gfx->leftMouseUp();
+		gfx->updateMouse();
 	}
-
-	void GraphicsCommunicator::updateMouse(int x, int y)
+	
+	void GraphicsCommunicator::cleanUp()
 	{
-		POINT p;
-		p.x = x;
-		p.y = y;
-		gfx->updateMouse(p);
+		EngineFactory::deleteEngine();
 	}
 
 	GraphicsCommunicator::~GraphicsCommunicator()
 	{
-		delete(gfx);
 	}
 }

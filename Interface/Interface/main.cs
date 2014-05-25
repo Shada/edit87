@@ -1,22 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;
 using System.Xml;
-using System.Diagnostics;
-using WeifenLuo.WinFormsUI.Docking;
 using System.Globalization;
-
-using Microsoft.DirectX;
-
-using wrap;
+using WeifenLuo.WinFormsUI.Docking;
 
 namespace LevelEditor
 {
@@ -39,11 +27,15 @@ namespace LevelEditor
 
 	public partial class MapEditor : Form
     {
-        public const string activeLayoutName = "PanelLayout.xml";
+        const string activeLayoutName = "PanelLayout.xml";
 
-        private bool forwardKey, backwardKey, leftKey, rightKey, leftMouseDown, rightMouseDown;
+		private bool forwardKey;
+		private bool backwardKey;
+		private bool leftKey;
+		private bool rightKey;
 
-		private int mousePosX, mousePosY, windowWidth, windowHeight;
+		private int windowWidth;
+		private int windowHeight;
 
         DeserializeDockContent deserializeDockContent;
 
@@ -58,9 +50,6 @@ namespace LevelEditor
 			InitializeComponent();
             createStandardControls();
 
-			//brushSize = (int)nud_BrushSize.Value;
-			//brushIntensity = (int)nud_brushIntensity.Value;
-
 			windowWidth = Size.Width;
 			windowHeight = Size.Height;
 
@@ -68,7 +57,6 @@ namespace LevelEditor
 
             mainDockPanel.LoadFromXml(activeLayoutName, deserializeDockContent);
 
-            timer1.Interval = 20;
             timer1.Start();
 
             toolTips = new ToolTip();
@@ -100,12 +88,15 @@ namespace LevelEditor
 
         private void createStandardControls()
         {
-			Utils.Panels.addPanel(new PanBrushes(),     typeof(PanBrushes).ToString(),      brushToolsToolStripMenuItem);
-			Utils.Panels.addPanel(new PanTextures(),    typeof(PanTextures).ToString(),     texturesToolToolStripMenuItem);
-			Utils.Panels.addPanel(new PanResources(),   typeof(PanResources).ToString(),    resourcesToolToolStripMenuItem);
-			Utils.Panels.addPanel(new PanRender(this),  typeof(PanRender).ToString(),       null);
-			Utils.Panels.addPanel(new PanLibrary(),     typeof(PanLibrary).ToString(),      libraryToolStripMenuItem);
-			Utils.Panels.addPanel(new PanProperties(),  typeof(PanProperties).ToString(),   propertiesToolStripMenuItem);
+			Utils.Panels.addPanel(new PanTextures(),            typeof(PanTextures).ToString(),         texturesToolToolStripMenuItem);
+			Utils.Panels.addPanel(new PanResources(),           typeof(PanResources).ToString(),        resourcesToolToolStripMenuItem);
+			Utils.Panels.addPanel(new PanRender(this),          typeof(PanRender).ToString(),           null);
+            Utils.Panels.addPanel(new PanAlternateView(this),   typeof(PanAlternateView).ToString(),    null);
+			Utils.Panels.addPanel(new PanLibrary(),             typeof(PanLibrary).ToString(),          libraryToolStripMenuItem);
+			Utils.Panels.addPanel(new PanBrushes(),             typeof(PanBrushes).ToString(),          brushToolsToolStripMenuItem);
+			Utils.Panels.addPanel(new PanProperties(),          typeof(PanProperties).ToString(),       propertiesToolStripMenuItem);
+
+            Utils.Graphics.gfx.createTerrain(256, 256, 5, false, 0);
         }
 
 		#region events
@@ -254,28 +245,13 @@ namespace LevelEditor
 		private void MapEditor_FormClosing(object sender, FormClosingEventArgs e)
 		{
 			mainDockPanel.SaveAsXml(activeLayoutName);
+			Utils.Graphics.gfx.cleanUp();
 		}
 
 		private void newProjectToolStripMenuItem_Click(object sender, EventArgs e)
 		{
 			NewProject project = new NewProject(this);
 			project.Show();
-		}
-
-		private void MapEditor_MouseUp(object sender, MouseEventArgs e)
-		{
-			mapEditorMouseUp(e);
-		}
-
-		private void MapEditor_MouseMove(object sender, MouseEventArgs e)
-		{
-			mousePosX = e.X;
-			mousePosY = e.Y;
-		}
-
-		private void MapEditor_MouseDown(object sender, MouseEventArgs e)
-		{
-			mapEditorMouseDown(e);
 		}
 
 		private void MapEditor_KeyDown(object sender, KeyEventArgs e)
@@ -306,28 +282,6 @@ namespace LevelEditor
 		#endregion
 
 		#region non-events
-
-		private void mapEditorMouseDown(MouseEventArgs e)
-		{
-			if (!rightMouseDown || !leftMouseDown)
-			{
-				if (!leftMouseDown && e.Button == System.Windows.Forms.MouseButtons.Left)
-					leftMouseDown = true;
-				else if (!rightMouseDown && e.Button == System.Windows.Forms.MouseButtons.Right)
-					rightMouseDown = true;
-			}
-		}
-
-		private void mapEditorMouseUp(MouseEventArgs e)
-		{
-			if (rightMouseDown || leftMouseDown)
-			{
-				if (leftMouseDown && e.Button == System.Windows.Forms.MouseButtons.Left)
-					leftMouseDown = false;
-				else if (rightMouseDown && e.Button == System.Windows.Forms.MouseButtons.Right)
-					rightMouseDown = false;
-			}
-		}
 
 		private void mapEditorLoad()
 		{
@@ -370,6 +324,7 @@ namespace LevelEditor
 			PanTextures texture = (PanTextures)Utils.Panels.getpanelByName("LevelEditor.PanTextures");
 			PanResources resources = (PanResources)Utils.Panels.getpanelByName("LevelEditor.PanResources");
 			PanRender render = (PanRender)Utils.Panels.getpanelByName("LevelEditor.PanRender");
+            PanAlternateView minimap = (PanAlternateView)Utils.Panels.getpanelByName("LevelEditor.PanAlternateView");
 			PanLibrary library = (PanLibrary)Utils.Panels.getpanelByName("LevelEditor.PanLibrary");
 			PanProperties properties = (PanProperties)Utils.Panels.getpanelByName("LevelEditor.PanProperties");
 
@@ -378,6 +333,7 @@ namespace LevelEditor
 			resources.Show(texture.Pane, DockAlignment.Bottom, 0.50);
 			render.Show(mainDockPanel, DockState.Document);
 			library.Show(mainDockPanel, DockState.DockLeft);
+            minimap.Show(library.Pane, DockAlignment.Bottom, 0.5);
 			properties.Show(library.Pane, DockAlignment.Bottom, 0.50);
 
             brushToolsToolStripMenuItem.Checked = true;
@@ -661,21 +617,11 @@ namespace LevelEditor
 			int zDir = rightKey ? 1 : leftKey ? -1 : 0;
 			bool mouseMove = xDir != 0 || zDir != 0;
 			if (mouseMove)
-				Utils.Graphics.gfx.moveCamera(xDir, zDir);			
+				Utils.Graphics.gfx.moveCamera(xDir, zDir);
 
-			if (rightMouseDown && !leftMouseDown)
-			{
-				PanBrushes brush = (PanBrushes)Utils.Panels.getpanelByName("LevelEditor.PanBrushes");
-				Utils.Graphics.gfx.rightMouseDown(brush.BrushSize, brush.BrushIntensity);
-			}
-			else if (leftMouseDown && !rightMouseDown)
-			{
-				PanBrushes brush = (PanBrushes)Utils.Panels.getpanelByName("LevelEditor.PanBrushes");
-				Utils.Graphics.gfx.leftMouseDown(brush.BrushSize, brush.BrushIntensity);
-			}				
-
-			if (rightMouseDown || leftMouseDown || mouseMove)
-				Utils.Graphics.gfx.renderScene();
+			Utils.Graphics.gfx.updateMouse();
+			Utils.Graphics.gfx.renderScene();
+            Utils.Graphics.gfx.renderScene("minimap");
 		}        
 
 		private void resizeWindow()
@@ -808,6 +754,7 @@ namespace LevelEditor
         {
             if (mainDockPanel.DocumentStyle == DocumentStyle.SystemMdi)
             {
+                timer1.Stop();
                 foreach (Form form in MdiChildren)
                     form.Close();
             }
@@ -825,7 +772,9 @@ namespace LevelEditor
 		private void MapEditor_Move(object sender, EventArgs e)
 		{
 			PanRender render = (PanRender)Utils.Panels.getpanelByName("LevelEditor.PanRender");
+		    PanAlternateView minimap = (PanAlternateView) Utils.Panels.getpanelByName("LevelEditor.PanAlternateView");
 			render.resizeRenderPanel();
+		    minimap.resizeRenderPanel();
 		}
 
 		#endregion

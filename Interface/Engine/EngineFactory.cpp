@@ -3,9 +3,9 @@
 
 EngineInterface* EngineFactory::gfx = NULL;
 
-void EngineFactory::addHandle(HWND _hWnd, std::string _name)
+void EngineFactory::addHandle(HWND _hWnd, std::string _name, int width, int height)
 {
-	gfx->addHandels(_hWnd, _name);
+	gfx->addHandle(_hWnd, _name, width, height);
 }
 
 EngineInterface *EngineFactory::createEngine()

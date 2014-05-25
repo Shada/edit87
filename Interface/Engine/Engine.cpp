@@ -1,18 +1,15 @@
 #include "Engine.h"
 
-
 Engine::Engine()
 {
-	selectedTool = Tools::SELECTOR;
-	minmaxCalcDone = true;
-
+	mouseWorldPos = elm::vec3(200, 0, 1000);
+	brushTexture = "";
 	camera = nullptr;
+	minimapCamera = nullptr;
 	terrain = nullptr;
 	dx = nullptr;
-
-	//dx = new RenderDX11(hWnd);
-
-	mouseWorldPos = elm::vec3(200, 0, 1000);
+	selectedTool = Tools::ELEVATION;
+	minmaxCalcDone = true;
 }
 
 void Engine::init()
@@ -25,23 +22,25 @@ void Engine::init()
 	c.setProperty(co);
 }
 
-void Engine::setRect(RECT t)
-{
-	r = t;
-	dx->setRect(t);
-	if(camera)
-		camera->resizeWindow(r.right - r.left, r.bottom - r.top);
-}
-
-void Engine::addHandels(HWND _hWnd, std::string _name)
+void Engine::addHandle(HWND hWnd, std::string name, int width, int height)
 {
 	if(!dx)
 		dx = new RenderDX11();
 	
-	dx->addHandle(_hWnd, _name);
+	dx->addHandle(hWnd, name, width, height);
+	
+	if(name == "main")
+		this->hWnd = hWnd;
 }
 
+void Engine::updateHandle(HWND hWnd, std::string name, int width, int height)
+{
+	dx->updateHandle(hWnd, name, width, height);
+	dx->createAndSetTerrainBuffers(terrain->getVBuffer(), terrain->getIBuffer());
 
+	if(name == "main")
+		this->hWnd = hWnd;
+}
 
 void Engine::createTerrain(int width, int height, float pointStep, bool fromPerlinMap, int seed)
 {
@@ -61,16 +60,48 @@ void Engine::createTerrain(int width, int height, float pointStep, bool fromPerl
 	if(!camera)
 		camera = new Camera(width, height, terrain);
 
+	if(!minimapCamera)
+		minimapCamera = new Camera(width, height, terrain);
+
+	minimapCamera->setEyePos(elm::vec3(600, 800, -100));
+
 	dx->setTerrainIndexCount(terrain->getIndexCount());
-	dx->setCamera(camera);
+	dx->setCamera(camera, "main");
+	dx->setCamera(minimapCamera, "minimap");
 }
 
-void Engine::leftMouseDown(int brushSize, float brushIntensity)
+void Engine::resizeWindow(int width, int height, std::string name)
+{
+	if(name == "main")
+		camera->resizeWindow(width, height);
+	else if(name == "minimap")
+		minimapCamera->resizeWindow(width, height);
+
+	dx->resizeSurface(width, height, name);
+	dx->createAndSetTerrainBuffers(terrain->getVBuffer(), terrain->getIBuffer());
+}
+
+void Engine::setBrushIntensity(int _val)
+{
+	brushIntensity = _val;
+}
+
+void Engine::setBrushSize(int _val)
+{
+	brushSize = _val;
+}
+
+void Engine::setBrushTexture(std::string _val)
+{
+	brushTexture = _val;
+}
+
+void Engine::leftMouseDown()
 {
 	switch(selectedTool)
 	{
 	case Tools::ELEVATION:
-		terrain->applyElevationBrush((float)brushSize, brushIntensity, mouseWorldPos.xz);
+		terrain->applyElevationBrush((float)brushSize, (float)brushIntensity / 100, mouseWorldPos.xz);
 		dx->updateTerrainBuffer(terrain->getVBuffer());
 		break;
 	case Tools::NORMALIZER:
@@ -86,16 +117,14 @@ void Engine::leftMouseDown(int brushSize, float brushIntensity)
 	}
 
 	camera->move(elm::vec2(0));
-
-	
 }
 
-void Engine::rightMouseDown(int brushSize, float brushIntensity)
+void Engine::rightMouseDown()
 {
 	switch(selectedTool)
 	{
 	case Tools::ELEVATION:
-		terrain->applyElevationBrush((float)brushSize, -brushIntensity, mouseWorldPos.xz);
+		terrain->applyElevationBrush((float)brushSize, -(float)brushIntensity / 100, mouseWorldPos.xz);
 		dx->updateTerrainBuffer(terrain->getVBuffer());
 		break;
 	case Tools::NORMALIZER:
@@ -107,7 +136,6 @@ void Engine::rightMouseDown(int brushSize, float brushIntensity)
 		break;
 	}
 
-
 	if(minmaxCalcDone)
 	{
 		minmaxCalc = std::thread(&Engine::findMinMaxValues, this);
@@ -115,7 +143,6 @@ void Engine::rightMouseDown(int brushSize, float brushIntensity)
 	}
 
 	camera->move(elm::vec2(0));
-
 }
 
 void Engine::leftMouseUp()
@@ -148,10 +175,26 @@ void Engine::move(float alongX, float alongZ)
 	mouseWorldPos = camera->getWorldPos(mousePos.x, mousePos.y, node);
 }
 
-void Engine::updateMouse(POINT mouse)
+void Engine::updateMouse()
 {
-	mousePos = mouse;
-	mouseWorldPos = camera->getWorldPos(mousePos.x, mousePos.y, node);
+	GetCursorPos(&mousePos);
+	RECT win;
+	GetWindowRect(hWnd, &win);
+
+	bool lButt = (GetKeyState(VK_LBUTTON) & 0xA000);
+	bool rButt = (GetKeyState(VK_RBUTTON) & 0xA000);
+
+	mouseWorldPos = camera->getWorldPos(mousePos.x - win.left, mousePos.y - win.top, node);
+
+	if(lButt && rectIntersect(win, mousePos))
+		leftMouseDown();
+	else
+		leftMouseUp();		
+
+	if(rButt && rectIntersect(win, mousePos))
+		rightMouseDown();
+	else
+		rightMouseUp();	
 }
 
 void Engine::findMinMaxValues()
@@ -159,6 +202,11 @@ void Engine::findMinMaxValues()
 	minmaxCalcDone = false;
 	terrain->findMinMaxValues(leafNodes);
 	minmaxCalcDone = true;
+}
+
+bool Engine::rectIntersect(RECT _r, POINT _p)
+{
+	return (_r.bottom > _p.y && _r.top < _p.y && _r.left < _p.x && _r.right > _p.x);
 }
 
 Engine::~Engine()

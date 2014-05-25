@@ -454,6 +454,7 @@
             // 
             // timer1
             // 
+            this.timer1.Interval = 30;
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
             // ofd_loadProject
@@ -476,9 +477,6 @@
             this.Load += new System.EventHandler(this.MapEditor_Load);
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.MapEditor_KeyDown);
             this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.MapEditor_KeyUp);
-            this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.MapEditor_MouseDown);
-            this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.MapEditor_MouseMove);
-            this.MouseUp += new System.Windows.Forms.MouseEventHandler(this.MapEditor_MouseUp);
             this.Move += new System.EventHandler(this.MapEditor_Move);
             this.Resize += new System.EventHandler(this.MapEditor_Resize);
             this.menuStrip.ResumeLayout(false);

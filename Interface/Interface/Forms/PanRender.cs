@@ -8,6 +8,7 @@ namespace LevelEditor
     public partial class PanRender : DockContent
     {
 		MapEditor editor;
+        private IntPtr win;
 
 		public PanRender(MapEditor _editor)
         {
@@ -16,9 +17,10 @@ namespace LevelEditor
 		
 			resizeRenderPanel();
 
+		    win = drawSurface.Handle;
+
 			Utils.Graphics.Init();
-			Utils.Graphics.Sethandle(drawSurface.Handle, "main");
-			Utils.Graphics.gfx.createTerrain(256, 256, 5, false, 0);
+            Utils.Graphics.Addhandle(win, "main", this.Size.Width, this.Size.Height);
         }
 
 		public void resizeRenderPanel()
@@ -29,6 +31,9 @@ namespace LevelEditor
 													editor.Bounds.Y + this.Bounds.Y + 55,
 													this.Bounds.Width + 1,
 													this.Bounds.Height - 6);
+
+                if (Utils.Graphics.gfx != null && drawSurface.Size.Width != 0)
+                    Utils.Graphics.gfx.resizeWindow(drawSurface.Size.Width, drawSurface.Size.Height, "main");
 			}
 		}
 
@@ -44,7 +49,11 @@ namespace LevelEditor
 
 		private void PanRender_DockStateChanged(object sender, EventArgs e)
 		{
-			//Utils.Graphics.Sethandle(drawSurface.Handle, "main");
+            if (drawSurface.Handle != win)
+		    {
+		        win = drawSurface.Handle;
+                Utils.Graphics.gfx.updateHandle(win, "main", drawSurface.Size.Width, drawSurface.Size.Height);
+		    }
 		}
 
         private void PanRender_FormClosing(object sender, FormClosingEventArgs e)

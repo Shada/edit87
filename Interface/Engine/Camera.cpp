@@ -31,10 +31,17 @@ Camera::Camera(int width, int height, const Terrain *terrain)
 	frustum = elm::buildViewFrustum(mView, mProj);
 }
 
+void Camera::resizeWindow(int width, int height)
+{
+	this->width = width;
+	this->height = height;
+	elm::perspectiveFovLH(mProj, ELM_PI / 4, (float)width / height, 1.f, 20000.f);
+}
+
 void Camera::move(elm::vec2 direction)
 {
 	if(direction != 0)
-		vEye.xz += elm::normalize(direction.y * vRight.xz + direction.x * vLook.xz) * 5;
+		vEye.xz += elm::normalize(direction.y * vRight.xz + direction.x * vLook.xz) * 7;
 
 	if(vEye.x > maxX)	vEye.x = maxX;
 	if(vEye.x < minX)	vEye.x = minX;

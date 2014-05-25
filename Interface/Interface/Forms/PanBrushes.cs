@@ -22,6 +22,9 @@ namespace LevelEditor
         public PanBrushes()
         {
             InitializeComponent();
+
+            Utils.Graphics.gfx.setBrushIntensity((int)nud_brushIntensity.Value);
+			Utils.Graphics.gfx.setBrushSize((int)nud_BrushSize.Value);
         }
 
         private void PanBrushes_SizeChanged(object sender, EventArgs e)
@@ -37,12 +40,14 @@ namespace LevelEditor
 		{
 			NumericUpDown send = (NumericUpDown)sender;
 			brushSize = (int)send.Value;
+            Utils.Graphics.gfx.setBrushSize(brushSize);
 		}
 
 		private void nud_brushIntensity_ValueChanged(object sender, EventArgs e)
 		{
 			NumericUpDown send = (NumericUpDown)sender;
 			brushIntensity = (int)send.Value;
+            Utils.Graphics.gfx.setBrushIntensity(brushIntensity);
 		}
 
         private void PanBrushes_FormClosing(object sender, FormClosingEventArgs e)

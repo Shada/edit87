@@ -12,6 +12,7 @@
     <AssemblyName>Interface</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -24,7 +25,6 @@
     <MapFileExtensions>true</MapFileExtensions>
     <ApplicationRevision>0</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
@@ -83,8 +83,9 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
-    <Reference Include="WeifenLuo.WinFormsUI.Docking">
-      <HintPath>.\WeifenLuo.WinFormsUI.Docking.dll</HintPath>
+    <Reference Include="WeifenLuo.WinFormsUI.Docking, Version=2.9.0.0, Culture=neutral, PublicKeyToken=5cded1a1a0a7b481, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\DockPanelSuite.2.9.0.0\lib\net40\WeifenLuo.WinFormsUI.Docking.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -93,6 +94,12 @@
     </Compile>
     <Compile Include="About.Designer.cs">
       <DependentUpon>About.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\PanAlternateView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\PanAlternateView.Designer.cs">
+      <DependentUpon>PanAlternateView.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\PanBrushes.cs">
       <SubType>Form</SubType>
@@ -145,9 +152,7 @@
     <Compile Include="NameFolder.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="NameFolder.Designer.cs">
-      <DependentUpon>NameFolder.cs</DependentUpon>
-    </Compile>
+    <Compile Include="NameFolder.Designer.cs" />
     <Compile Include="NewProject.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -168,8 +173,12 @@
     <EmbeddedResource Include="About.resx">
       <DependentUpon>About.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Forms\PanAlternateView.resx">
+      <DependentUpon>PanAlternateView.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\PanBrushes.resx">
       <DependentUpon>PanBrushes.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\PanLibrary.resx">
       <DependentUpon>PanLibrary.cs</DependentUpon>
@@ -185,16 +194,16 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\PanTextures.resx">
       <DependentUpon>PanTextures.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="ImportResource.resx">
       <DependentUpon>ImportResource.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="main.resx">
       <DependentUpon>main.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="NameFolder.resx">
-      <DependentUpon>NameFolder.cs</DependentUpon>
-    </EmbeddedResource>
+    <EmbeddedResource Include="NameFolder.resx" />
     <EmbeddedResource Include="NewProject.resx">
       <DependentUpon>NewProject.cs</DependentUpon>
     </EmbeddedResource>
@@ -265,23 +274,7 @@
   <ItemGroup>
     <None Include="Images\Editor\undo.png" />
   </ItemGroup>
-  <ItemGroup>
-    <BootstrapperPackage Include=".NETFramework,Version=v4.5">
-      <Visible>False</Visible>
-      <ProductName>Microsoft .NET Framework 4.5 %28x86 and x64%29</ProductName>
-      <Install>true</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
-      <Install>false</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.5 SP1</ProductName>
-      <Install>false</Install>
-    </BootstrapperPackage>
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <ProjectReference Include="..\Wrapper\cliproject.vcxproj">
       <Project>{3faa1ea8-c6e5-4a6e-915c-b9bd387fcb05}</Project>
@@ -304,6 +297,9 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="license.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
