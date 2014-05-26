@@ -277,7 +277,7 @@ void Terrain::applyElevationBrush(float radius, float intensity, elm::vec2 origi
 			if(len < radius)
 			{
 				float val = std::cos(pow(len / radius * 1.75f, 2)) + 1;
-				vBuffer.at(index).pos.y = points.at(index).y += val * intensity;
+				vBuffer.at(index).pos.y = points.at(index).y += val * intensity * 2;
 			}
 		}
 	}
@@ -330,7 +330,7 @@ void Terrain::applyNormalizeBrush(float radius, float intensity, elm::vec2 origi
 				float val = std::cos(pow(len / radius * 1.75f, 2)) + 1;
 				float diff = normalizerHeight - vBuffer.at(index).pos.y;
 				if(abs(diff) > 1) diff = diff < 0 ? -1 : 1;
-				vBuffer.at(index).pos.y = points.at(index).y += diff * intensity * val;
+				vBuffer.at(index).pos.y = points.at(index).y += diff * intensity * val * 2;
 			}
 		}
 	}

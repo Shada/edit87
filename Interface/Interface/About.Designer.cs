@@ -28,30 +28,30 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this.label1 = new System.Windows.Forms.Label();
-			this.SuspendLayout();
-			// 
-			// label1
-			// 
-			this.label1.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.label1.Location = new System.Drawing.Point(0, 0);
-			this.label1.Name = "label1";
-			this.label1.Size = new System.Drawing.Size(284, 262);
-			this.label1.TabIndex = 0;
-			this.label1.Text = "We made this thing!\r\n\r\nOssian Petri\r\nVictor Stenberg\r\nChristopher Petersson\r\nTobi" +
-    "as Andersson\r\nEmil Bertilsson\r\nStefan Grahn\r\nJimy Gusavsson\r\nMartin Säll\r\nRickar" +
-    "d Fridvall";
-			this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-			// 
-			// About
-			// 
-			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(284, 262);
-			this.Controls.Add(this.label1);
-			this.Name = "About";
-			this.Text = "About";
-			this.ResumeLayout(false);
+            this.label1 = new System.Windows.Forms.Label();
+            this.SuspendLayout();
+            // 
+            // label1
+            // 
+            this.label1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.label1.Location = new System.Drawing.Point(0, 0);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(284, 262);
+            this.label1.TabIndex = 0;
+            this.label1.Text = "We made this thing!\r\n\r\nOssian Petri\r\nVictor Stenberg\r\nChristopher Petersson\r\nTobi" +
+    "as Andersson\r\nEmil Bertilsson\r\nStefan Grahn\r\nJimmy Gustafsson\r\nMartin Säll\r\nRick" +
+    "ard Fridvall";
+            this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // About
+            // 
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.ClientSize = new System.Drawing.Size(284, 262);
+            this.Controls.Add(this.label1);
+            this.Name = "About";
+            this.Text = "About";
+            this.ResumeLayout(false);
 
 		}
 

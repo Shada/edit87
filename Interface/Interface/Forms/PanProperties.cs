@@ -50,5 +50,10 @@ namespace LevelEditor
         {
             resizeWindow();
         }
+
+        private void PanProperties_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            Utils.Panels.removePanel(this.GetType().ToString());
+        }
     }
 }

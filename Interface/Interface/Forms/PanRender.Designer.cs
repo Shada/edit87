@@ -51,10 +51,8 @@
 			this.ShowInTaskbar = false;
 			this.Text = "PanRender";
 			this.DockStateChanged += new System.EventHandler(this.PanRender_DockStateChanged);
-			this.Load += new System.EventHandler(this.PanRender_Load);
 			this.SizeChanged += new System.EventHandler(this.PanRender_SizeChanged);
 			this.ResumeLayout(false);
-
         }
 
         #endregion

@@ -27,10 +27,6 @@ namespace LevelEditor
 			Utils.Graphics.gfx.setBrushSize((int)nud_BrushSize.Value);
         }
 
-	    private void PanBrushes_Load(object sender, EventArgs e)
-        {
-        }
-
         private void PanBrushes_SizeChanged(object sender, EventArgs e)
         {
             resizeWindow();
@@ -53,5 +49,10 @@ namespace LevelEditor
 			brushIntensity = (int)send.Value;
             Utils.Graphics.gfx.setBrushIntensity(brushIntensity);
 		}
+
+        private void PanBrushes_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            Utils.Panels.removePanel(this.GetType().ToString());
+        }
     }
 }

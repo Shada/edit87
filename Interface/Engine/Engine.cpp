@@ -5,6 +5,7 @@ Engine::Engine()
 	mouseWorldPos = elm::vec3(200, 0, 1000);
 	brushTexture = "";
 	camera = nullptr;
+	minimapCamera = nullptr;
 	terrain = nullptr;
 	dx = nullptr;
 	selectedTool = Tools::ELEVATION;
@@ -21,20 +22,24 @@ void Engine::init()
 	c.setProperty(co);
 }
 
-void Engine::addHandels(HWND hWnd, std::string name, int width, int height)
+void Engine::addHandle(HWND hWnd, std::string name, int width, int height)
 {
 	if(!dx)
 		dx = new RenderDX11();
 	
 	dx->addHandle(hWnd, name, width, height);
-	this->hWnd = hWnd;
+	
+	if(name == "main")
+		this->hWnd = hWnd;
 }
 
 void Engine::updateHandle(HWND hWnd, std::string name, int width, int height)
 {
 	dx->updateHandle(hWnd, name, width, height);
 	dx->createAndSetTerrainBuffers(terrain->getVBuffer(), terrain->getIBuffer());
-	this->hWnd = hWnd;
+
+	if(name == "main")
+		this->hWnd = hWnd;
 }
 
 void Engine::createTerrain(int width, int height, float pointStep, bool fromPerlinMap, int seed)
@@ -55,14 +60,24 @@ void Engine::createTerrain(int width, int height, float pointStep, bool fromPerl
 	if(!camera)
 		camera = new Camera(width, height, terrain);
 
+	if(!minimapCamera)
+		minimapCamera = new Camera(width, height, terrain);
+
+	minimapCamera->setEyePos(elm::vec3(600, 800, -100));
+
 	dx->setTerrainIndexCount(terrain->getIndexCount());
-	dx->setCamera(camera);
+	dx->setCamera(camera, "main");
+	dx->setCamera(minimapCamera, "minimap");
 }
 
-void Engine::resizeWindow(int width, int height)
+void Engine::resizeWindow(int width, int height, std::string name)
 {
-	camera->resizeWindow(width, height);
-	dx->resizeSurface(width, height, "main");
+	if(name == "main")
+		camera->resizeWindow(width, height);
+	else if(name == "minimap")
+		minimapCamera->resizeWindow(width, height);
+
+	dx->resizeSurface(width, height, name);
 	dx->createAndSetTerrainBuffers(terrain->getVBuffer(), terrain->getIBuffer());
 }
 
@@ -121,7 +136,6 @@ void Engine::rightMouseDown()
 		break;
 	}
 
-
 	if(minmaxCalcDone)
 	{
 		minmaxCalc = std::thread(&Engine::findMinMaxValues, this);
@@ -129,7 +143,6 @@ void Engine::rightMouseDown()
 	}
 
 	camera->move(elm::vec2(0));
-
 }
 
 void Engine::leftMouseUp()

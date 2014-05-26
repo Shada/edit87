@@ -8,9 +8,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using CookComputing.XmlRpc;
-using JetBrains.ProjectModel.Properties.Managed;
-using JetBrains.Util;
 using WeifenLuo.WinFormsUI.Docking;
 
 namespace LevelEditor
@@ -81,6 +78,11 @@ namespace LevelEditor
         private void resizeWindow()
         {
             lv_Textures.Size = new Size(Size.Width - lv_TexturesSizeDiff, Size.Height - lv_TexturesSizeDiff - 24);
+        }
+
+        private void PanTextures_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            Utils.Panels.removePanel(this.GetType().ToString());
         }
 
 		private void lv_Textures_SelectedIndexChanged(object sender, EventArgs e)
