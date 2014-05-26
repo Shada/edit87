@@ -55,7 +55,18 @@ namespace LevelEditor
 
             deserializeDockContent = new DeserializeDockContent(Utils.Panels.getpanelByName);
 
-            mainDockPanel.LoadFromXml(activeLayoutName, deserializeDockContent);
+            try
+            {
+                mainDockPanel.LoadFromXml(activeLayoutName, deserializeDockContent);
+            }
+            catch (IOException e)
+            {
+                MessageBox.Show("Cannot find XML file "+activeLayoutName, "#weirdButtStuff", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show("Loading layout from XML failed!", "#buttsex", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
 
             timer1.Start();
 
@@ -355,7 +366,18 @@ namespace LevelEditor
 			//string xmlFile = "PanelLayout.xml";
 			//Assembly assembly = Assembly.GetAssembly(typeof(MapEditor));
 			//Stream xmlStream = assembly.GetManifestResourceStream(xmlFile);
-			mainDockPanel.LoadFromXml(activeLayoutName, deserializeDockContent);
+            try
+            {
+                mainDockPanel.LoadFromXml(activeLayoutName, deserializeDockContent);
+            }
+            catch (IOException e)
+            {
+                MessageBox.Show("Cannot find XML file " + activeLayoutName, "#weirdButtStuff", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show("Loading layout from XML failed!", "#buttsex", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
 
 			mainDockPanel.ResumeLayout(true, true);
 

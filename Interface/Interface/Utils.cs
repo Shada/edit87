@@ -131,6 +131,7 @@ namespace LevelEditor
                     if (panels[i].Panel != null)
                     {
                         //panels[i].toolMenuItem.Checked = false;
+                        panels[i].Panel.Hide();
                         panels[i].Panel.Close();
                     }
                 }
