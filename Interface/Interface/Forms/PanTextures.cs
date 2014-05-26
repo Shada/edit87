@@ -86,8 +86,7 @@ namespace LevelEditor
 		private void lv_Textures_SelectedIndexChanged(object sender, EventArgs e)
 		{
 			var list = lv_Textures.SelectedIndices;
-			var tag = textureList.Images[list[0]].Tag as Utils.twTag;
-			Utils.Graphics.gfx.setBrushTexture(tag.getAttributeByName<string>("path"));
+			Utils.Graphics.gfx.setBrushTexture(tags[list[0]].getAttributeByName<string>("path"));
 		}
     }
 }
