@@ -5,9 +5,9 @@ using System.Windows.Forms;
 using System.IO;
 using System.Xml;
 using System.Globalization;
-using CookComputing.XmlRpc;
+//using CookComputing.XmlRpc;
 using WeifenLuo.WinFormsUI.Docking;
-using Util = JetBrains.ReSharper.Psi.JavaScript.WinRT.Util;
+//using Util = JetBrains.ReSharper.Psi.JavaScript.WinRT.Util;
 
 namespace LevelEditor
 {
@@ -247,10 +247,10 @@ namespace LevelEditor
 			mainDockPanel.SaveAsXml(activeLayoutName);
 			Utils.Graphics.gfx.cleanUp();
 
-#if DEBUG
-			if(Utils.ProjectDirectory.Exists)
-				Utils.ProjectDirectory.Delete(true);
-#endif
+//#if DEBUG
+//			if(Utils.ProjectDirectory.Exists)
+//				Utils.ProjectDirectory.Delete(true);
+//#endif
 		} //TODO: glöm en att ta bort debug kod!
 
 		private void newProjectToolStripMenuItem_Click(object sender, EventArgs e)
@@ -282,6 +282,26 @@ namespace LevelEditor
 		private void importPreferencesToolStripMenuItem_Click(object sender, EventArgs e)
 		{
 			importPrefrences();
+		}
+
+		private void resourcesToolToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			toggleDisplayMenuItems(typeof(PanResources));
+		}
+
+		private void texturesToolToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			toggleDisplayMenuItems(typeof(PanTextures));
+		}
+
+		private void libraryToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			toggleDisplayMenuItems(typeof(PanLibrary));
+		}
+
+		private void propertiesToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			toggleDisplayMenuItems(typeof(PanProperties));
 		}
 
 		#endregion
@@ -797,25 +817,5 @@ namespace LevelEditor
 		}
 
 		#endregion
-
-        private void resourcesToolToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            toggleDisplayMenuItems(typeof(PanResources));
-        }
-
-        private void texturesToolToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            toggleDisplayMenuItems(typeof(PanTextures));
-        }
-
-        private void libraryToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            toggleDisplayMenuItems(typeof(PanLibrary));
-        }
-
-        private void propertiesToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            toggleDisplayMenuItems(typeof(PanProperties));
-        }
 	}
 }
