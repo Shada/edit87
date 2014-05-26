@@ -258,5 +258,10 @@ namespace LevelEditor
 				toolTipRes.SetToolTip(tw_resources, "");
 			}
 		}
+
+        private void PanResources_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            Utils.Panels.removePanel(this.GetType().ToString());
+        }
     }
 }

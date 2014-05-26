@@ -20,8 +20,7 @@ namespace LevelEditor
 		    win = drawSurface.Handle;
 
 			Utils.Graphics.Init();
-            Utils.Graphics.Sethandle(win, "main", this.Size.Width, this.Size.Height);
-			Utils.Graphics.gfx.createTerrain(256, 256, 5, false, 0);
+            Utils.Graphics.Addhandle(win, "main", this.Size.Width, this.Size.Height);
         }
 
 		public void resizeRenderPanel()
@@ -34,7 +33,7 @@ namespace LevelEditor
 													this.Bounds.Height - 6);
 
                 if (Utils.Graphics.gfx != null && drawSurface.Size.Width != 0)
-                    Utils.Graphics.gfx.resizeWindow(drawSurface.Size.Width, drawSurface.Size.Height);
+                    Utils.Graphics.gfx.resizeWindow(drawSurface.Size.Width, drawSurface.Size.Height, "main");
 			}
 		}
 
@@ -50,11 +49,16 @@ namespace LevelEditor
 
 		private void PanRender_DockStateChanged(object sender, EventArgs e)
 		{
-		    if (drawSurface.Handle != win)
+            if (drawSurface.Handle != win)
 		    {
 		        win = drawSurface.Handle;
                 Utils.Graphics.gfx.updateHandle(win, "main", drawSurface.Size.Width, drawSurface.Size.Height);
 		    }
 		}
+
+        private void PanRender_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            //Utils.Panels.removePanel(this.GetType().ToString());
+        }
     }
 }

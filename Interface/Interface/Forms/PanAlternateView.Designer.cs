@@ -1,6 +1,6 @@
 ﻿namespace LevelEditor
 {
-    partial class PanProperties
+    partial class PanAlternateView
     {
         /// <summary>
         /// Required designer variable.
@@ -28,35 +28,34 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.pg_object = new System.Windows.Forms.PropertyGrid();
+            this.drawSurface = new System.Windows.Forms.Panel();
             this.SuspendLayout();
             // 
-            // pg_object
+            // drawSurface
             // 
-            this.pg_object.Location = new System.Drawing.Point(6, 2);
-            this.pg_object.Name = "pg_object";
-            this.pg_object.Size = new System.Drawing.Size(260, 238);
-            this.pg_object.TabIndex = 1;
+            this.drawSurface.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.drawSurface.Location = new System.Drawing.Point(0, 0);
+            this.drawSurface.Name = "drawSurface";
+            this.drawSurface.Size = new System.Drawing.Size(284, 262);
+            this.drawSurface.TabIndex = 1;
             // 
-            // PanProperties
+            // PanAlternateView
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(284, 262);
-            this.Controls.Add(this.pg_object);
+            this.Controls.Add(this.drawSurface);
             this.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.Name = "PanProperties";
-            this.Text = "PanProperties";
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.PanProperties_FormClosing);
-            this.Load += new System.EventHandler(this.PanProperties_Load);
-            this.SizeChanged += new System.EventHandler(this.PanProperties_SizeChanged);
-            this.Resize += new System.EventHandler(this.PanProperties_Resize);
+            this.Name = "PanAlternateView";
+            this.Text = "PanAlternateView";
+            this.DockStateChanged += new System.EventHandler(this.PanAlternateView_DockStateChanged);
+            this.SizeChanged += new System.EventHandler(this.PanAlternateView_SizeChanged);
             this.ResumeLayout(false);
 
         }
 
         #endregion
 
-        private System.Windows.Forms.PropertyGrid pg_object;
+        private System.Windows.Forms.Panel drawSurface;
     }
 }

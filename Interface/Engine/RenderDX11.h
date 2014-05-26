@@ -69,6 +69,8 @@ struct Handle
 	std::vector<ID3D11Buffer*>	buffers;
 
 	std::vector<ID3D11ShaderResourceView*> textures;
+
+	Camera *camera;
 };
 
 class RenderDX11
@@ -84,9 +86,8 @@ private:
 	RECT r;
 	HWND hWnd;
 
-	Handle *primaryHandle;
+	//Handle *primaryHandle;
 
-	Camera *camera;
 	Blendmap *blendmap;
 
 	std::vector<Handle>			handles;
@@ -118,10 +119,10 @@ public:
 	~RenderDX11();
 
 	void renderScene();
-	void renderMiniMap(std::string name);
+	void renderScene(std::string name);
 
 	void setTerrainIndexCount(int count)	{ terrainIndexCount = count; }
-	void setCamera(Camera *cam)				{ camera = cam; }
+	void setCamera(Camera *cam, std::string name);
 
 	void updateTerrainBuffer(std::vector<Vertex> *vBuffer);
 	void createAndSetTerrainBuffers(std::vector<Vertex> *vBuffer, std::vector<uint> *iBuffer);

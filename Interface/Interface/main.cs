@@ -11,6 +11,23 @@ using Util = JetBrains.ReSharper.Psi.JavaScript.WinRT.Util;
 
 namespace LevelEditor
 {
+    //public struct ToolViewOption
+    //{
+    //    string toolName; //tool name without the "levelEditor." part
+    //    ToolStripMenuItem toolMenuItem = null;
+
+    //    public ToolViewOption(string _toolName, ToolStripMenuItem _menuItem)
+    //    {
+    //        this.toolMenuItem = _menuItem;
+    //        this.toolName = _toolName;
+    //        IDockContent panel = Utils.Panels.getpanelByName("LevelEditor." + _toolName);
+    //        if (panel == null || panel.DockHandler.IsHidden)
+    //            toolMenuItem.Checked = false;
+    //        else
+    //            toolMenuItem.Checked = true;
+    //    }
+    //}
+
 	public partial class MapEditor : Form
     {
         const string activeLayoutName = "PanelLayout.xml";
@@ -24,6 +41,9 @@ namespace LevelEditor
 		private int windowHeight;
 
 		DeserializeDockContent deserializeDockContent;	
+        ToolTip toolTips;
+
+        public TreeNode resourcesRoot = new TreeNode("Root", 0, 0);
 
 		public MapEditor()
 		{
@@ -31,6 +51,20 @@ namespace LevelEditor
 			windowWidth = Size.Width;
 			windowHeight = Size.Height;
 			KeyPreview = true;
+
+
+            toolTips = new ToolTip();
+            toolTips.AutoPopDelay = 10000;
+            toolTips.InitialDelay = 500;
+            toolTips.ReshowDelay = 500;
+            toolTips.ShowAlways = true;
+            toolTips.SetToolTip(btn_save, "Save the level");
+            toolTips.SetToolTip(btn_load, "Load a level");
+            toolTips.SetToolTip(btn_export, "Export the level");
+            toolTips.SetToolTip(cb_history, "History");
+            toolTips.SetToolTip(btn_undo, "Undo change");
+            toolTips.SetToolTip(btn_redo, "Redo change");
+
 		}
 
 		public void initPanels()
@@ -53,12 +87,15 @@ namespace LevelEditor
 
         private void createStandardControls()
         {
-			Utils.Panels.addPanel(new PanTextures(), typeof(PanTextures).ToString());
-			Utils.Panels.addPanel(new PanResources(), typeof(PanResources).ToString());
-			Utils.Panels.addPanel(new PanRender(this), typeof(PanRender).ToString());
-			Utils.Panels.addPanel(new PanBrushes(), typeof(PanBrushes).ToString());
-			Utils.Panels.addPanel(new PanLibrary(), typeof(PanLibrary).ToString());
-			Utils.Panels.addPanel(new PanProperties(), typeof(PanProperties).ToString());
+			Utils.Panels.addPanel(new PanTextures(),            typeof(PanTextures).ToString(),         texturesToolToolStripMenuItem);
+			Utils.Panels.addPanel(new PanResources(),           typeof(PanResources).ToString(),        resourcesToolToolStripMenuItem);
+			Utils.Panels.addPanel(new PanRender(this),          typeof(PanRender).ToString(),           null);
+            Utils.Panels.addPanel(new PanAlternateView(this),   typeof(PanAlternateView).ToString(),    null);
+			Utils.Panels.addPanel(new PanLibrary(),             typeof(PanLibrary).ToString(),          libraryToolStripMenuItem);
+			Utils.Panels.addPanel(new PanBrushes(),             typeof(PanBrushes).ToString(),          brushToolsToolStripMenuItem);
+			Utils.Panels.addPanel(new PanProperties(),          typeof(PanProperties).ToString(),       propertiesToolStripMenuItem);
+
+            Utils.Graphics.gfx.createTerrain(256, 256, 5, false, 0);
         }
 
 		#region events
@@ -195,12 +232,13 @@ namespace LevelEditor
 
 		private void brushToolsToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			toggleDisplay();
+            toggleDisplayMenuItems( typeof(PanBrushes) );
 		}
 
 		private void resetToDefaultToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			panelLayoutReset();
+            if(MessageBox.Show("Do you want to reset the layout?", "Layout Reset", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                panelLayoutReset();
 		}
 
 		private void MapEditor_FormClosing(object sender, FormClosingEventArgs e)
@@ -291,6 +329,7 @@ namespace LevelEditor
 			PanTextures texture = (PanTextures)Utils.Panels.getpanelByName("LevelEditor.PanTextures");
 			PanResources resources = (PanResources)Utils.Panels.getpanelByName("LevelEditor.PanResources");
 			PanRender render = (PanRender)Utils.Panels.getpanelByName("LevelEditor.PanRender");
+            PanAlternateView minimap = (PanAlternateView)Utils.Panels.getpanelByName("LevelEditor.PanAlternateView");
 			PanLibrary library = (PanLibrary)Utils.Panels.getpanelByName("LevelEditor.PanLibrary");
 			PanProperties properties = (PanProperties)Utils.Panels.getpanelByName("LevelEditor.PanProperties");
 
@@ -299,7 +338,14 @@ namespace LevelEditor
 			resources.Show(texture.Pane, DockAlignment.Bottom, 0.50);
 			render.Show(mainDockPanel, DockState.Document);
 			library.Show(mainDockPanel, DockState.DockLeft);
+            minimap.Show(library.Pane, DockAlignment.Bottom, 0.5);
 			properties.Show(library.Pane, DockAlignment.Bottom, 0.50);
+
+            brushToolsToolStripMenuItem.Checked = true;
+            texturesToolToolStripMenuItem.Checked = true;
+            resourcesToolToolStripMenuItem.Checked = true;
+            libraryToolStripMenuItem.Checked = true;
+            propertiesToolStripMenuItem.Checked = true;
 
 			mainDockPanel.ResumeLayout(true, true);
 		}
@@ -316,6 +362,8 @@ namespace LevelEditor
 			mainDockPanel.LoadFromXml(activeLayoutName, deserializeDockContent);
 
 			mainDockPanel.ResumeLayout(true, true);
+
+            Utils.Panels.updateToolStrips();
 		}
 
 		public void saveProject()
@@ -592,6 +640,7 @@ namespace LevelEditor
 
 			Utils.Graphics.gfx.updateMouse();
 			Utils.Graphics.gfx.renderScene();
+            Utils.Graphics.gfx.renderScene("minimap");
 		}        
 
 		private void resizeWindow()
@@ -633,7 +682,7 @@ namespace LevelEditor
                 item.CheckState = CheckState.Checked;
 
                 //shortcutPanel.Size = new Size(shortcutPanel.Size.Width, shortcutPanel.Size.Height - 34);
-                mainDockPanel.Size = new Size(mainDockPanel.Size.Width, mainDockPanel.Size.Height - 34);
+                mainDockPanel.Size = new Size(mainDockPanel.Size.Width, mainDockPanel.Size.Height);
 
                 //shortcutPanel.Location = new Point(shortcutPanel.Location.X, shortcutPanel.Location.Y + 34);
                 mainDockPanel.Location = new Point(mainDockPanel.Location.X, mainDockPanel.Location.Y + 34);
@@ -647,30 +696,84 @@ namespace LevelEditor
             }
 		}
 
-        private void toggleDisplay()
+        private void toggleDisplayMenuItems(Type panelType)
         {
-			DockContent panel = (PanBrushes)Utils.Panels.getpanelByName("LevelEditor.PanBrushes");
+			DockContent panel = (DockContent)Utils.Panels.getpanelByName(panelType.ToString());
+            ToolStripMenuItem toolMenuItem = null;
+            if (panelType == typeof(PanBrushes))
+            {
+                toolMenuItem = brushToolsToolStripMenuItem;
+            }
+            else if (panelType == typeof(PanLibrary))
+            {
+                toolMenuItem = libraryToolStripMenuItem;
+            }
+            else if (panelType == typeof(PanProperties))
+            {
+                toolMenuItem = propertiesToolStripMenuItem;
+            }
+            else if (panelType == typeof(PanResources))
+            {
+                toolMenuItem = resourcesToolToolStripMenuItem;
+            }
+            else if (panelType == typeof(PanTextures))
+            {
+                toolMenuItem = texturesToolToolStripMenuItem;
+            }
 
-            if (!panel.IsDisposed)
+            if (panel == null || panel.IsDisposed)
+            {
+                if (panelType == typeof(PanBrushes))
+                {
+                    panel = new PanBrushes();
+                }
+                else if (panelType == typeof(PanLibrary))
+                {
+                    panel = new PanLibrary();
+                }
+                else if (panelType == typeof(PanProperties))
+                {
+                    panel = new PanProperties();
+                }
+                else if (panelType == typeof(PanResources))
+                {
+                    panel = new PanResources();
+                }
+                else if (panelType == typeof(PanTextures))
+                {
+                    panel = new PanTextures();
+                }
+                else if (panelType == typeof(PanRender))
+                {
+                    panel = new PanRender(this);
+                }
+            }
+            else if (!panel.IsDisposed)
             {
                 if (panel.IsHidden)
+                {
                     panel.IsHidden = false;
+                    toolMenuItem.Checked = true;
+                }
                 else
+                {
                     panel.Hide();
+                    toolMenuItem.Checked = false;
+                }
+                return;
             }
-            else
-            {
-                panel = new PanBrushes();
-                panel.Show(mainDockPanel, DockState.Float);
-                panel.DockHandler.FloatPane.DockTo(mainDockPanel.DockWindows[DockState.DockRight]);
-            }
-            
+
+            panel.Show(mainDockPanel, DockState.Float);
+            Utils.Panels.addPanel(panel, panelType.ToString(), toolMenuItem);
+            if(toolMenuItem != null)
+                toolMenuItem.Checked = true;
         }
 
         private void closeAllDocuments()
         {
             if (mainDockPanel.DocumentStyle == DocumentStyle.SystemMdi)
             {
+                timer.Stop();
                 foreach (Form form in MdiChildren)
                     form.Close();
             }
@@ -688,9 +791,31 @@ namespace LevelEditor
 		private void MapEditor_Move(object sender, EventArgs e)
 		{
 			PanRender render = (PanRender)Utils.Panels.getpanelByName("LevelEditor.PanRender");
+		    PanAlternateView minimap = (PanAlternateView) Utils.Panels.getpanelByName("LevelEditor.PanAlternateView");
 			render.resizeRenderPanel();
+		    minimap.resizeRenderPanel();
 		}
 
 		#endregion
+
+        private void resourcesToolToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            toggleDisplayMenuItems(typeof(PanResources));
+        }
+
+        private void texturesToolToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            toggleDisplayMenuItems(typeof(PanTextures));
+        }
+
+        private void libraryToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            toggleDisplayMenuItems(typeof(PanLibrary));
+        }
+
+        private void propertiesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            toggleDisplayMenuItems(typeof(PanProperties));
+        }
 	}
 }

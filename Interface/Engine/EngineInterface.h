@@ -9,6 +9,7 @@ public:
 	virtual ~EngineInterface() {}
 
 	virtual void renderScene() = 0;
+	virtual void renderScene(std::string name) = 0;
 
 	virtual void createTerrain(int width, int height, float pointStep, bool fromPerlinMap, int seed) = 0;
 
@@ -20,7 +21,7 @@ public:
 
 	/* Mouse calls */
 	virtual void updateMouse() = 0;
-	virtual void resizeWindow(int width, int height) = 0;
+	virtual void resizeWindow(int width, int height, std::string name) = 0;
 
 	/* Tool calls */
 	virtual void setSelctorTool() = 0;
@@ -29,6 +30,6 @@ public:
 	virtual void setNormalizerTool() = 0;
 	virtual void setObjectPlacerTool() = 0;
 
-	virtual void addHandels(HWND _hWnd, std::string _name, int width, int height) = 0;
+	virtual void addHandle(HWND _hWnd, std::string _name, int width, int height) = 0;
 	virtual void updateHandle(HWND _hWnd, std::string _name, int width, int height) = 0;
 };
