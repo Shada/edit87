@@ -18,7 +18,7 @@
           <name>s|grass</name>
           <modifiable>b|true</modifiable>
           <realname>s|grass.png</realname>
-          <path>s|\\storage10.student.bth.se\profile\ospe10\desktop\test\grass.png</path>
+          <path>s|D:\edit87\Interface\test\grass.png</path>
           <size>f|0,6</size>
           <sizex>i|512</sizex>
           <sizey>i|512</sizey>
@@ -28,7 +28,7 @@
           <name>s|ground</name>
           <modifiable>b|true</modifiable>
           <realname>s|ground.png</realname>
-          <path>s|\\storage10.student.bth.se\profile\ospe10\desktop\test\ground.png</path>
+          <path>s|D:\edit87\Interface\test\ground.png</path>
           <size>f|0,83</size>
           <sizex>i|512</sizex>
           <sizey>i|512</sizey>
@@ -38,7 +38,7 @@
           <name>s|lava</name>
           <modifiable>b|true</modifiable>
           <realname>s|lava.png</realname>
-          <path>s|\\storage10.student.bth.se\profile\ospe10\desktop\test\lava.png</path>
+          <path>s|D:\edit87\Interface\test\lava.png</path>
           <size>f|0,76</size>
           <sizex>i|512</sizex>
           <sizey>i|512</sizey>
@@ -48,7 +48,7 @@
           <name>s|lavag</name>
           <modifiable>b|true</modifiable>
           <realname>s|lavag.png</realname>
-          <path>s|\\storage10.student.bth.se\profile\ospe10\desktop\test\lavag.png</path>
+          <path>s|D:\edit87\Interface\test\lavag.png</path>
           <size>f|0,79</size>
           <sizex>i|512</sizex>
           <sizey>i|512</sizey>
@@ -58,7 +58,7 @@
           <name>s|sand</name>
           <modifiable>b|true</modifiable>
           <realname>s|sand.png</realname>
-          <path>s|\\storage10.student.bth.se\profile\ospe10\desktop\test\sand.png</path>
+          <path>s|D:\edit87\Interface\test\sand.png</path>
           <size>f|0,47</size>
           <sizex>i|512</sizex>
           <sizey>i|512</sizey>
@@ -77,7 +77,7 @@
     <image>
       <modifiable>b|true</modifiable>
       <realname>s|grass.png</realname>
-      <path>s|\\storage10.student.bth.se\profile\ospe10\desktop\test\grass.png</path>
+      <path>s|D:\edit87\Interface\test\grass.png</path>
       <size>f|0,6</size>
       <sizex>i|512</sizex>
       <sizey>i|512</sizey>
@@ -86,7 +86,7 @@
     <image>
       <modifiable>b|true</modifiable>
       <realname>s|ground.png</realname>
-      <path>s|\\storage10.student.bth.se\profile\ospe10\desktop\test\ground.png</path>
+      <path>s|D:\edit87\Interface\test\ground.png</path>
       <size>f|0,83</size>
       <sizex>i|512</sizex>
       <sizey>i|512</sizey>
@@ -95,7 +95,7 @@
     <image>
       <modifiable>b|true</modifiable>
       <realname>s|lava.png</realname>
-      <path>s|\\storage10.student.bth.se\profile\ospe10\desktop\test\lava.png</path>
+      <path>s|D:\edit87\Interface\test\lava.png</path>
       <size>f|0,76</size>
       <sizex>i|512</sizex>
       <sizey>i|512</sizey>
@@ -104,7 +104,7 @@
     <image>
       <modifiable>b|true</modifiable>
       <realname>s|lavag.png</realname>
-      <path>s|\\storage10.student.bth.se\profile\ospe10\desktop\test\lavag.png</path>
+      <path>s|D:\edit87\Interface\test\lavag.png</path>
       <size>f|0,79</size>
       <sizex>i|512</sizex>
       <sizey>i|512</sizey>
@@ -113,7 +113,7 @@
     <image>
       <modifiable>b|true</modifiable>
       <realname>s|sand.png</realname>
-      <path>s|\\storage10.student.bth.se\profile\ospe10\desktop\test\sand.png</path>
+      <path>s|D:\edit87\Interface\test\sand.png</path>
       <size>f|0,47</size>
       <sizex>i|512</sizex>
       <sizey>i|512</sizey>
