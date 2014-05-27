@@ -88,6 +88,12 @@ void IRadial::setSpawn(elm::vec2 _origin)
 
 void IRadial::select(elm::vec2 _mouse, bool _leftMouseDown)
 {
+	if(m_state != RState::SELECT)
+	{
+		m_toolBufferId = -1;
+		return;
+	}
+
 	elm::vec2 scrnm = elm::vec2(_mouse.x / screenWidth * 2 - 1, _mouse.y / screenHeight * 2 - 1);
 	elm::vec2 scrno = m_origin;
 
@@ -173,6 +179,7 @@ void IRadial::draw()
 
 void IRadial::setState(RState _state)
 {
+	if(m_state == RState::SELECT);
 	m_state = _state;
 }
 
@@ -190,6 +197,9 @@ bool ObjectRadial::update(bool _leftMouseDown)
 	// check for icon selection
 	select(m_mouse,_leftMouseDown);
 	m_tool->setAxis(m_axis);
+
+	//setState(RState::HIDE);
+	//m_tool->setState(OTState::NONE);
 	switch(m_selectedToolFunction)
 	{
 	case 0:
@@ -211,10 +221,11 @@ bool ObjectRadial::update(bool _leftMouseDown)
 	case 3:
 		// follow terrain
 		m_tool->setState(OTState::FOLLOWTERRAIN);
-		setState(RState::HIDE);
+		//setState(RState::HIDE);
 		break;
 	default:
 		m_tool->setState(OTState::NONE);
+		//setState(RState::OPEN);
 		break;
 	}
 	m_selectedToolFunction = -1;

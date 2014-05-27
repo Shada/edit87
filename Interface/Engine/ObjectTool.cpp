@@ -22,6 +22,12 @@ ObjectTool::~ObjectTool(void)
 void ObjectTool::setAxis( elm::vec3 _axis )
 {
 	currentAxis = _axis;
+	currentAxis = elm::normalize(currentAxis);
+
+	if(elm::vecLength(currentAxis) > 3)
+	{
+		int i = 42;
+	}
 }
 
 void ObjectTool::update(Composition* _composition, elm::vec2 _mouse, elm::vec2 _oldMouse)

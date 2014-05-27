@@ -91,15 +91,11 @@ void Engine::leftMouseDown()
 		break;
 	case Tools::SELECTOR:
 		{
-			//if(m_objectRadial->getState() != RState::HIDE)
-				m_objectRadial->update(leftMouseIsDown);
-
+			
 			if(m_selectedObject != nullptr)
 				objectTool->update(m_selectedObject, elm::vec2(mousePos.x, mousePos.y), elm::vec2(oldMousePos.x, oldMousePos.y));	
 
-				
-			m_terrainRadial->update(true);
-
+			m_objectRadial->update(leftMouseIsDown);
 		}
 		break;
 
@@ -138,12 +134,12 @@ void Engine::leftMouseUp()
 		break;
 	case Tools::SELECTOR:
 		selectObject();
-
-		//if(m_objectRadial->getState() != RState::HIDE)
-			m_objectRadial->update(leftMouseIsDown);
-
+	
+		
 		if(m_selectedObject != nullptr)
 			objectTool->update(m_selectedObject, elm::vec2(mousePos.x, mousePos.y), elm::vec2(oldMousePos.x, oldMousePos.y));	
+
+		m_objectRadial->update(leftMouseIsDown);
 		break;
 	}
 	leftMouseIsDown = !leftMouseIsDown;
@@ -185,11 +181,20 @@ void Engine::rightMouseUp()
 		m_selectedObject->setSelected(false);
 		m_selectedObject = nullptr;
 		
-		m_currentRadial->setState( RState::HIDE);
+		
+		//m_currentRadial->setState( RState::HIDE);
 
-		dx->renderScene(node);
+		
 	}
-
+	else
+	{
+		//objectTool->setState(OTState::NONE);
+		//m_currentRadial->setState(RState::HIDE);
+	}
+	objectTool->setState(OTState::NONE);
+	m_objectRadial->setState(RState::HIDE);
+	
+	dx->renderScene(node);
 	selectedTool = Tools::SELECTOR;
 	m_currentKeyBinding = std::make_pair( (unsigned int)Key::NO_STATE, true);
 }
@@ -242,12 +247,12 @@ void Engine::keyboardEvent(unsigned int _key, bool _isDown)
 	case Key::STATE_TERRAIN:
 		m_terrainRadial->setState(RState::SELECT);
 		m_terrainRadial->setSpawn(elm::vec2(mousePos.x, mousePos.y));
-		m_currentRadial = m_terrainRadial;
-		dx->setRadial(m_currentRadial);
+		//m_currentRadial = m_terrainRadial;
+		//dx->setRadial(m_currentRadial);
 		if(m_selectedObject != nullptr)
 			m_selectedObject->setSelected(false);
 		m_selectedObject = nullptr;
-		//setElevationTool();
+		setElevationTool();
 		break;
 		
 	case Key::STATE_FOLLOW_TERRAIN:
@@ -327,7 +332,8 @@ void Engine::selectObject()
 
 	elm::vec3 vPickRayDir, vPickRayOrig;
 	pickRay(mousePos, vPickRayDir, vPickRayOrig);
-
+	m_selectedObject = nullptr;
+	
 	for( auto &c : dx->g_comps )
 	{
 		Object3D* object = c.getProperty<Object3D>();
@@ -348,7 +354,11 @@ void Engine::selectObject()
 			m_currentRadial = m_objectRadial;
 			m_objectRadial->setSpawn(elm::vec2(mousePos.x, mousePos.y));
 
-			m_objectRadial->setState(RState::SELECT);
+			//if(objectTool->getState() == OTState::NONE)
+				m_objectRadial->setState(RState::SELECT);
+			//else
+				//m_objectRadial->setState(RState::OPEN);
+
 			dx->setRadial(m_currentRadial);
 		}
 		else
@@ -363,12 +373,7 @@ void Engine::selectObject()
 	}
 	else
 	{
-		float xDiff, yDiff;
-		xDiff = mousePos.x - oldMousePos.x;
-		yDiff = mousePos.y - oldMousePos.y;
-
-		elm::vec3 nrot = elm::vec3(xDiff, yDiff, 0) / 10.f;
-		//object->setRotation( nrot + object->getRotation() );
+		//objectTool->setState(OTState::NONE);
 	}
 }
 
