@@ -97,6 +97,8 @@ namespace LevelEditor
 			Utils.ProjectFile.Load(folder + "\\" + txb_projectName.Text + ".xml");
 			Utils.ProjectName = txb_projectName.Text;
 			edit.initPanels();
+	        PanTextures tex = (PanTextures) Utils.Panels.getpanelByName("LevelEditor.PanTextures");
+			tex.initDefTex();
 			edit.saveProject();
 			
             Close();
