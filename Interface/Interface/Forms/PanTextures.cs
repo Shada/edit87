@@ -67,6 +67,7 @@ namespace LevelEditor
 	    public void addImages(Image _img)
 		{
 			textureList.Images.Add(_img);
+			tags.Add(_img.Tag as Utils.twTag);
 			var name = _img.Tag as Utils.twTag;
 			lv_Textures.Items.Add(new ListViewItem(name.getAttributeByName<string>("showname"), textureList.Images.Count - 1));
 		}
