@@ -44,6 +44,7 @@
             this.lv_Textures.SmallImageList = this.textureList;
             this.lv_Textures.TabIndex = 31;
             this.lv_Textures.UseCompatibleStateImageBehavior = false;
+            this.lv_Textures.SelectedIndexChanged += new System.EventHandler(this.lv_Textures_SelectedIndexChanged);
             // 
             // textureList
             // 

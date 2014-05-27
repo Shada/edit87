@@ -744,8 +744,8 @@ void RenderDX11::render(const Handle &h)
 	h.deviceContext->PSSetSamplers(0, 1, &h.wrap);
 	
 	h.deviceContext->PSSetSamplers(0, 1, &h.wrap);
-	h.deviceContext->PSSetShaderResources(0, 1, &h.textures.at(0));
-	//blendmap->CSexec();
+	//h.deviceContext->PSSetShaderResources(0, 1, &h.textures.at(0));
+	blendmap->CSexec();
 
 	h.deviceContext->VSSetConstantBuffers(0, 1, &h.buffers.at(cbOnChangeID));
 

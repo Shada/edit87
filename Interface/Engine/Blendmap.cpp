@@ -6,6 +6,7 @@
 Blendmap::Blendmap()
 {
 	nrOfTextures = 0;
+	initBlendmap = true;
 }
 
 Blendmap::~Blendmap()
@@ -79,11 +80,11 @@ void Blendmap::createTexture2DArray(int _width, int _height)
 		MessageBox(NULL, "Failed to create texture for render target view.", "RenderDX11 Error", S_OK);
 	}
 
-	addTexture("..\\Textures\\ground.png");
+	//addTexture("..\\Textures\\ground.png");
 	addTexture("..\\Textures\\grass.png");
-	addTexture("..\\Textures\\lava.png");
-	addTexture("..\\Textures\\sand.png");
-	addTexture("..\\Textures\\lavag.png");
+	//addTexture("..\\Textures\\lava.png");
+	//addTexture("..\\Textures\\sand.png");
+	//addTexture("..\\Textures\\lavag.png");
 	//LoadTextureInToTextureArray("..\\Textures\\lava.jpg", 8);
 
 
@@ -98,6 +99,9 @@ void Blendmap::createTexture2DArray(int _width, int _height)
 
 	compileShader("..\\Shaders\\blendmapuppdateCS.hlsl", "cs_5_0", &blob);
 	g_device->CreateComputeShader(blob->GetBufferPointer(), blob->GetBufferSize(), NULL, &computeShaderUpdate);
+
+	compileShader("..\\Shaders\\blendmapinitCS.hlsl", "cs_5_0", &blob);
+	g_device->CreateComputeShader(blob->GetBufferPointer(), blob->GetBufferSize(), NULL, &computeShaderInit);
 
 
 	//-------------------------------------------------------------------------- texture view
@@ -477,7 +481,17 @@ void Blendmap::CSexecupdate()
 
 	g_deviceContext->CSSetConstantBuffers(0, 1, &cbuffer);
 
-	g_deviceContext->CSSetShader(computeShaderUpdate, NULL, 0);
+	if (initBlendmap == true)
+	{
+		g_deviceContext->CSSetShader(computeShaderInit, NULL, 0);
+		initBlendmap = false;
+	}
+	else
+	{
+		g_deviceContext->CSSetShader(computeShaderUpdate, NULL, 0);
+	}
+
+
 
 	g_deviceContext->Dispatch(45, 45, 1);
 

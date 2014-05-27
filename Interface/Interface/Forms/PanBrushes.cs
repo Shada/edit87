@@ -54,5 +54,15 @@ namespace LevelEditor
         {
             Utils.Panels.removePanel(this.GetType().ToString());
         }
+
+        private void btn_TextureBrush_Click(object sender, EventArgs e)
+        {
+            Utils.Graphics.gfx.setTextureTool();
+        }
+
+        private void btn_TerrainBrush_Click(object sender, EventArgs e)
+        {
+            Utils.Graphics.gfx.setElevationTool();
+        }
     }
 }

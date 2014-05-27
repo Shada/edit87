@@ -78,5 +78,6 @@ namespace LevelEditor
 			var list = lv_Textures.SelectedIndices;
 			Utils.Graphics.gfx.setBrushTexture(tags[list[0]].getAttributeByName<string>("path"));
 		}
+
     }
 }

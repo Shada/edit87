@@ -108,6 +108,9 @@ void Engine::leftMouseDown()
 		terrain->applyNormalizeBrush((float)brushSize, brushIntensity, mouseWorldPos.xz);
 		dx->updateTerrainBuffer(terrain->getVBuffer());
 		break;
+	case Tools::TEXTURING:
+		dx->blendmapBrush((float)brushSize, brushIntensity, mouseWorldPos.xz, (char*)brushTexture.c_str(), terrain->getStep());
+		break;
 	}	
 
 	if(minmaxCalcDone)

@@ -29,14 +29,14 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.ListViewItem listViewItem1 = new System.Windows.Forms.ListViewItem(new string[] {
+            System.Windows.Forms.ListViewItem listViewItem7 = new System.Windows.Forms.ListViewItem(new string[] {
             "B1",
             "Test"}, 0);
-            System.Windows.Forms.ListViewItem listViewItem2 = new System.Windows.Forms.ListViewItem("B2", 1);
-            System.Windows.Forms.ListViewItem listViewItem3 = new System.Windows.Forms.ListViewItem("B3", 2);
-            System.Windows.Forms.ListViewItem listViewItem4 = new System.Windows.Forms.ListViewItem("B4", 3);
-            System.Windows.Forms.ListViewItem listViewItem5 = new System.Windows.Forms.ListViewItem("B5", 4);
-            System.Windows.Forms.ListViewItem listViewItem6 = new System.Windows.Forms.ListViewItem("B6", 5);
+            System.Windows.Forms.ListViewItem listViewItem8 = new System.Windows.Forms.ListViewItem("B2", 1);
+            System.Windows.Forms.ListViewItem listViewItem9 = new System.Windows.Forms.ListViewItem("B3", 2);
+            System.Windows.Forms.ListViewItem listViewItem10 = new System.Windows.Forms.ListViewItem("B4", 3);
+            System.Windows.Forms.ListViewItem listViewItem11 = new System.Windows.Forms.ListViewItem("B5", 4);
+            System.Windows.Forms.ListViewItem listViewItem12 = new System.Windows.Forms.ListViewItem("B6", 5);
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PanBrushes));
             this.lw_Brush = new System.Windows.Forms.ListView();
             this.brushList = new System.Windows.Forms.ImageList(this.components);
@@ -57,12 +57,12 @@
             // lw_Brush
             // 
             this.lw_Brush.Items.AddRange(new System.Windows.Forms.ListViewItem[] {
-            listViewItem1,
-            listViewItem2,
-            listViewItem3,
-            listViewItem4,
-            listViewItem5,
-            listViewItem6});
+            listViewItem7,
+            listViewItem8,
+            listViewItem9,
+            listViewItem10,
+            listViewItem11,
+            listViewItem12});
             this.lw_Brush.LargeImageList = this.brushList;
             this.lw_Brush.Location = new System.Drawing.Point(12, 161);
             this.lw_Brush.Name = "lw_Brush";
@@ -180,6 +180,7 @@
             this.btn_TextureBrush.Size = new System.Drawing.Size(50, 50);
             this.btn_TextureBrush.TabIndex = 31;
             this.btn_TextureBrush.UseVisualStyleBackColor = true;
+            this.btn_TextureBrush.Click += new System.EventHandler(this.btn_TextureBrush_Click);
             // 
             // btn_TerrainBrush
             // 
@@ -190,6 +191,7 @@
             this.btn_TerrainBrush.Size = new System.Drawing.Size(50, 50);
             this.btn_TerrainBrush.TabIndex = 30;
             this.btn_TerrainBrush.UseVisualStyleBackColor = true;
+            this.btn_TerrainBrush.Click += new System.EventHandler(this.btn_TerrainBrush_Click);
             // 
             // PanBrushes
             // 

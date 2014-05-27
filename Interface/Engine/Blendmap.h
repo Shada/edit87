@@ -76,9 +76,10 @@ private:
 	ID3D11ShaderResourceView* uavSRV;
 	ID3D11ComputeShader *computeShader;
 	ID3D11ComputeShader *computeShaderUpdate;
+	ID3D11ComputeShader *computeShaderInit;
 
 
-
+	bool initBlendmap;
 	int nrOfTextures;
 
 
