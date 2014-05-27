@@ -140,7 +140,7 @@ void Blendmap::createTexture2DArray(int _width, int _height)
 
 	CSexecupdate();
 
-	CSexec();
+	//CSexec();
 
 	//g_textures->at(0) = uavSRV;
 
@@ -506,16 +506,17 @@ void Blendmap::CSexecupdate()
 
 int Blendmap::addTexture(const char *_texture)
 {
+	
+	for (int i = 0; i < nrOfTextures; i++)
+	{
+		if (strcmp(textureArrayHandler.at(i).texturePath.c_str(),_texture) == 0)
+		{
+			return i;
+		}
+	}
+
 	if (nrOfTextures <= 20)
 	{
-		for (int i = 0; i < nrOfTextures; i++)
-		{
-			if (strcmp(textureArrayHandler.at(i).texturePath.c_str(),_texture) == 0)
-			{
-				return i;
-			}
-		}
-
 		LoadTextureInToTextureArray(_texture,nrOfTextures);
 		textureHandler temp;
 		temp.textureIndex = nrOfTextures;
