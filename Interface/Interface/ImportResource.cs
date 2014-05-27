@@ -118,6 +118,7 @@ namespace LevelEditor
 					tag.addAttribute(Utils.twTagAttribute.dataType.FLOAT, "size", fileSize);
 					tag.addAttribute(Utils.twTagAttribute.dataType.INT, "sizex", img.Width);
 					tag.addAttribute(Utils.twTagAttribute.dataType.INT, "sizey", img.Height);
+					tag.addAttribute(Utils.twTagAttribute.dataType.STRING, "showname", txb_fileName.Text);
 
 					newNode.Tag = tag;
 					tw_fileTree.SelectedNode.Nodes.Add(newNode);

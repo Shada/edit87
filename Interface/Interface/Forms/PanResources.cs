@@ -103,6 +103,18 @@ namespace LevelEditor
 			tw_resources.SelectedNode.Expand();
 		}
 
+		public TreeNode createFolderInRoot(string _name)
+		{
+			TreeNode tn = new TreeNode(_name, 0, 0);
+
+			Utils.twTag tag = new Utils.twTag(Utils.twTag.TYPE.FOLDER);
+			tag.addAttribute(Utils.twTagAttribute.dataType.BOOL, "modifiable", false);
+
+			tn.Tag = tag;
+			tw_resources.Nodes[0].Nodes.Add(tn);
+			return tn;
+		}
+
         private void PanResources_SizeChanged(object sender, EventArgs e)
         {
 			tw_resources.Size = new Size(Size.Width - tw_resourcesSizeDiff, Size.Height - tw_resourcesSizeDiff - 44);
