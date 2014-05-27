@@ -25,12 +25,15 @@ namespace LevelEditor
 	    public void initDefTex()
 	    {
 			string[] defStrings = new[] { "grass", "ground", "lava", "lavag", "sand" };
+			PanResources res = (PanResources)Utils.Panels.getpanelByName("LevelEditor.PanResources");
+			TreeNode tn = res.createFolderInRoot("Default textures");
 
 		    for (int i = 0; i < defStrings.Length; i++)
 		    {
 			    string file = Utils.ProjectDirectory.FullName + "\\" + defStrings[i] + ".png";
 			    Image img = Image.FromFile(file);
 			    float fileSize = (float) Math.Round((new FileInfo(file).Length)/1000000.0f, 2);
+				TreeNode newNode = new TreeNode(defStrings[i], 1, 1);
 
 			    Utils.twTag tag = new Utils.twTag(Utils.twTag.TYPE.IMAGE);
 			    tag.addAttribute(Utils.twTagAttribute.dataType.BOOL, "modifiable", true);
@@ -43,8 +46,12 @@ namespace LevelEditor
 
 			    textureList.Images.Add(img);
 				tags.Add(tag);
+				newNode.Tag = tag;
 			    lv_Textures.Items.Add(new ListViewItem(defStrings[i], i));
+				tn.Nodes.Add(newNode);
 		    }
+
+			tn.Expand();
 	    }
 
 		public List<Utils.twTag> TexTags 

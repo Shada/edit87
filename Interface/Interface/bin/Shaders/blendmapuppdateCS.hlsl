@@ -34,6 +34,13 @@ void main(uint3 threadID : SV_DispatchThreadID)
 		blendmaps[float3(threadID.xy, 3)] = blendmapTextures[float3(threadID.xy, 3)] * deminish;
 		blendmaps[float3(threadID.xy, 4)] = blendmapTextures[float3(threadID.xy, 4)] * deminish;
 		*/
+
+		blendmaps[float3(threadID.xy, 0)] = float4(0, 0, 0, 0);
+		blendmaps[float3(threadID.xy, 1)] = float4(0,0,0,0);
+		blendmaps[float3(threadID.xy, 2)] = float4(0,0,0,0);
+		blendmaps[float3(threadID.xy, 3)] = float4(0,0,0,0);
+		blendmaps[float3(threadID.xy, 4)] = float4(0,0,0,0);
+
 		float result[4];
 		result[0] = 0;
 		result[1] = 0;

@@ -43,7 +43,7 @@ void Blendmap::applayBrush(float _radius, float _intensity, elm::vec2 _origin, c
 	config.textureIndex.x = (int)(temp / 4);
 	config.textureIndex.y = temp % 4;
 
-	config.intensity = _intensity;
+	config.intensity = (_intensity/100);
 	config.origin = _origin / _step;
 	config.radius = _radius;
 	config.pad = elm::vec2(0, 0);
@@ -81,7 +81,7 @@ void Blendmap::createTexture2DArray(int _width, int _height)
 	}
 
 	//addTexture("..\\Textures\\ground.png");
-	addTexture("..\\Textures\\grass.png");
+	//addTexture("..\\Textures\\grass.png");
 	//addTexture("..\\Textures\\lava.png");
 	//addTexture("..\\Textures\\sand.png");
 	//addTexture("..\\Textures\\lavag.png");
@@ -138,7 +138,7 @@ void Blendmap::createTexture2DArray(int _width, int _height)
 
 
 
-	CSexecupdate();
+	//CSexecupdate();
 
 	//CSexec();
 
@@ -506,7 +506,8 @@ void Blendmap::CSexecupdate()
 
 int Blendmap::addTexture(const char *_texture)
 {
-	
+	if (nrOfTextures <= 20)
+	{
 	for (int i = 0; i < nrOfTextures; i++)
 	{
 		if (strcmp(textureArrayHandler.at(i).texturePath.c_str(),_texture) == 0)
@@ -515,8 +516,7 @@ int Blendmap::addTexture(const char *_texture)
 		}
 	}
 
-	if (nrOfTextures <= 20)
-	{
+	
 		LoadTextureInToTextureArray(_texture,nrOfTextures);
 		textureHandler temp;
 		temp.textureIndex = nrOfTextures;
