@@ -109,7 +109,7 @@ void Engine::leftMouseDown()
 		dx->updateTerrainBuffer(terrain->getVBuffer());
 		break;
 	case Tools::TEXTURING:
-		dx->blendmapBrush((float)brushSize, brushIntensity, mouseWorldPos.xz, (char*)brushTexture.c_str(), terrain->getStep());
+		dx->blendmapBrush((float)brushSize, brushIntensity, elm::vec2(mouseWorldPos.x, (terrain->getDepth() - mouseWorldPos.z)), (char*)brushTexture.c_str(), terrain->getStep());
 		break;
 	}	
 
@@ -135,7 +135,7 @@ void Engine::rightMouseDown()
 		dx->updateTerrainBuffer(terrain->getVBuffer());
 		break;
 	case Tools::TEXTURING:
-		dx->blendmapBrush((float)brushSize, brushIntensity, mouseWorldPos.xz, (char*)brushTexture.c_str(), terrain->getStep());
+		dx->blendmapBrush((float)brushSize, brushIntensity, elm::vec2(mouseWorldPos.x, (terrain->getDepth() - mouseWorldPos.z)), (char*)brushTexture.c_str(), terrain->getStep());
 		break;
 	}
 
